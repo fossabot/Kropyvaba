@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>{{ topic.theme }} | Кропивач</title>
+		<base href="../">
+		{% include "posts/head.html" %}
+	</head>
+	<body>
+	    {% include "posts/header.html" %}
+		<div id="maincontent" class="row grey lighten-4">
+            <div class="col m4 s12 offset-m1 z-depth-1 op-post white">
+			    {% include "posts/thread.html" %}
+			    <div class="divider"></div>
+			    {% include "posts/reply.html" %}
+	        </div>
+		    <div class="col m7 s12 offset-m5">
+			    {% for post in posts_list %}
+                    {% include "posts/temp_post.html" %}
+                {% endfor %}
+            </div>
+		</div>
+		<script>
+		    document.addEventListener("DOMContentLoaded", setreplay_to);
+		    function setreplay_to(){
+		        $('#id_replay_to').val({{ topic.id }});
+		        $('#id_replay_to').hide();
+            }
+		</script>
+		{% include "posts/footer.html" %}
+        {% include "posts/scripts.html" %}
+	</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Головна | Кропивач</title>
+	    {% include "posts/head.html" %}
+	</head>
+	<body>
+	    {% include "posts/header.html" %}
+	    <div id="maincontent" >
+	        <h1 class="center col m12">Ласкаво просимо на Кропивач</h1>
+            <div class="row container">
+                <div class="col s12 m4">
+                    <a href="#!" id="logo-container" class="brand-logo"><img id="front-page-logo" src="/static/posts/logo.png"></a>
+	            </div>
+	            <div class="col s12 m6">
+		            <p>
+		                Кропивач — це платформа для спілкування на довільні теми, створенна за моделлю «imageboard». Ми пропонуємо вам можливість висловляти будь‐які думки та зберігати повну анонімність. Схожа схема обміну інформацією стала потужним джерелом наповнення інтернет‐культури. Наразі сайт має три дошки (розділи) для спілкування, та <a href="/bugs">одну</a> для обговорення роботи проекту.
+		                <br>Приєднуйтесь до нашої спільноти!
+		            </p>
+	            </div>
+            </div>
+		</div>
+		{% include "posts/footer.html" %}
+		{% include "posts/scripts.html" %}
+	</body>
+</html>

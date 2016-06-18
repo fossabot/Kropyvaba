@@ -1,0 +1,44 @@
+body {
+	min-height:70vmax;
+}
+.quote {
+	color:#789922;
+}
+.spoiler {
+	background:#000000 none repeat scroll 0 0!important;
+	color:#000000!important;
+}
+.spoiler:hover {
+	background:#000000 none repeat scroll 0 0!important;
+	color:#ffffff!important;
+}
+#logo-container,#front-page-logo {
+	height:100%;
+	width:100%;
+}
+#maincontent {
+	min-height:70vmax;
+}
+.post {
+	margin:20px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+.op-post {
+	margin:20px;
+	position:initial;
+	height:auto;
+}
+.board_thread {
+	height:150px;
+	width:300px;
+}
+
+@media only screen and (min-width: 800px) {
+	.op-post {
+		margin:20px;
+		position:fixed;
+		height:70vh;
+		overflow-y:auto;
+	}
+}

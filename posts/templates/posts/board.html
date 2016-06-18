@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	    <title>{{ curr_board.0.description }} | Кропивач</title>
+		<base href="../">
+		{% include "posts/head.html" %}
+	</head>
+	<body>
+	    {% include "posts/header.html" %}
+		<div class="row">
+		    <div class="col s12 m8 offset-m2">{% include "posts/topic.html" %}</div>
+		</div>
+		<div class="row">
+			{% for topic in topics_list %}
+			    <div class="col s12 m3">
+			        {% include "posts/thread-card.html" %}
+			    </div>
+			{% endfor %}
+		</div>
+		<script>
+		    document.addEventListener("DOMContentLoaded", setreplay_to);
+		    function setreplay_to(){
+		        $('#id_replay_to').hide();
+		        $('#id_replay_to').val(0);
+
+            }
+		</script>
+		{% include "posts/footer.html" %}
+        {% include "posts/scripts.html" %}
+	</body>
+</html>
