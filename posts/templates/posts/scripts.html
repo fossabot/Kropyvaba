@@ -39,9 +39,9 @@ function quickreply(id, topic_id) {
     o.style.visibility = 'visible';
     var input = document.createElement('input');
     input.type = "hidden";
-    input.name = "replay_to";
+    input.name = "thread";
     input.value = topic_id;
-    input.id = "replay_to";
+    input.id = "thread";
     inp_list = o.getElementsByTagName("input");
     for (var i = 0; i < inp_list.length; i++) {
         var elem = inp_list[i];

@@ -20,10 +20,10 @@
             </div>
 		</div>
 		<script>
-		    document.addEventListener("DOMContentLoaded", setreplay_to);
-		    function setreplay_to(){
-		        $('#id_replay_to').val({{ topic.id }});
-		        $('#id_replay_to').hide();
+		    document.addEventListener("DOMContentLoaded", setthread);
+		    function setthread(){
+		        $('#id_thread').val({{ topic.id }});
+		        $('#id_thread').hide();
             }
 		</script>
 		{% include "posts/footer.html" %}

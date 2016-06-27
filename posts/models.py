@@ -14,9 +14,9 @@ class Board(models.Model):
 		return self.name
 
 class Post(models.Model):
-	replay_to = models.IntegerField(default=0)
-	close = models.IntegerField(default=0)
-	posts = models.IntegerField(default=0)
+	thread = models.IntegerField(default=0) #thread ID for posts and 0 for threads
+	close = models.IntegerField(default=0) #for threads
+	posts = models.IntegerField(default=0) #number of posts in thread
 	board = models.ForeignKey(Board, on_delete=models.CASCADE)
 	author = models.CharField(blank=True, max_length=64)
 	pub_date = models.DateTimeField('date_published')
@@ -24,6 +24,6 @@ class Post(models.Model):
 	theme = models.CharField(blank=True, max_length=100)
 	file = models.FileField(upload_to='' ,max_length=256, blank=True, null=True)
 	thumb = ImageSpecField(source='file',processors =[ResizeToFit(250, 250)],format='PNG',options={'quality': 90})
-	threadthumb=  ImageSpecField(source='file',processors =[ResizeToFill(300, 150)],format='PNG',options={'quality': 90})
+	threadthumb=  ImageSpecField(source='file',processors =[ResizeToFill(300, 150)],format='PNG',options={'quality': 90}) #thread preview for card mode
 	def __str__(self):
 		return self.body

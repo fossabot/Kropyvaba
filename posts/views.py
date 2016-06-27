@@ -5,7 +5,7 @@ from django.utils import timezone
 from .models import Board, Post
 from .forms import PostForm
 
-def index(request):
+def index(request): #nuff said
 	return render(request, 'posts/index.html', {})
 
 def ret_post(request, post_id):
@@ -14,13 +14,13 @@ def ret_post(request, post_id):
 	    this_post = Post.objects.filter(id = 1)
 	board_list = Board.objects.all()
 	curr_board = board_list.filter(id = this_post[0].board.id)
-	if this_post[0].replay_to != 0:
-		topic = Post.objects.filter(id = this_post[0].replay_to)
+	if this_post[0].thread != 0:
+		topic = Post.objects.filter(id = this_post[0].thread)
 	else:
 		topic = Post.objects.filter(id = this_post[0].id)
 		this_post = 0
-	posts_list = Post.objects.filter(replay_to = topic[0].id)
-	if request.method == 'POST':
+	posts_list = Post.objects.filter(thread = topic[0].id)
+	if request.method == 'POST': #work with forms. #TODO make a two form for posts and threads
 		form = PostForm(request.POST, request.FILES)
 		if form.is_valid():
 			new_post = form.save(commit=False)
@@ -43,10 +43,10 @@ def ret_board(request, board_name):
 	topics_list = []
 	for post in temp_list:
 		unik = True
-		if post.replay_to == 0:
+		if post.thread == 0:
 			reply = post.id
 		else:
-			reply = post.replay_to
+			reply = post.thread
 		for topic in topics_list:
 			if reply != topic.id and unik == True:
 				unik = True
@@ -56,12 +56,12 @@ def ret_board(request, board_name):
 		if unik == True:
 			temp = Post.objects.filter(id = reply)
 			topics_list.append(temp[0])
-	posts_list = Post.objects.exclude(replay_to = 0).order_by('-id')
+	posts_list = Post.objects.exclude(thread = 0).order_by('-id')
 	temp_list = []
 	for topic in topics_list:
 	    temp = 0
 	    for post in posts_list:
-	        if post.replay_to == topic.id and temp <= 5:
+	        if post.thread == topic.id and temp <= 5:
 	            temp_list.append(post)
 	            temp+=1
 	posts_list = temp_list
@@ -69,7 +69,7 @@ def ret_board(request, board_name):
 	curr_board = board_list.filter(id = board_id)
 	for topic in topics_list:
 		for post in all_post:
-			if post.replay_to == topic.id:
+			if post.thread == topic.id:
 				topic.posts +=1
 		topic.posts -=3
 	if request.method == 'POST':
@@ -82,7 +82,7 @@ def ret_board(request, board_name):
 				new_post.pub_date = timezone.now()
 				new_post.board = curr_board[0]
 				new_post.save()
-				if new_post.replay_to == 0:
+				if new_post.thread == 0:
 				    return HttpResponseRedirect('/post-'+str(new_post.id))
 				return HttpResponseRedirect('/'+str(board_name))
 	else:
