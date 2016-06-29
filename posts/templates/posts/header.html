@@ -5,11 +5,7 @@
             <li><a class="brand-logo" href="#">Кропивач</a></li>
         </ul>
         <ul class="right hide-on-med-and-down">
-            <li><a class="board_list" href="/int/">International</a></li>
-            <li><a class="board_list" href="/a/">Аніме</a></li>
-            <li><a class="board_list" href="/b/">Балачки</a></li>
-            <li><a class="board_list" href="/bugs/">Зауваження</a></li>
-            <li><a class="board_list" href="/fap/">Фап</a></li>
+		{% for board in board_list %}<li><a class="board_list" href="/{{ board.name }}/">/{{ board.name }}/</a></li>{% endfor %}
         </ul>
         <!-- for mobile -->
         <a href="#" id="mobile-menu" data-activates="mobile-demo" class="button-collapse" ><i class="material-icons">menu</i></a>
@@ -17,11 +13,7 @@
             <li><a href="#">Кропивач</a></li>
         </ul>
         <ul class="side-nav" id="mobile-demo">
-            <li><a class="board_list" href="/int/">International</a></li>
-            <li><a class="board_list" href="/a/">Аніме</a></li>
-            <li><a class="board_list" href="/b/">Балачки</a></li>
-            <li><a class="board_list" href="/bugs/">Зауваження</a></li>
-            <li><a class="board_list" href="/fap/">Фап</a></li>
+            {% for board in board_list %}<li><a class="board_list" href="/{{ board.name }}/">/{{ board.name }}/ — {{ board.description }}</a></li>{% endfor %}
       </ul>
     </div>
 </nav>

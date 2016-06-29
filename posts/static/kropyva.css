@@ -1,5 +1,5 @@
 body {
-	min-height:70vmax;
+	min-height:50vmax;
 }
 .quote {
 	color:#789922;
@@ -17,7 +17,7 @@ body {
 	width:100%;
 }
 #maincontent {
-	min-height:70vmax;
+	min-height:50vmax;
 }
 .post {
 	margin:20px;

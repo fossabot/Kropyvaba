@@ -8,14 +8,14 @@
             <form method="POST" enctype="multipart/form-data">
 	        {% csrf_token %}
 	        <div class="row">
-	            <div class="input-field col m6">{{ form.author }}<label for="author">Псевдо</label></div>
-	            <div class="input-field col m6">{{ form.theme }}<label for="theme">Тема</label></div>
+	            <div class="input-field col m6">{{ thread_form.author }}<label for="author">Псевдо</label></div>
+	            <div class="input-field col m6">{{ thread_form.theme }}<label for="theme">Тема</label></div>
 	        </div>
 	        <div class="row">
 	            <div class="file-field input-field col m12">
                     <div class="green btn">
                         <span>Файл</span>
-                        {{ form.file }}
+                        {{ thread_form.file }}
                     </div>
                     <div class="file-path-wrapper">
                         <input class="file-path validate" type="text">
@@ -23,9 +23,9 @@
                 </div>
 	        </div>
 	        <div class="row">
-		        <div class="input-field col m12">{{ form.body }}<label for="body">Ваша думка</label></div>
+		        <div class="input-field col m12">{{ thread_form.body }}<label for="body">Ваша думка</label></div>
 	        </div>
-	        {{ form.thread }}
+	        {{ thread_form.thread }}
 	        <div class="row">
 	            <button class="col m2 offset-m5 green btn waves-effect waves-light" type="submit" name="action">Створити</button>
 	        </div>

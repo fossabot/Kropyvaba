@@ -1,4 +1,4 @@
-"""kropyva URL Configuration
+"""kropyvaba URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.9/topics/http/urls/
@@ -27,8 +27,6 @@ v1_api.register(BoardResource())
 urlpatterns = [
 	url(r'^admin/', admin.site.urls),
 	url(r'^i18n/', include('django.conf.urls.i18n')),
-	url(r'^', include('posts.urls')),
 	url(r'^api/', include(v1_api.urls)),
-	url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
-	url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
-]
+	url(r'^', include('posts.urls')),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

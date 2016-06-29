@@ -3,13 +3,13 @@
 <form method="POST" enctype="multipart/form-data">
 	{% csrf_token %}
 	<div class="row">
-	    <div class="input-field col m12">{{ form.author }}<label for="author">Псевдо</label></div>
+	    <div class="input-field col m12">{{ post_form.author }}<label for="author">Псевдо</label></div>
 	</div>
 	<div class="row">
 	    <div class="file-field input-field col m12">
             <div class="green btn">
                 <span>Файл</span>
-                {{ form.file }}
+                {{ post_form.file }}
             </div>
             <div class="file-path-wrapper">
                 <input class="file-path validate" type="text">
@@ -17,9 +17,9 @@
         </div>
     </div>
 	<div class="row">
-		<div class="input-field col m12">{{ form.body }}<label for="body">Ваша думка</label></div>
+		<div class="input-field col m12">{{ post_form.body }}<label for="body">Ваша думка</label></div>
 	</div>
-	{{ form.thread }}
+	{{ post_form.thread }}
 	<div class="row">
 	    <button class="green btn waves-effect waves-light" type="submit" name="action">Відповісти
             <i class="material-icons right">send</i>
