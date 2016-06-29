@@ -24,6 +24,8 @@ body {
 	padding-left: 10px;
 	padding-right: 10px;
 }
+
+
 .op-post {
 	margin:20px;
 	position:initial;
@@ -32,6 +34,17 @@ body {
 .board_thread {
 	height:150px;
 	width:300px;
+}
+
+a.post-anchor{
+	display: block;
+    position: relative;
+    top: -84px;
+    visibility: hidden;
+}
+
+.post-body{
+	word-wrap: break-word !important;
 }
 
 @media only screen and (min-width: 800px) {

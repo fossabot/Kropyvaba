@@ -1,4 +1,4 @@
-<div><div class="post white z-depth-1" id="post-{{ post.id }}">{% load i18n %}
+<a name="{{ post.id }}" class="post-anchor"></a><div class="post white z-depth-1" id="post-{{ post.id }}">{% load i18n %}
     <div class="row">
         <a class="left" href="/post-{{ post.id }}"> {{ post.theme }} </a> <span class="right"> <a href="/post-{{ post.id }}">#{{ post.id }}</a></span>
 	</div>
@@ -33,8 +33,7 @@
                     </div>
                 {% endif %}
             {% endif %}
-			{% load index %}{{ post.body|cut_text|index|safe }}
+			<div class="post-body">{% load index %}{{ post.body|cut_text|index|safe }}</div>
 		</div>
 	</div>
-</div>
 </div>
