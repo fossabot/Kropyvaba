@@ -1,11 +1,18 @@
 <div class="navbar-fixed">
 <nav class="row col s12">
     <div class="nav-wrapper green">
-        <ul class="left hide-on-med-and-down">
-            <li><a class="brand-logo" href="#">Кропивач</a></li>
+        <ul class="left hide-on-med-and-down col m1">
+            <li><a href="#">Кропивач</a></li>
         </ul>
-        <ul class="right hide-on-med-and-down">
-		{% for board in board_list %}<li><a class="board_list" href="/{{ board.name }}/">/{{ board.name }}/</a></li>{% endfor %}
+		<form>
+        <div class="input-field hide-on-med-and-down center col m7">
+          <input id="search" type="search" required>
+          <label for="search"><i class="material-icons">search</i></label>
+          <i class="material-icons">close</i>
+        </div>
+        </form>
+        <ul class="right hide-on-med-and-down col m4">
+		{% for board in board_list %}<li {% if board.name = curr_board.0.name %} class="active" {% endif %}><a class="board_list" href="/{{ board.name }}/">/{{ board.name }}/</a></li>{% endfor %}
         </ul>
         <!-- for mobile -->
         <a href="#" id="mobile-menu" data-activates="mobile-demo" class="button-collapse" ><i class="material-icons">menu</i></a>

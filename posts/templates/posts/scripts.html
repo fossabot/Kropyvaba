@@ -58,7 +58,7 @@ function imageprev(id,link,thumb){
     var elem = document.getElementById(id+"_image");
     elem.innerHTML='<img style="float: left; margin: 7px 7px 7px 0; word-wrap: break-word;max-height: 100%; max-width: 100%;" alt="Зображення" src="'+link+'" onclick="imageprev(('+id+'),\''+thumb+'\',\''+link+'\')">';
 }
-
+--><script>
 function getPost(id){
     var request = new XMLHttpRequest();
     request.open('GET', './api/v1/post/'+id+'?format=json', false);
@@ -70,4 +70,5 @@ function getPost(id){
     }
     return (post);
 }
--->
+
+</script>

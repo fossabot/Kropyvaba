@@ -1,39 +1,39 @@
 <div class="thread">{% load i18n %}
     <div class="row">
-        <a class="left" href="/post-{{ topic.id }}"> {{ topic.theme }} </a> <span class="right"> <a href="/post-{{ topic.id }}">#{{ topic.id }}</a></span>
+        <a class="left" href="/post-{{ topic.op.id }}"> {{ topic.theme }} </a> <span class="right"> <a class="post-id" href="/post-{{ topic.op.id }}">#{{ topic.op.id }}</a></span>
 	</div>
 	<div>
         <div class="row">
-            <span class="left">{{ topic.pub_date }}</span>
-            <span class="right">{% if topic.author = 'Хтось' %} {% trans "Хтось" %} {% else %} {{ topic.author }} {% endif %}{% trans " написав:" %}</span>
+            <span class="left">{{ topic.op.pub_date }}</span>
+            <span class="right">{% if topic.op.author = 'Хтось' %} {% trans "Хтось" %} {% else %} {{ topic.op.author }} {% endif %}{% trans " написав:" %}</span>
 		</div>
         <!-- <span class="rep_icn" title="Швидка відповідь" onclick="quickreply({{topic.id}}, {{ topic.id }})"></span> -->
         <div class="divider"></div>
         <div id="post_content_{{ topic.id }}">
-            {% if topic.file %}
+            {% if topic.op.file %}
                 {% load index %}
-                {% if topic.file.name|get_ext = ".webm" %}
-                    <a href="{{ topic.file.url }}" target="_blank">Зберегти</a>
+                {% if topic.op.file.name|get_ext = ".webm" %}
+                    <a href="{{ topic.op.file.url }}" target="_blank">Зберегти</a>
                     <div id="{{ topic.id }}_video">
-                        <video src="{{ topic.file.url }}" class="responsive-video" controls preload="none" muted="true" loop="true"></video>
+                        <video src="{{ topic.op.file.url }}" class="responsive-video" controls preload="none" muted="true" loop="true"></video>
                     </div>
                 {% endif %}
                 {% load index %}
-                {% if topic.file.name|get_ext = ".mp3" %}
-                    <a href="{{ topic.file.url }}" target="_blank">Зберегти</a>
+                {% if topic.op.file.name|get_ext = ".mp3" %}
+                    <a href="{{ topic.op.file.url }}" target="_blank">Зберегти</a>
                     <div id="{{ topic.id }}_audio">
-                        <audio src="{{ topic.file.url }}" controls preload="none"></video>
+                        <audio src="{{ topic.op.file.url }}" controls preload="none"></video>
                     </div>
                 {% endif %}
                 {% load index %}
-                {% if topic.file.name|get_ext = ".png" or ".bmp" or ".jpg" or ".jpeg" %}
-                    <a href="{{ topic.file.url }}" target="_blank">Зберегти</a>
-                    <div id="{{ topic.id }}_image">
-                        <img alt="Зображення" src="{{topic.thumb.url }}" onclick="imageprev(({{ post.id }}),'{{ post.file.url }}','{{post.thumb.url }}');">
+                 {% if topic.op.file.name|get_ext = ".png" or ".bmp" or ".jpg" or ".jpeg" %}
+                    <a href="{{ topic.op.file.url }}" target="_blank">Зберегти</a>
+                    <div id="{{ topic.op.id }}_image">
+                        <img alt="Зображення" src="{{ topic.op.thumb.url }}">
                     </div>
                 {% endif %}
             {% endif %}
-		    {% load index %}{{ topic.body|cut_text|index|safe }}
+		    {% load index %}{{ topic.op.body|cut_text|index|safe }}
 		</div>
 	</div>
 </div>

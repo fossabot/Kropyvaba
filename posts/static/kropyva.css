@@ -47,6 +47,10 @@ a.post-anchor{
 	word-wrap: break-word !important;
 }
 
+.post-id{
+	color : grey;
+}
+
 @media only screen and (min-width: 800px) {
 	.op-post {
 		margin:20px;

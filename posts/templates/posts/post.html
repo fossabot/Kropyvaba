@@ -2,7 +2,7 @@
 <html>
 	<head>
 	    <title>/{{ curr_board.0.name }}/ - {{ topic.theme }} | Кропивач</title>
-		<base href="../">
+		{% if three_slash = 1%}<base href="../../../">{% else %}<base href="../">{% endif %}
 		{% include "posts/head.html" %}
 	</head>
 	<body>

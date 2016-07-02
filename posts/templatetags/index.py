@@ -60,7 +60,24 @@ def cut_text(body):
 def get_ext(filename):
     filename, ext = os.path.splitext(filename)
     return ext.lower();
+	
+def dec(value): # decrement operation
+	return (int(value) - 1);
+
+def inc(value): # increment operation
+	return (int(value) + 1);
+
+def minus(value1, value2):
+	return (int(value1)-int(value2));
+
+def plus(value1, value2):
+	return (int(value1)+int(value2));
 
 register.filter('index', index)
 register.filter('cut_text', cut_text)
 register.filter('get_ext', get_ext)
+register.filter('dec', dec)
+register.filter('inc', inc)
+register.filter('minus', minus)
+register.filter('plus', plus)
+
