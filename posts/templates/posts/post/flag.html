@@ -1,0 +1,14 @@
+{% if config.display_flags and post.modifiers.flag %}
+	 <img
+		{% if config.country_flags_condensed %}
+			 class="flag flag-{{ post.modifiers.flag }}" src="{{ config.image_blank }}"
+		{% else %}
+			 class="flag" src="{{ config.uri_flags }}"
+		{% endif %}
+		 style="{% if post.modifiers %}
+				{{ post.modifiers }}
+			{% else %}
+				{{ config.flag_style }}
+			{% endif %}"
+	>
+{% endif %}

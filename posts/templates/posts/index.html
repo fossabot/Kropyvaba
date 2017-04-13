@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>{{ board.url }} - {{ board.title }}</title>
+</head>
+<body class="8chan vichan is-not-moderator active-index" data-stylesheet="default">
+	<header>
+		<h1>{{ board.url }} - {{ board.title }}</h1>
+		<div class="subtitle">
+		</div>
+	</header>
+	<hr />
+	<div class="pages">
+        {% for thread in threads %}
+            {% include 'posts/post_thread.html' %}
+        {% endfor %}
+		{{ btn.prev }} {% for page in pages %}
+		 [<a {% if page.selected %}class="selected"{% endif %}{% if not page.selected %}href="{{ page.link }}"{% endif %}>{{ page.num }}</a>]{% if loop.last %} {% endif %}
+		{% endfor %} {{ btn.next }}
+		{% if config.catalog_link %}
+			 | <a href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">Catalog</a>
+		{% endif %}
+	</div>
+	<footer>
+	</footer>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<div class="thread" id="thread_{{ post.id }}" data-board="{{ board.uri }}">
+{% if not index %}<a id="{{ post.id }}" class="post_anchor"></a>{% endif %}
+
+{% include 'posts/post/fileinfo.html' %}
+<div class="post op" id="op_{{ post.id }}" {%if post.num_files > 1%}style='clear:both'{%endif%}><p class="intro">
+	<input type="checkbox" class="delete" name="delete_{{ post.id }}" id="delete_{{ post.id }}" />
+	<label for="delete_{{ post.id }}">
+		{% include 'posts/post/subject.html' %}
+		{% include 'posts/post/name.html' %}
+		{% include 'posts/post/ip.html' %}
+		{% include 'posts/post/flag.html' %}
+		{% include 'posts/post/time.html' %}
+	</label>
+	{% include 'posts/post/poster_id.html' %}&nbsp;
+	<a class="post_no" id="post_no_{{ post.id }}" onclick="highlightReply({{ post.id }})" href="{{ post.link }}">No.</a>
+	<a class="post_no" onclick="citeReply({{ post.id }})" href="{{ post.link }}">{{ post.id }}</a>
+	{% if post.sticky %}
+        <img class="icon" title="Sticky" src="{{ config.image_sticky }}" alt="Sticky" />
+	{% endif %}
+	{% if post.locked %}
+        <img class="icon" title="Locked" src="{{ config.image_locked }}" alt="Locked" />
+	{% endif %}
+	{% if post.bumplocked %}
+        <img class="icon" title="Bumplocked" src="{{ config.image_bumplocked }}" alt="Bumplocked" />
+	{% endif %}
+	{% if post.cycle %}
+		{<img class="icon" title="Cyclical" src="{{ config.image_sticky }}" alt="Cyclical" />
+	{% endif %}
+	{% if index %}
+		<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for }}">[Reply]</a>
+	{% endif %}
+	{% include 'posts/post/post_controls.html' %}
+	</p>
+	<div class="body">
+		{% if index %}{{ post.body }}{% else %}{{ post.body }}{% endif %}
+	</div>
+	{% if post.omitted or post.omitted_images %}
+		<span class="omitted">
+			omitted. Click reply to view.
+		</span>
+	{% endif %}
+{% if not index %}
+{% endif %}
+</div>
+{% for post in post.posts %}
+	{% include 'post_reply.html' %}
+{% endfor %}
+<br class="clear"/>{% if hr %}<hr/>{% endif %}
+</div> 

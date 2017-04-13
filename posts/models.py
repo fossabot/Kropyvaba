@@ -23,7 +23,7 @@ class Antispam(models.Model):
         db_table = 'antispam'
 
 
-class BanAppeals(models.Model):
+class BanAppeal(models.Model):
     ban_id = models.IntegerField()
     time = models.IntegerField()
     message = models.TextField()
@@ -34,7 +34,7 @@ class BanAppeals(models.Model):
         db_table = 'ban_appeals'
 
 
-class Bans(models.Model):
+class Ban(models.Model):
     ipstart = models.CharField(max_length=16)
     ipend = models.CharField(max_length=16, blank=True, null=True)
     created = models.IntegerField()
@@ -50,7 +50,7 @@ class Bans(models.Model):
         db_table = 'bans'
 
 
-class Boards(models.Model):
+class Board(models.Model):
     uri = models.CharField(primary_key=True, max_length=58)
     title = models.TextField()
     subtitle = models.TextField(blank=True, null=True)
@@ -60,7 +60,7 @@ class Boards(models.Model):
         db_table = 'boards'
 
 
-class Cites(models.Model):
+class Cite(models.Model):
     board = models.CharField(max_length=58)
     post = models.IntegerField()
     target_board = models.CharField(max_length=58)
@@ -84,7 +84,7 @@ class Flood(models.Model):
         db_table = 'flood'
 
 
-class IpNotes(models.Model):
+class IpNote(models.Model):
     ip = models.CharField(max_length=39)
     mod = models.IntegerField(blank=True, null=True)
     time = models.IntegerField()
@@ -95,7 +95,7 @@ class IpNotes(models.Model):
         db_table = 'ip_notes'
 
 
-class Modlogs(models.Model):
+class Modlog(models.Model):
     mod = models.IntegerField()
     ip = models.CharField(max_length=39)
     board = models.CharField(max_length=58, blank=True, null=True)
@@ -107,7 +107,7 @@ class Modlogs(models.Model):
         db_table = 'modlogs'
 
 
-class Mods(models.Model):
+class Mod(models.Model):
     username = models.CharField(max_length=30)
     password = models.CharField(max_length=256)
     version = models.CharField(max_length=64)
@@ -120,7 +120,7 @@ class Mods(models.Model):
         unique_together = (('id', 'username'),)
 
 
-class Mutes(models.Model):
+class Mute(models.Model):
     ip = models.CharField(max_length=39)
     time = models.IntegerField()
 
@@ -151,7 +151,7 @@ class Noticeboard(models.Model):
         db_table = 'noticeboard'
 
 
-class Pms(models.Model):
+class Pm(models.Model):
     sender = models.IntegerField()
     to = models.IntegerField()
     message = models.TextField()
@@ -163,7 +163,7 @@ class Pms(models.Model):
         db_table = 'pms'
 
 
-class Posts(models.Model):
+class Post(models.Model):
     thread = models.IntegerField(blank=True, null=True)
     subject = models.CharField(max_length=100, blank=True, null=True)
     email = models.CharField(max_length=30, blank=True, null=True)
@@ -191,7 +191,7 @@ class Posts(models.Model):
         db_table = 'posts_a'
 
 
-class Reports(models.Model):
+class Report(models.Model):
     time = models.IntegerField()
     ip = models.CharField(max_length=39)
     board = models.CharField(max_length=58, blank=True, null=True)
@@ -211,7 +211,7 @@ class Robot(models.Model):
         db_table = 'robot'
 
 
-class SearchQueries(models.Model):
+class SearchQuerie(models.Model):
     ip = models.CharField(max_length=39)
     time = models.IntegerField()
     query = models.TextField()
@@ -221,7 +221,7 @@ class SearchQueries(models.Model):
         db_table = 'search_queries'
 
 
-class ThemeSettings(models.Model):
+class ThemeSetting(models.Model):
     theme = models.CharField(max_length=40)
     name = models.CharField(max_length=40, blank=True, null=True)
     value = models.TextField(blank=True, null=True)
