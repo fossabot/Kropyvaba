@@ -2,15 +2,69 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>{{ board.url }} - {{ board.title }}</title>
+        <script type="text/javascript">
+	  var
+          {% if not no_post_form %}
+              active_page = "index"
+            , board_name = "{{ board.uri }}";
+	  {% else %}
+              active_page = "ukko";
+          {% endif %}
+        </script>
+    {% include 'posts/header.html' %}
+	<meta charset="utf-8">
+	<title>/{{ board.url }} - {{ board.title }}</title>
 </head>
 <body class="8chan vichan is-not-moderator active-index" data-stylesheet="default">
+
+	{{ boardlist.top }}
+	
+	{% if pm %}<div class="top_notice">You have <a href="?/PM/{{ pm.id }}">an unread PM</a>{% if pm.waiting > 0 %}, plus {{ pm.waiting }} more waiting{% endif %}.</div><hr />{% endif %}
+	{% if config.url_banner %}<img class="board_image" src="{{ config.url_banner }}" {% if config.banner_width or config.banner_height %}style="{% if config.banner_width %}width:{{ config.banner_width }}px{% endif %};{% if config.banner_width %}height:{{ config.banner_height }}px{% endif %}" {% endif %}alt="" />{% endif %}
+
+
 	<header>
-		<h1>{{ board.url }} - {{ board.title }}</h1>
+		<h1>/{{ board.url }}/ - {{ board.title }}</h1>
 		<div class="subtitle">
+            {% if board.subtitle %}
+				{% if config.allow_subtitle_html %}
+					{{ board.subtitle }}
+				{% else %}
+					{{ board.subtitle }}
+				{% endif %}
+			{% endif %}
+            {% if mod %}<p><a href="?/">Return to dashboard</a></p>{% endif %}
 		</div>
 	</header>
+
+	{% include 'posts/attention_bar.html' %}
+
+	{{ config.ad.top }}
+
+	{% if not no_post_form %}
+		{% include 'posts/post_form.html' %}
+	{% else %}
+		{% include 'posts/boardlist.html' %}
+	{% endif %}
+
+	{% if config.page_nav_top %}
+		<div class="pages top">
+			{% for page in pages %}
+			 [<a {% if page.selected %}class="selected"{% endif %}{% if not page.selected %}href="{{ page.link }}"{% endif %}>{{ page.num }}</a>]{% if loop.last %} {% endif %}
+			{% endfor %}
+			{{ btn.next }}
+		</div>
+	{% endif %}
+	
+	{% if config.global_message %}<hr /><div class="blotter">{{ config.global_message }}</div>{% endif %}
 	<hr />
+	<form name="postcontrols" action="{{ config.post_url }}" method="post">
+	<input type="hidden" name="board" value="{{ board.uri }}" />
+	{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
+	{{ body }}
+	{% include 'posts/report_delete.html' %}
+</form>
+
 	<div class="pages">
         {% for thread in threads %}
             {% include 'posts/post_thread.html' %}

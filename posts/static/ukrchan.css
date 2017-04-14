@@ -1,0 +1,269 @@
+body {
+	background:#AAC3EC url('img/ukrchan_body.png');
+	color:#000;
+	font:15px Roboto,Trebuchet MS,Trebuchet,Arial,Verdana,sans-serif;
+	margin:0;
+	padding-left:12px;
+	padding-right:12px;
+}
+div.post.reply div.body a,a,a:hover {
+	color:#004C8C;
+}
+a {
+	text-decoration:none;
+}
+a:hover {
+	text-decoration:underline!important;
+}
+blockquote {
+	color:#4C6C2B;
+	margin:0;
+}
+img.board_image,div.boardlist:nth-child(1) {
+	background:#6B86B2;
+	border:none;
+	box-shadow:0px 0px 1px 2px rgba(45,73,121,0.75);
+}
+img.board_image {
+	border:none;
+	margin-top:24px;
+}
+div.boardlist:nth-child(1) {
+	font-size:1em;
+	opacity:0.9;
+}
+div.boardlist:nth-child(1),div.boardlist div.pages {
+	color:#FFF;
+}
+div.boardlist:nth-child(1) a {
+	color:inherit;
+}
+header {
+	margin:1em 0 0.5em;
+}
+header div.subtitle,h1,.theme-stats a.current {
+	color:#FFF;
+	padding:5px 0 0;
+	text-shadow:1px 1px 1px #6F89B9;
+	font-family:Lobster;
+}
+header div.subtitle br:first-child {
+	display:none;
+}
+.name {
+	visibility:hidden;
+	position:fixed;
+}
+div.banner {
+	margin:15px 0 25px;
+	padding:0 0 2px;
+}
+button,input,textarea {
+	transition-property:background,box-shadow,color;
+	transition-duration:0.3s;
+}
+input[type="text"],input[type="password"],textarea {
+	background:#FFF;
+	border:1px solid #5F7BAB;
+}
+input[type="file"] {
+	padding:6px 0 8px;
+}
+input[type="text"],input[type="password"],input[type="submit"],button {
+	line-height:18px;
+	margin-bottom:6px;
+	padding:6px;
+}
+input[type="submit"],button {
+	background:#6B86B2;
+	border-color:rgba(45,73,121,0.25);
+	border-radius:2px;
+	border-width:0 0 2px;
+	color:#FFF;
+	cursor:pointer;
+	padding:7px 10px 5px;
+}
+input[type="submit"]:hover,button:hover,input[type="submit"]:focus,button:focus {
+	background:rgba(45,73,121,0.25);
+	border-color:rgba(45,73,121,0.15);
+}
+input[type="submit"],button,input[name="subject"],#password,#reason {
+	margin-right:6px;
+}
+select {
+	margin-top:4px;
+}
+textarea {
+	line-height:18px;
+	height:150px;
+}
+input[type="text"]:focus,input[type="password"]:focus,textarea:focus {
+	box-shadow:0 0 5px #2D4979 inset;
+}
+form table tr th,div.delete label {
+	background:none;
+	font-weight:700;
+	text-shadow:1px 1px 1px #FFF;
+}
+body>div.pages,.webm-settings div {
+	background:#B9CEF0!important;
+}
+body>div.pages {
+	border:none;
+	color:#000;
+	display:table;
+	line-height:2.2em;
+	padding:3px 8px 5px;
+}
+body>div.pages form input {
+	margin:0;
+	line-height:1em;
+}
+body>div.pages form:first-child input {
+	margin-right:2px;
+}
+body>div.pages form:last-child input {
+	margin-left:2px;
+}
+.webm-settings div {
+	padding:10px!important;
+}
+div.ban {
+	border:1px solid #5F7BAB;
+}
+div.ban h2 {
+	background:#5F7BAB;
+	color:#FFF;
+}
+fieldset {
+	border:1px solid #5F7BAB;
+	margin:0 80px 20px;
+}
+hr {
+	border-top:1px solid #86AEDD;
+}
+br.clear {
+	display:none;
+}
+.post+br {
+	clear:left;
+	display:block;
+}
+.post-image {
+	margin-right:16px;
+}
+div.post .post-image {
+	margin-right:8px;
+}
+p.fileinfo,.post-image {
+	margin-left:6px;
+}
+p.fileinfo,.post {
+	padding:0 0 4px;
+}
+.file {
+	margin:0;
+}
+.files+.post {
+	padding:2px 0 0;
+}
+.name+.flag {
+	margin:0 0.1em;
+}
+div.post.reply {
+	background:#E5DC9B url('img/ukrchan_post.png');
+	border:2px solid #CCC17F;
+	padding-right:0.5em;
+}
+br+div.post.reply {
+	margin-top:6px;
+}
+div.post.reply.highlighted {
+	background:#EBE5B4 url('img/ukrchan_focus.png');
+	border-color:#CCC493;
+}
+div.post.reply.post-hover {
+	margin:10px;
+}
+div.post.reply div.body {
+	margin:0;
+	padding:0;
+}
+.post p {
+	margin:6px 0;
+}
+div.post.op span.spoiler,div.post.op div.body span.spoiler a {
+	color:#6B86B2;
+}
+div.post.op span.spoiler {
+	background:#6B86B2;
+}
+div.post.reply span.spoiler,div.post.reply div.body span.spoiler a {
+	color:#CCC17F;
+}
+div.post.reply span.spoiler {
+	background:#CCC17F;
+}
+div.post.op span.spoiler:hover,div.post.op div.body span.spoiler:hover a,div.post.reply span.spoiler:hover,div.post.reply div.body span.spoiler:hover a {
+	color:#000;
+}
+span.omitted {
+	margin-top:10px;
+}
+div.delete {
+	margin:24px 0 0;
+}
+div.delete+div.delete {
+	margin:12px 0;
+}
+.de-parea>div:first-child {
+	margin:0 0 1.4em;
+}
+.de-omitted {
+	color:inherit!important;
+	opacity:0.6;
+}
+.de-refmap {
+	margin:4px 0 2px!important;
+}
+[lang="de"] #de-panel {
+	height:1.56em!important;
+}
+[lang="de"] #de-panel-btns {
+	height:1.9em!important;
+}
+[lang="de"] #de-spell-rowmeter,[lang="de"] .de-cfg-head,[lang="de"] #de-panel {
+	background:#6B86B2!important;
+}
+[lang="de"] #de-panel-btns,[lang="de"] #de-panel-info {
+	border-color:rgba(45,73,121,0.75)!important;
+}
+[lang="de"] .de-cfg-head {
+	border-radius:0!important;
+}
+[lang="de"] #de-panel,[lang="de"] #de-content-cfg>div {
+	border:none!important;
+	border-radius:1px!important;
+	box-shadow:0px 0px 1px 2px rgba(45,73,121,0.75);
+}
+ul#Grid {
+	list-style:none;
+}
+form {
+	margin-bottom:15px;
+}
+div.boardlist.bottom {
+	color:#68a;
+	margin-top:1em;
+}
+@media screen and (max-width: 600px) {
+	.wrappers {
+		display:none;
+	}
+	div.delete label[for="password"],div.delete label[for="reason"] {
+		display:block;
+	}
+	#reason,input[name="subject"] {
+		max-width:60%;
+	}
+}

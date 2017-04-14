@@ -118,4 +118,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
+STATIC_ROOT = '/home/shooz/.static/'
 STATIC_URL = '/static/'
+
+config = {
+    'url_stylesheet' : "style.css",
+    'default_stylesheet': {
+        '1' : 'ukrchan.css'
+        },
+    'uri_stylesheets' : '',
+    'font_awesome' : True
+    }
