@@ -1,0 +1,27 @@
+<a href="
+	{% if post.file.extension == 'webm' or post.file.extension == 'mp4' %}
+		{{ config.root }}player.php?v={{ config.uri_img }}{{ post.file }}&amp;t={{ post.filename }}&amp;loop=1
+	{% else %}
+		{{ config.uri_img }}{{ post.file }}
+	{% endif %}
+	"
+	 target="_blank"
+	{% if post.thumb == 'file' or post.filename.extension == 'webm' or post.file.extension == 'mp4' %}
+		 class="file"
+	{% endif %}
+>
+	{% if post.thumb.extension == 'webm' or post.thumb.extension == 'mp4' %}
+		<video autoplay class="post-image" src="{{ config.uri_thumb }}{{ post.thumb }}"
+			 poster="
+			"
+			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px"
+		>
+		</video>
+	{% else %}
+		<img class="post-image" 
+			src="
+			"
+			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px" alt="" 
+		/>
+	{% endif %}
+</a>

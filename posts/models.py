@@ -162,33 +162,39 @@ class Pm(models.Model):
         managed = False
         db_table = 'pms'
 
+boards = [b.uri for b in Board.objects.all()]
 
-class Post(models.Model):
-    thread = models.IntegerField(blank=True, null=True)
-    subject = models.CharField(max_length=100, blank=True, null=True)
-    email = models.CharField(max_length=30, blank=True, null=True)
-    name = models.CharField(max_length=35, blank=True, null=True)
-    trip = models.CharField(max_length=15, blank=True, null=True)
-    capcode = models.CharField(max_length=50, blank=True, null=True)
-    body = models.TextField()
-    body_nomarkup = models.TextField(blank=True, null=True)
-    time = models.IntegerField()
-    bump = models.IntegerField(blank=True, null=True)
-    files = models.TextField(blank=True, null=True)
-    num_files = models.IntegerField(blank=True, null=True)
-    filehash = models.TextField(blank=True, null=True)
-    password = models.CharField(max_length=20, blank=True, null=True)
-    ip = models.CharField(max_length=39)
-    sticky = models.IntegerField()
-    locked = models.IntegerField()
-    cycle = models.IntegerField()
-    sage = models.IntegerField()
-    embed = models.TextField(blank=True, null=True)
-    slug = models.CharField(max_length=256, blank=True, null=True)
+Posts = {}
 
-    class Meta:
-        managed = False
-        db_table = 'posts_a'
+for brd in boards:
+    class Post(models.Model):
+        thread = models.IntegerField(blank=True, null=True)
+        subject = models.CharField(max_length=100, blank=True, null=True)
+        email = models.CharField(max_length=30, blank=True, null=True)
+        name = models.CharField(max_length=35, blank=True, null=True)
+        trip = models.CharField(max_length=15, blank=True, null=True)
+        capcode = models.CharField(max_length=50, blank=True, null=True)
+        body = models.TextField()
+        body_nomarkup = models.TextField(blank=True, null=True)
+        time = models.IntegerField()
+        bump = models.IntegerField(blank=True, null=True)
+        files = models.TextField(blank=True, null=True)
+        num_files = models.IntegerField(blank=True, null=True)
+        filehash = models.TextField(blank=True, null=True)
+        password = models.CharField(max_length=20, blank=True, null=True)
+        ip = models.CharField(max_length=39)
+        sticky = models.IntegerField()
+        locked = models.IntegerField()
+        cycle = models.IntegerField()
+        sage = models.IntegerField()
+        embed = models.TextField(blank=True, null=True)
+        slug = models.CharField(max_length=256, blank=True, null=True)
+
+        class Meta:
+            managed = False
+            db_table = 'posts_'+brd
+            
+    Posts[brd] = Post
 
 
 class Report(models.Model):

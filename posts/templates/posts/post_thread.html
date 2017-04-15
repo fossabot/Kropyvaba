@@ -12,8 +12,8 @@
 		{% include 'posts/post/time.html' %}
 	</label>
 	{% include 'posts/post/poster_id.html' %}&nbsp;
-	<a class="post_no" id="post_no_{{ post.id }}" onclick="highlightReply({{ post.id }})" href="{{ post.link }}">No.</a>
-	<a class="post_no" onclick="citeReply({{ post.id }})" href="{{ post.link }}">{{ post.id }}</a>
+	<a class="post_no" id="post_no_{{ post.id }}" onclick="highlightReply({{ post.id }})" href="{% url 'thread' board.uri post.id %}">No.</a>
+	<a class="post_no" onclick="citeReply({{ post.id }})" href="{% url 'thread' board.uri post.id %}">{{ post.id }}</a>
 	{% if post.sticky %}
         <img class="icon" title="Sticky" src="{{ config.image_sticky }}" alt="Sticky" />
 	{% endif %}
@@ -27,7 +27,7 @@
 		{<img class="icon" title="Cyclical" src="{{ config.image_sticky }}" alt="Cyclical" />
 	{% endif %}
 	{% if index %}
-		<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for }}">[Reply]</a>
+		<a href="{% url 'thread' board.uri post.id %}">[Reply]</a>
 	{% endif %}
 	{% include 'posts/post/post_controls.html' %}
 	</p>
@@ -36,9 +36,9 @@
 	</div>
 	{% if post.omitted or post.omitted_images %}
 		<span class="omitted">
-			omitted. Click reply to view.
+			replies omitted. Click reply to view.
 		</span>
-	{% endif %}
+{% endif %}
 {% if not index %}
 {% endif %}
 </div>
