@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+__init__.py
 
 # Distribution / packaging
 .Python
@@ -31,3 +32,5 @@ docs/_build/
 
 *.sqlite3
 migrations/
+
+.directory
