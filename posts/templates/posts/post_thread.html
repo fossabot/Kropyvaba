@@ -32,7 +32,7 @@
 	{% include 'posts/post/post_controls.html' %}
 	</p>
 	<div class="body">
-		{% if index %}{{ post.body }}{% else %}{{ post.body }}{% endif %}
+		{% if index %}{{ post.body|safe }}{% else %}{{ post.body|safe }}{% endif %}
 	</div>
 	{% if post.omitted or post.omitted_images %}
 		<span class="omitted">
@@ -43,7 +43,7 @@
 {% endif %}
 </div>
 {% for post in post.posts %}
-	{% include 'post_reply.html' %}
+	{% include 'posts/post_reply.html' %}
 {% endfor %}
 <br class="clear"/>{% if hr %}<hr/>{% endif %}
 </div> 

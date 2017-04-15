@@ -13,12 +13,13 @@ def render_board(request, board_name):
         current_board = models.Board.objects.get(uri = board_name)
         current_board.url = current_board.uri
         threads = models.Post.objects.filter(thread = None)
-        for thread in threads:
-            print(thread.id)
+        for thrd in threads:
+            thrd.posts = models.Post.objects.filter(thread = thrd.id)
         context = {
                     'config': config,
                     'board': current_board,
-                    'threads': threads
+                    'threads': threads,
+                    'hr': True
                 }
         return render(request, 'posts/index.html', context)
     except ObjectDoesNotExist:

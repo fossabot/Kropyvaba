@@ -61,14 +61,13 @@
 	<form name="postcontrols" action="{{ config.post_url }}" method="post">
 	<input type="hidden" name="board" value="{{ board.uri }}" />
 	{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
-	{{ body }}
+	{% for post in threads %}
+            {% include 'posts/post_thread.html' %}
+    {% endfor %}
 	{% include 'posts/report_delete.html' %}
 </form>
 
 	<div class="pages">
-        {% for thread in threads %}
-            {% include 'posts/post_thread.html' %}
-        {% endfor %}
 		{{ btn.prev }} {% for page in pages %}
 		 [<a {% if page.selected %}class="selected"{% endif %}{% if not page.selected %}href="{{ page.link }}"{% endif %}>{{ page.num }}</a>]{% if loop.last %} {% endif %}
 		{% endfor %} {{ btn.next }}
