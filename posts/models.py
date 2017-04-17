@@ -18,7 +18,7 @@ class Antispam(models.Model):
     expires = models.IntegerField(blank=True, null=True)
     passed = models.SmallIntegerField()
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'antispam'
 
@@ -29,7 +29,7 @@ class BanAppeal(models.Model):
     message = models.TextField()
     denied = models.IntegerField()
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'ban_appeals'
 
@@ -45,7 +45,7 @@ class Ban(models.Model):
     seen = models.IntegerField()
     post = models.TextField(blank=True, null=True)
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'bans'
 
@@ -55,7 +55,7 @@ class Board(models.Model):
     title = models.TextField()
     subtitle = models.TextField(blank=True, null=True)
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'boards'
 
@@ -66,7 +66,7 @@ class Cite(models.Model):
     target_board = models.CharField(max_length=58)
     target = models.IntegerField()
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'cites'
 
@@ -79,7 +79,7 @@ class Flood(models.Model):
     filehash = models.CharField(max_length=32, blank=True, null=True)
     isreply = models.IntegerField()
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'flood'
 
@@ -90,7 +90,7 @@ class IpNote(models.Model):
     time = models.IntegerField()
     body = models.TextField()
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'ip_notes'
 
@@ -102,7 +102,7 @@ class Modlog(models.Model):
     time = models.IntegerField()
     text = models.TextField()
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'modlogs'
 
@@ -114,7 +114,7 @@ class Mod(models.Model):
     type = models.SmallIntegerField()
     boards = models.TextField()
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'mods'
         unique_together = (('id', 'username'),)
@@ -124,7 +124,7 @@ class Mute(models.Model):
     ip = models.CharField(max_length=39)
     time = models.IntegerField()
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'mutes'
 
@@ -135,7 +135,7 @@ class News(models.Model):
     subject = models.TextField()
     body = models.TextField()
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'news'
 
@@ -146,7 +146,7 @@ class Noticeboard(models.Model):
     subject = models.TextField()
     body = models.TextField()
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'noticeboard'
 
@@ -158,7 +158,7 @@ class Pm(models.Model):
     time = models.IntegerField()
     unread = models.IntegerField()
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'pms'
 
@@ -190,7 +190,7 @@ for brd in boards:
         embed = models.TextField(blank=True, null=True)
         slug = models.CharField(max_length=256, blank=True, null=True)
 
-        class Meta:
+        class Meta(object):
             managed = False
             db_table = 'posts_'+brd
             
@@ -204,7 +204,7 @@ class Report(models.Model):
     post = models.IntegerField()
     reason = models.TextField()
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'reports'
 
@@ -212,7 +212,7 @@ class Report(models.Model):
 class Robot(models.Model):
     hash = models.CharField(primary_key=True, max_length=40)
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'robot'
 
@@ -222,7 +222,7 @@ class SearchQuerie(models.Model):
     time = models.IntegerField()
     query = models.TextField()
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'search_queries'
 
@@ -232,6 +232,6 @@ class ThemeSetting(models.Model):
     name = models.CharField(max_length=40, blank=True, null=True)
     value = models.TextField(blank=True, null=True)
 
-    class Meta:
+    class Meta(object):
         managed = False
         db_table = 'theme_settings'

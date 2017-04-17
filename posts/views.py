@@ -84,8 +84,8 @@ def make_stats():
     return stats
 
 class postBreaf(object):
-    def __init__(self, id, body, board_title, board_uri):
-        self.id = id
+    def __init__(self, post_id, body, board_title, board_uri):
+        self.id = post_id
         self.snippet = body
         self.board_name = board_title
         self.board_url = board_uri
