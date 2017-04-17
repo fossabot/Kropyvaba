@@ -1,0 +1,152 @@
+h1,
+div.box.boards,
+header div.subtitle {
+    line-height: 1.2em;
+}
+h1 {
+    font-size: 4.0em;
+}
+div.box.boards {
+    font-size: 1.4em;
+}
+header div.subtitle {
+    font-size: 1.6em;
+}
+div.box,
+div.post.reply.box {
+    display: table;
+    float: none;
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+}
+div.post.reply.box.recent {
+    margin: 0 auto 1em;
+    text-align: left;
+}
+div.box h2 {
+    padding: 0.5em 1em;
+    font-size: 12pt;
+}
+div.box ul + h2 {
+    padding-top: 0;
+}
+div.box ul {
+    margin: 0 0 0.7em;
+    padding: 0 1em;
+}
+div.box ul li {
+    list-style: none;
+    margin: 0;
+}
+div.box p {
+    margin: 0.5em 0;
+}
+footer {
+    font-size: 10px;
+    text-align: center;
+}
+footer p {
+    padding: 0.5em 0;
+}
+
+.container{
+    text-align: center;
+    min-width: calc(100% - 4px) !important;
+    padding:0 !important;
+    margin: 2px auto 0 auto;
+}
+
+h1{
+    font-family: 'Lobster', cursive;
+}
+
+li{
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 1%;
+    margin: 5%;
+}
+.maincolumn{
+        width: 99%; 
+        margin-left: auto; 
+        margin-right: auto;
+    }
+#main-content{
+    width: 99%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#boards-table, #stats-table{
+    -webkit-column-count: 1;
+    -moz-column-count: 1;
+    column-count: 1;
+}
+
+.nsfw{
+    color:red;
+}
+
+img{
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.mobile-only{
+    visibility: visible;
+    position: initial;
+}
+
+.sub{
+        visibility: hidden;
+        position: fixed;
+    }
+
+
+@media only screen and (min-width: 768px) {
+    /* For pc: */
+    
+    .sub{
+        visibility: visible;
+        position: initial;
+    }
+    .mobile-only{
+        visibility: hidden;
+        position: fixed;
+    }
+    
+    .maincolumn{
+        width: 70%; 
+        margin-left: auto; 
+        margin-right: auto;
+    }
+    
+    li{
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 40px;
+        margin: 0%;
+    }
+
+    h1{
+        font-family: 'Lobster', cursive;
+    }
+
+    #main-content{
+        width: 70%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #boards-table, #stats-table{
+        -webkit-column-count: 3;
+        -moz-column-count: 3;
+        column-count: 3;
+    }
+        
+}
