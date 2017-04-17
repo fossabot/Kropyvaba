@@ -1,2 +1,2 @@
-Django
-simplejson
+Django==1.10.6
+simplejson==3.10.0

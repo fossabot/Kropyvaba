@@ -1,0 +1,130 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+	<meta name=viewport content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta name="description" content="Кропивач - це український іміджборд, місце для спілкування на довільні теми. Реєстрація не є необхідною.">
+	<meta name="keywords" content="Кропивач,іміджборд,імейджборд,Україна,анонімний форум,форум,imageboard,kropyvach,аніме,політика,музика,спілкування,культура,анонімність">
+	<title>{{ config.title }}</title>
+	{% if config.url_favicon %}<link rel="shortcut icon" href="{{ config.url_favicon }}" />{% endif %}
+</head>
+<body>
+	<div class="boardlist">
+        <span class="sub" data-description="0">
+            [ <a href="/help.html">/ЧаПи/</a> ]
+        </span> 
+        <span class="sub" data-description="1">
+            [ <a href="/bugs/index.html" title="Пропозиції та претензії">/зауваження/</a> ]
+        </span>
+        <span class="sub" data-description="2">
+            [ <a href="/mobile.html" title="Для власників смартфонів">/мобільна версія/</a> ]
+        </span>
+        <span class="sub" data-description="3">
+            [ <a href="/donate.html" title="Підтримка сайту">/пожертвувати/</a> ]
+        </span>
+        <span class="sub" data-description="4">
+            [ <a href="https://twitter.com/kropyvach">/твіттер/</a> ]
+        </span>
+        <span class="sub" data-description="5">
+            [ <a href="https://vk.com/kropyvach">/вконтакті/</a> ]
+        </span>
+        <span class="sub" data-description="6">
+            [ <a href="https://drama.kropyva.ch/">/енциклопедія/</a> ]
+        </span>
+        <select class='mobile-only' onChange="window.location.href=this.value">
+            <option value="">Навігація</option>
+            <option value="/help.html">/ЧаПи/</option>
+            <option value="/bugs/index.html">/зауваження/</option>
+            <option value="/mobile.html">/мобільна версія/</option>
+            <option value="/donate.html">/пожертвувати/</option>
+            <option value="https://twitter.com/kropyvach">/твіттер/</option>
+            <option value="https://vk.com/kropyvach">/вконтакті/</option>
+            <option value="https://drama.kropyva.ch/">/енциклопедія/</option>
+        </select>
+        </div>
+	<header>
+		<h1>Кропивач</h1>
+		<div class="subtitle">{{ slogan }}</div>
+        <div class="box logo">
+            {% load index %}
+            <img src="{% static 'randlogo/' %}{% random_logo %}">
+        </div>
+    </header>
+	<div id='main-content'>
+        
+        <p>
+        <strong><a href="https://drama.kropyva.ch/Кропивач">Кропивач</a></strong> - український <a href="https://drama.kropyva.ch/Іміджборд">іміджборд</a>, де кожен може дописувати чи ділитися контентом без реєстрації. Тут є дошки присвячені різним темам, від високої культури до порнографії. Не соромся, заходь на ту, що тебе цікавить!
+        </p>
+        <div class="post reply container">
+        <label><strong>Дошки</strong></label>
+        <div id='boards-table'>
+            <strong><a href="/a/index.html" title="Аніме">Аніме</a></strong><br>
+            <strong><a href="/b/index.html" title="Балачки">Балачки <span class='nsfw'>(18+)</span></a></strong><br>
+            <strong><a href="/c/index.html" title="Кіно">Кіно</a></strong><br>
+            <strong><a href="/f/index.html" title="Фап">Фап <span class='nsfw'>(18+)</span></a></strong><br>
+            <strong><a href="/g/index.html" title="Відеоігри">Відеоігри</a></strong><br>
+            <strong><a href="/i/index.html" title="International">International</a></strong><br>
+            <strong> <a href="/m/index.html" title="Музика">Музика</a></strong><br>
+            <strong><a href="/l/index.html" title="Література">Література</a></strong><br>
+            <strong><a href="/p/index.html" title="Політика">Політика</a></strong><br>
+            <strong><a href="/t/index.html" title="Тренування">Тренування</a></strong><br>
+        </div>    
+        </div>
+        
+		<div class="post reply container">
+       
+        <label><strong>Останні пости</strong></label>
+			<ul>
+				{% for post in recent_posts %}
+					<li>
+						<strong>{{ post.board_name }}</strong>: 
+						<a href="{{ post.link }}">
+							{{ post.snippet }}
+						</a>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+        <div class="post reply container">
+        <label><strong>Статистика</label></strong>
+			<ul id='stats-table'>
+				<li>Усього повідомлень: {{ stats.total_posts }}</li>
+				<li>Повідомлень за добу: {{ stats.posts_per24 }}</li>
+				<li>Усього ниток: {{ stats.total_threads }}</li>
+				<li>Ниток за добу: {{ stats.threads_per24 }}</li>
+				<li>Дописувачів: {{ stats.unique_posters }}</li>
+				<li>Дописувачів за добу: {{ stats.unique_posters_per24 }}</li>
+			</ul>
+</div>
+	</div>
+	
+	<hr/>
+	<footer>
+	
+    <label>Кропивач 2016-2017</label>
+    <br>
+	</footer>
+	<noscript id="deferred-styles">
+      <link rel="stylesheet" media="screen" href="{% static config.url_stylesheet %}"/>
+	  <link rel="stylesheet" media="screen" href="{% static config.recent %}"/>
+      <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+	  {% if config.default_stylesheet.1 != '' %}<link rel="stylesheet" type="text/css" id="stylesheet" href="{% static config.default_stylesheet.1 %}">{% endif %}
+    </noscript>
+    <script>
+      var loadDeferredStyles = function() {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement);
+        addStylesNode.parentElement.removeChild(addStylesNode);
+      };
+      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+          webkitRequestAnimationFrame || msRequestAnimationFrame;
+      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+      else window.addEventListener('load', loadDeferredStyles);
+    </script>
+
+
+</body>
+</html>
