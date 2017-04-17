@@ -59,16 +59,9 @@
         <div class="post reply container">
         <label><strong>Дошки</strong></label>
         <div id='boards-table'>
-            <strong><a href="/a/index.html" title="Аніме">Аніме</a></strong><br>
-            <strong><a href="/b/index.html" title="Балачки">Балачки <span class='nsfw'>(18+)</span></a></strong><br>
-            <strong><a href="/c/index.html" title="Кіно">Кіно</a></strong><br>
-            <strong><a href="/f/index.html" title="Фап">Фап <span class='nsfw'>(18+)</span></a></strong><br>
-            <strong><a href="/g/index.html" title="Відеоігри">Відеоігри</a></strong><br>
-            <strong><a href="/i/index.html" title="International">International</a></strong><br>
-            <strong> <a href="/m/index.html" title="Музика">Музика</a></strong><br>
-            <strong><a href="/l/index.html" title="Література">Література</a></strong><br>
-            <strong><a href="/p/index.html" title="Політика">Політика</a></strong><br>
-            <strong><a href="/t/index.html" title="Тренування">Тренування</a></strong><br>
+            {% for board in boards %}
+            <strong><a href="{% url 'board' board.uri %}" title="{{ board.title }}">{{ board.title }}{% if board.uri == 'b' or board.uri == 'f'%}<span class='nsfw'>(18+){% endif %}</span></a></strong><br>
+            {% endfor %}
         </div>    
         </div>
         
@@ -79,7 +72,7 @@
 				{% for post in recent_posts %}
 					<li>
 						<strong>{{ post.board_name }}</strong>: 
-						<a href="{{ post.link }}">
+						<a href="{% url 'thread' post.board_url post.id %}">
 							{{ post.snippet }}
 						</a>
 					</li>
@@ -91,7 +84,7 @@
 			<ul id='stats-table'>
 				<li>Усього повідомлень: {{ stats.total_posts }}</li>
 				<li>Повідомлень за добу: {{ stats.posts_per24 }}</li>
-				<li>Усього ниток: {{ stats.total_threads }}</li>
+				<li>Доступно ниток: {{ stats.total_threads }}</li>
 				<li>Ниток за добу: {{ stats.threads_per24 }}</li>
 				<li>Дописувачів: {{ stats.unique_posters }}</li>
 				<li>Дописувачів за добу: {{ stats.unique_posters_per24 }}</li>
