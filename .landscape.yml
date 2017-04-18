@@ -1,0 +1,10 @@
+strictness: veryhigh
+pep8:
+  full: true
+uses:
+  - django
+autodetect: true
+requirements:
+  - requirements.txt
+python-targets:
+  - 3
