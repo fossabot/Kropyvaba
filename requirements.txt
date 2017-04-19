@@ -1,3 +1,4 @@
 Django==1.11
 simplejson==3.10.0
 pyup-django==0.3.0
+flake8==3.3.0

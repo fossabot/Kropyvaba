@@ -72,7 +72,7 @@
 				{% for post in recent_posts %}
 					<li>
 						<strong>{{ post.board_name }}</strong>: 
-						<a href="{% url 'thread' post.board_url post.id %}">
+						<a href="{% if post.thread %}{% url 'thread' post.board_url post.thread %}#{{post.id}}{% else %}{% url 'thread' post.board_url post.id %}{% endif %}">
 							{{ post.snippet }}
 						</a>
 					</li>

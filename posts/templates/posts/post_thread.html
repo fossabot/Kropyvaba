@@ -36,10 +36,18 @@
 		{% if index %}{{ post.body|safe }}{% else %}{{ post.body|safe }}{% endif %}
 	</div>
 	{% if post.omitted or post.omitted_images %}
-		<span class="omitted">
-			replies omitted. Click reply to view.
-		</span>
-{% endif %}
+        <span class="omitted">
+			{% if post.omitted %}
+					{{ post.omitted }} posts
+				{% if post.omitted_images %}
+					 and 
+				{% endif %}
+			{% endif %}
+			{% if post.omitted_images %}
+				{{ post.omitted_images }} image replies
+			{% endif %} omitted. Click reply to view.
+        </span>
+    {% endif %}
 {% if not index %}
 {% endif %}
 </div>
