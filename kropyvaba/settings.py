@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    #'pyup_django',
+    # 'pyup_django',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -86,18 +86,20 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
+password_validator = 'django.contrib.auth.password_validation.'
+
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': password_validator+'UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': password_validator+'MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': password_validator+'CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': password_validator+'NumericPasswordValidator',
     },
 ]
 
@@ -124,16 +126,16 @@ STATIC_URL = '/static/'
 
 config = {
     'title': "Кропивач",
-    'url_stylesheet' : "style.css",
+    'url_stylesheet': "style.css",
     'default_stylesheet': {
-        '1' : 'ukrchan.css'
+        '1': 'ukrchan.css'
         },
-    'uri_stylesheets' : '',
-    'font_awesome' : True,
-    'post_date' : "%d-%m-%y о %H:%M:%S",
-    'recent' : "recent.css",
+    'uri_stylesheets': '',
+    'font_awesome': True,
+    'post_date': "%d-%m-%y о %H:%M:%S",
+    'recent': "recent.css",
     'catalog_link': 'catalog.html',
-    'slogan' : [
+    'slogan': [
             "Український іміджборд",
             "Насирматри!",
             "... просто приклади до болючого місця",
@@ -165,7 +167,8 @@ config = {
             "Для реєстрації натисни Ctrl+W",
             "Четверте з половиною диво України!",
             "Щоб продовжити, вкиньте монетку!",
-            "Будь-яка схожість з іншими іміджбордами, живими чи мертвими, є абсолютно випадковою!",
+            "Будь-яка схожість з іншими іміджбордами, \
+            живими чи мертвими, є абсолютно випадковою!",
             "Ласкаво просимо в інтернет, курво!",
             "Ми крадемо у Футурами!",
             "Європа б ним пишалася, але він наш!",
