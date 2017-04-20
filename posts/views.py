@@ -109,10 +109,10 @@ def make_stats():
     return stats
 
 
-def get_posts(board): return(Posts[board.uri].objects)
+def get_posts(board): return Posts[board.uri].objects
 
 
-def get_threads(board): return(get_posts(board).filter(thread=None))
+def get_threads(board): return get_posts(board).filter(thread=None)
 
 
 class PostBreaf(object):
@@ -123,7 +123,7 @@ class PostBreaf(object):
         self.id = post_id
         # slice last row
 
-        def s(x): return('\n'.join(x.split('\n')[:-1]))
+        def s(x): return '\n'.join(x.split('\n')[:-1])
         self.snippet = s(body) if len(s(body)) else EMPTY_POST
         self.board_name = board.title
         self.board_url = board.uri
