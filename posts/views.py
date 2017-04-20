@@ -9,19 +9,19 @@ from posts import models
 
 from kropyvaba.settings import config
 
-EMPTY_POST = '(коментар відсутній)'
+EMPTY_POST='(коментар відсутній)'
 
 def render_index(request):
     try:
-        boards = models.Board.objects.exclude(uri = 'bugs').order_by('uri')
-        recent_posts = []
+        boards=models.Board.objects.exclude(uri='bugs').order_by('uri')
+        recent_posts=[]
         for board in models.Board.objects.all():
             for pst in models.Posts[board.uri].objects.values_list('id', 'body_nomarkup', 'thread').order_by('-id')[:30]:
-                post = PostBreaf(pst[0], pst[1], pst[2], board.title, board.uri)
+                post=PostBreaf(pst[0], pst[1], pst[2], board.title, board.uri)
                 recent_posts.append(post)
         #for post in recent_posts:
             #post
-        context = {
+        context={
                     'config': config,
                     'boards': boards,
                     'slogan': random.choice(config['slogan']),
@@ -34,16 +34,16 @@ def render_index(request):
 
 def render_board(request, board_name):
     try:
-        current_board = models.Board.objects.get(uri = board_name)
-        current_board.url = current_board.uri
-        boards = models.Board.objects.exclude(uri = 'bugs').order_by('uri')
-        threads = models.Posts[current_board.uri].objects.filter(thread = None).order_by('-bump')[:15]
+        current_board=models.Board.objects.get(uri=board_name)
+        current_board.url=current_board.uri
+        boards=models.Board.objects.exclude(uri='bugs').order_by('uri')
+        threads=models.Posts[current_board.uri].objects.filter(thread=None).order_by('-bump')[:15]
         for thrd in threads:
-            thrd.posts = models.Posts[current_board.uri].objects.filter(thread = thrd.id)
-            thrd.omitted = len(thrd.posts) - 3
-            thrd.posts = thrd.posts[:3]
-        pages = [Page(_) for _ in range(15)]
-        context = {
+            thrd.posts=models.Posts[current_board.uri].objects.filter(thread=thrd.id)
+            thrd.omitted=len(thrd.posts) - 3
+            thrd.posts=thrd.posts[:3]
+        pages=[Page(_) for _ in range(15)]
+        context={
                     'config': config,
                     'board': current_board,
                     'boards': boards,
@@ -58,12 +58,12 @@ def render_board(request, board_name):
 
 def render_thread(request, board_name, thread_id):
     try:
-        current_board = models.Board.objects.get(uri = board_name)
-        boards = models.Board.objects.exclude(uri = 'bugs').order_by('uri')
-        current_board.url = current_board.uri
-        post = models.Posts[current_board.uri].objects.get(id = thread_id)
-        post.posts = models.Posts[current_board.uri].objects.filter(thread = post.id)
-        context = {
+        current_board=models.Board.objects.get(uri=board_name)
+        boards=models.Board.objects.exclude(uri='bugs').order_by('uri')
+        current_board.url=current_board.uri
+        post=models.Posts[current_board.uri].objects.get(id=thread_id)
+        post.posts=models.Posts[current_board.uri].objects.filter(thread=post.id)
+        context={
                     'config': config,
                     'board': current_board,
                     'boards': boards,
@@ -76,14 +76,14 @@ def render_thread(request, board_name, thread_id):
 
 def render_catalog(request, board_name):
     try:
-        current_board = models.Board.objects.get(uri = board_name)
-        boards = models.Board.objects.exclude(uri = 'bugs').order_by('uri')
-        recent_posts = []
-        for pst in models.Posts[current_board.uri].objects.filter(thread = None).order_by('-bump'):
+        current_board=models.Board.objects.get(uri=board_name)
+        boards=models.Board.objects.exclude(uri='bugs').order_by('uri')
+        recent_posts=[]
+        for pst in models.Posts[current_board.uri].objects.filter(thread=None).order_by('-bump'):
             recent_posts.append(pst)
         for thrd in recent_posts:
-            thrd.reply_count = len(models.Posts[current_board.uri].objects.filter(thread = thrd.id))
-        context = {
+            thrd.reply_count=len(models.Posts[current_board.uri].objects.filter(thread=thrd.id))
+        context={
                     'config': config,
                     'board': current_board,
                     'boards': boards,
@@ -97,29 +97,29 @@ def render_catalog(request, board_name):
 def make_stats():
     class Statistic(object):
         def __init__(self):
-            self.total_posts = 0      
+            self.total_posts=0      
             for board in models.Board.objects.all():
                 self.total_posts += models.Posts[board.uri].objects.order_by('-id')[0].id
-            self.posts_per24 = 1
-            self.total_threads = 0
+            self.posts_per24=1
+            self.total_threads=0
             for board in models.Board.objects.all():
-                self.total_threads += len(models.Posts[board.uri].objects.filter(thread = None))
-            self.threads_per24 = 1
-            self.unique_posters = 1
-            self.unique_posters_per24 = 1
-    stats = Statistic()
+                self.total_threads += len(models.Posts[board.uri].objects.filter(thread=None))
+            self.threads_per24=1
+            self.unique_posters=1
+            self.unique_posters_per24=1
+    stats=Statistic()
     return stats
 
 class PostBreaf(object):
     def __init__(self, post_id, body, thread_id, board_title, board_uri):
-        self.id = post_id
+        self.id=post_id
         # slice last row
-        s = lambda x: '\n'.join(x.split('\n')[:-1])
-        self.snippet = s(body) if len(s(body)) else EMPTY_POST
-        self.board_name = board_title
-        self.board_url = board_uri
-        self.thread = thread_id
+        s=lambda x: '\n'.join(x.split('\n')[:-1])
+        self.snippet=s(body) if len(s(body)) else EMPTY_POST
+        self.board_name=board_title
+        self.board_url=board_uri
+        self.thread=thread_id
 
 class Page(object):
     def __init__(self, number):
-        self.num = number
+        self.num=number
