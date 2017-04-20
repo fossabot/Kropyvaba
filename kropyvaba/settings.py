@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'pyup_django',
+    #'pyup_django',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -132,6 +132,7 @@ config = {
     'font_awesome' : True,
     'post_date' : "%d-%m-%y о %H:%M:%S",
     'recent' : "recent.css",
+    'catalog_link': 'catalog.html',
     'slogan' : [
             "Український іміджборд",
             "Насирматри!",

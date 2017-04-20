@@ -42,11 +42,13 @@ def render_board(request, board_name):
             thrd.posts = models.Posts[current_board.uri].objects.filter(thread = thrd.id)
             thrd.omitted = len(thrd.posts) - 3
             thrd.posts = thrd.posts[:3]
+        pages = [Page(_) for _ in range(15)]
         context = {
                     'config': config,
                     'board': current_board,
                     'boards': boards,
                     'threads': threads,
+                    'pages': pages,
                     'hr': True,
                     'index': True
                 }
@@ -69,6 +71,26 @@ def render_thread(request, board_name, thread_id):
                     'hr': True
                 }
         return render(request, 'posts/index.html', context)
+    except ObjectDoesNotExist:
+        return HttpResponse('404')
+
+def render_catalog(request, board_name):
+    try:
+        current_board = models.Board.objects.get(uri = board_name)
+        boards = models.Board.objects.exclude(uri = 'bugs').order_by('uri')
+        recent_posts = []
+        for pst in models.Posts[current_board.uri].objects.filter(thread = None).order_by('-bump'):
+            recent_posts.append(pst)
+        for thrd in recent_posts:
+            thrd.reply_count = len(models.Posts[current_board.uri].objects.filter(thread = thrd.id))
+        context = {
+                    'config': config,
+                    'board': current_board,
+                    'boards': boards,
+                    'recent_posts': recent_posts,
+                    'hr': True
+                }
+        return render(request, 'posts/catalog.html', context)
     except ObjectDoesNotExist:
         return HttpResponse('404')
 
@@ -97,3 +119,7 @@ class PostBreaf(object):
         self.board_name = board_title
         self.board_url = board_uri
         self.thread = thread_id
+
+class Page(object):
+    def __init__(self, number):
+        self.num = number
