@@ -17,11 +17,11 @@ try:
     from .secret_key import SECRET_KEY
 except ImportError:
     from django.utils.crypto import get_random_string
-    chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
-    settings_dir = os.path.abspath(os.path.dirname(__file__))
-    f = open(os.path.join(settings_dir, 'secret_key.py'), 'w')
-    f.write('SECRET_KEY = "' + get_random_string(50, chars)+'"\n')
-    f.close()
+    CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+    SETTINGS_DIR = os.path.abspath(os.path.dirname(__file__))
+    FILE = open(os.path.join(SETTINGS_DIR, 'secret_key.py'), 'w')
+    FILE.write('SECRET_KEY = "' + get_random_string(50, CHARS)+'"\n')
+    FILE.close()
     from .secret_key import SECRET_KEY
 
 # for flake8
@@ -98,20 +98,20 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
-PASSWORD_VALIDATOR = 'django.contrib.auth.password_validation.'
+PASSW_VALIDATOR = 'django.contrib.auth.password_validation.'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': PASSWORD_VALIDATOR+'UserAttributeSimilarityValidator',
+        'NAME': PASSW_VALIDATOR+'UserAttributeSimilarityValidator',
     },
     {
-        'NAME': PASSWORD_VALIDATOR+'MinimumLengthValidator',
+        'NAME': PASSW_VALIDATOR+'MinimumLengthValidator',
     },
     {
-        'NAME': PASSWORD_VALIDATOR+'CommonPasswordValidator',
+        'NAME': PASSW_VALIDATOR+'CommonPasswordValidator',
     },
     {
-        'NAME': PASSWORD_VALIDATOR+'NumericPasswordValidator',
+        'NAME': PASSW_VALIDATOR+'NumericPasswordValidator',
     },
 ]
 
