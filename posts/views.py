@@ -18,10 +18,11 @@ def render_index(request):
     try:
         boards = Board.objects.order_by('uri')
         recent_posts = []
-        fields = ('id', 'body_nomarkup', 'thread')
+        fields = ['id', 'body_nomarkup', 'thread', 'time']
         for b in boards:
             for post in get_posts(b).values_list(*fields)[::-1]:
                 recent_posts.append(PostBreaf(post, b))
+        recent_posts = sorted(recent_posts, key=lambda x: x.time, reverse=True)
         context = {
                     'config': config,
                     'boards': boards.exclude(uri='bugs'),
@@ -136,7 +137,7 @@ def get_threads(board): return get_posts(board).filter(thread=None)
 
 class PostBreaf(object):
     def __init__(self, post, board):
-        self.id, body, self.thread = post
+        self.id, body, self.thread, self.time = post
         # slice last row
 
         def s(x): return '\n'.join(x.split('\n')[:-1])
