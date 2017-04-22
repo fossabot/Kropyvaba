@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 import random
+from calendar import timegm
+from datetime import datetime, timedelta
 
 # database models
 from posts.models import Board, Posts
@@ -98,13 +100,30 @@ def render_catalog(request, board_name):
 def make_stats():
     class Statistic(object):
         def __init__(self):
+            # functions for DRY
+            def count_threads(threads):
+                return len([post for post in threads if not post[1]])
+
+            def count_posters(posts):
+                return len(set(post[2] for post in posts))
+            # getting time info
+            past = datetime.utcnow() + timedelta(hours=-24)
+            stamp = timegm(past.timetuple())
+            # querys cashing
             boards = Board.objects.all()
-            self.total_posts = sum([get_posts(b).last().id for b in boards])
-            self.posts_per24 = 1
-            self.total_threads = sum([len(get_threads(b)) for b in boards])
-            self.threads_per24 = 1
-            self.unique_posters = 1
-            self.unique_posters_per24 = 1
+            fields = ['id', 'thread', 'ip', 'time']
+            posts = []
+            for board in boards:
+                posts += get_posts(board).values_list(*fields)
+            # total objects
+            self.total_posts = max(*[post[0] for post in posts])
+            self.total_threads = count_threads(posts)
+            self.posters = count_posters(posts)
+            # objects for last 24 hours
+            posts = [post for post in posts if post[3] >= stamp]
+            self.posts_per24 = len(posts)
+            self.threads_per24 = count_threads(posts)
+            self.posters_per24 = count_posters(posts)
     stats = Statistic()
     return stats
 
