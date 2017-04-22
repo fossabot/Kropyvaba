@@ -13,14 +13,26 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+try:
+    from .secret_key import SECRET_KEY
+except ImportError:
+    from django.utils.crypto import get_random_string
+    chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+    settings_dir = os.path.abspath(os.path.dirname(__file__))
+    f = open(os.path.join(settings_dir, 'secret_key.py'), 'w')
+    f.write('SECRET_KEY = "' + get_random_string(50, chars)+'"\n')
+    f.close()
+    from .secret_key import SECRET_KEY
+
+# for flake8
+assert SECRET_KEY
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

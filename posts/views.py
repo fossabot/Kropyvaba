@@ -117,17 +117,13 @@ def get_threads(board): return get_posts(board).filter(thread=None)
 
 class PostBreaf(object):
     def __init__(self, post, board):
-        post_id = post[0]
-        body = post[1]
-        thread_id = post[2]
-        self.id = post_id
+        self.id, body, self.thread = post
         # slice last row
 
         def s(x): return '\n'.join(x.split('\n')[:-1])
         self.snippet = s(body) if len(s(body)) else EMPTY_POST
         self.board_name = board.title
         self.board_url = board.uri
-        self.thread = thread_id
 
 
 class Page(object):

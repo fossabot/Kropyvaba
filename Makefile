@@ -1,7 +1,7 @@
 MANAGE=./manage.py
 
 test:
-	flake8 --exclude='.env*, *migrations, manage.py' .
+	flake8 --statistics --exclude='.env*, *migrations, manage.py' .
 	$(MANAGE) test
 
 run:
