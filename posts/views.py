@@ -18,16 +18,18 @@ def render_index(request):
     try:
         boards = Board.objects.order_by('uri')
         recent_posts = []
-        fields = ['id', 'body_nomarkup', 'thread', 'time']
+        fields = ['id', 'body_nomarkup', 'thread', 'time', 'ip']
+        posts = []
         for b in boards:
-            for post in get_posts(b).values_list(*fields)[::-1]:
-                recent_posts.append(PostBreaf(post, b))
+            for post in get_posts(b).values_list(*fields):
+                posts += [post + (b,)]
+        recent_posts = [PostBreaf(post) for post in posts[::-1]]
         recent_posts = sorted(recent_posts, key=lambda x: x.time, reverse=True)
         context = {
                     'config': config,
                     'boards': boards.exclude(uri='bugs'),
                     'slogan': random.choice(config['slogan']),
-                    'stats': make_stats(),
+                    'stats': make_stats(boards, posts),
                     'recent_posts': recent_posts[:30]
                 }
         return render(request, 'posts/main_page.html', context)
@@ -98,24 +100,18 @@ def render_catalog(request, board_name):
         return HttpResponse('404')
 
 
-def make_stats():
+def make_stats(boards, posts):
     class Statistic(object):
-        def __init__(self):
+        def __init__(self, boards, posts):
             # functions for DRY
             def count_threads(threads):
-                return len([post for post in threads if not post[1]])
+                return len([post for post in threads if not post[2]])
 
             def count_posters(posts):
-                return len(set(post[2] for post in posts))
+                return len(set(post[4] for post in posts))
             # getting time info
             past = datetime.utcnow() + timedelta(hours=-24)
             stamp = timegm(past.timetuple())
-            # querys cashing
-            boards = Board.objects.all()
-            fields = ['id', 'thread', 'ip', 'time']
-            posts = []
-            for board in boards:
-                posts += get_posts(board).values_list(*fields)
             # total objects
             self.total_posts = max(*[post[0] for post in posts])
             self.total_threads = count_threads(posts)
@@ -125,7 +121,7 @@ def make_stats():
             self.posts_per24 = len(posts)
             self.threads_per24 = count_threads(posts)
             self.posters_per24 = count_posters(posts)
-    stats = Statistic()
+    stats = Statistic(boards, posts)
     return stats
 
 
@@ -136,8 +132,8 @@ def get_threads(board): return get_posts(board).filter(thread=None)
 
 
 class PostBreaf(object):
-    def __init__(self, post, board):
-        self.id, body, self.thread, self.time = post
+    def __init__(self, post):
+        self.id, body, self.thread, self.time, _, board = post
         # slice last row
 
         def s(x): return '\n'.join(x.split('\n')[:-1])
