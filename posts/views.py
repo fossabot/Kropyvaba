@@ -6,14 +6,16 @@ import random
 from calendar import timegm
 from datetime import datetime, timedelta
 
+from django.views.decorators.cache import cache_page
+
 # database models
 from posts.models import Board, Posts
 
-from kropyvaba.settings import config
+from kropyvaba.settings import config, CACHE_TTL
 
 EMPTY_POST = '(коментар відсутній)'
 
-
+@cache_page(CACHE_TTL)
 def render_index(request):
     try:
         boards = Board.objects.order_by('uri')
@@ -37,12 +39,14 @@ def render_index(request):
         return HttpResponse('404')
 
 
+@cache_page(CACHE_TTL)
 def render_board(request, board_name, current_page=0):
     try:
-        board = Board.objects.get(uri=board_name)
+        boards = Board.objects.all()
+        board = boards.get(uri=board_name)
         board.url = board.uri
-        boards = Board.objects.exclude(uri='bugs').order_by('uri')
-        threads = get_threads(board).order_by('-bump')[int(current_page):15]
+        posts = get_posts(board)
+        threads = get_threads(board, posts).order_by('-bump')[int(current_page):15]
         for thrd in threads:
             thrd.posts = get_posts(board).filter(thread=thrd.id)
             thrd.omitted = len(thrd.posts) - 3
@@ -54,7 +58,7 @@ def render_board(request, board_name, current_page=0):
         context = {
                     'config': config,
                     'board': board,
-                    'boards': boards,
+                    'boards': boards.order_by('uri').exclude(uri='bugs'),
                     'threads': threads,
                     'pages': pages,
                     'hr': True,
@@ -65,6 +69,7 @@ def render_board(request, board_name, current_page=0):
         return HttpResponse('404')
 
 
+@cache_page(CACHE_TTL)
 def render_thread(request, board_name, thread_id):
     try:
         board = Board.objects.get(uri=board_name)
@@ -84,11 +89,13 @@ def render_thread(request, board_name, thread_id):
         return HttpResponse('404')
 
 
+@cache_page(CACHE_TTL)
 def render_catalog(request, board_name):
     try:
         board = Board.objects.get(uri=board_name)
         boards = Board.objects.exclude(uri='bugs').order_by('uri')
-        recent_posts = [post for post in get_threads(board).order_by('-bump')]
+        posts = get_posts(board)
+        recent_posts = [post for post in get_threads(board, posts).order_by('-bump')]
         for thrd in recent_posts:
             thrd.reply_count = len(get_posts(board).filter(thread=thrd.id))
         context = {
@@ -132,7 +139,7 @@ def make_stats(posts):
 def get_posts(board): return Posts[board.uri].objects
 
 
-def get_threads(board): return get_posts(board).filter(thread=None)
+def get_threads(board, posts): return posts.filter(thread=None)
 
 
 class PostBreaf(object):
