@@ -37,17 +37,20 @@ def render_index(request):
         return HttpResponse('404')
 
 
-def render_board(request, board_name):
+def render_board(request, board_name, current_page=0):
     try:
         board = Board.objects.get(uri=board_name)
         board.url = board.uri
         boards = Board.objects.exclude(uri='bugs').order_by('uri')
-        threads = get_threads(board).order_by('-bump')[:15]
+        threads = get_threads(board).order_by('-bump')[int(current_page):15]
         for thrd in threads:
             thrd.posts = get_posts(board).filter(thread=thrd.id)
             thrd.omitted = len(thrd.posts) - 3
             thrd.posts = thrd.posts[:3]
         pages = [Page(_) for _ in range(15)]
+        for page in pages:
+            if page.num == current_page:
+                page.set_active()
         context = {
                     'config': config,
                     'board': board,
@@ -145,3 +148,6 @@ class PostBreaf(object):
 class Page(object):
     def __init__(self, number):
         self.num = number
+
+    def set_active(self):
+        self.selected = True

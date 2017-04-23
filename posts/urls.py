@@ -19,6 +19,11 @@ urlpatterns = [
         name="board"
         ),
     url(
+        r'^(?P<board_name>[A-Za-z]+)/(?P<current_page>[0-9]+).html$',
+        render_board,
+        name="board_page"
+        ),
+    url(
         r'^(?P<board_name>[A-Za-z]+)/catalog.html$',
         render_catalog,
         name="catalog"
