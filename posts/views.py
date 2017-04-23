@@ -29,7 +29,7 @@ def render_index(request):
                     'config': config,
                     'boards': boards.exclude(uri='bugs'),
                     'slogan': random.choice(config['slogan']),
-                    'stats': make_stats(boards, posts),
+                    'stats': make_stats(posts),
                     'recent_posts': recent_posts[:30]
                 }
         return render(request, 'posts/main_page.html', context)
@@ -103,9 +103,9 @@ def render_catalog(request, board_name):
         return HttpResponse('404')
 
 
-def make_stats(boards, posts):
+def make_stats(posts):
     class Statistic(object):
-        def __init__(self, boards, posts):
+        def __init__(self, posts):
             # functions for DRY
             def count_threads(threads):
                 return len([post for post in threads if not post[2]])
@@ -121,10 +121,11 @@ def make_stats(boards, posts):
             self.posters = count_posters(posts)
             # objects for last 24 hours
             posts = [post for post in posts if post[3] >= stamp]
+            print(type(posts))
             self.posts_per24 = len(posts)
             self.threads_per24 = count_threads(posts)
             self.posters_per24 = count_posters(posts)
-    stats = Statistic(boards, posts)
+    stats = Statistic(posts)
     return stats
 
 
@@ -148,6 +149,7 @@ class PostBreaf(object):
 class Page(object):
     def __init__(self, number):
         self.num = number
+        self.selected = False
 
     def set_active(self):
         self.selected = True
