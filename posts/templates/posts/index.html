@@ -68,9 +68,15 @@
 </form>
 
 	<div class="pages">
-		{{ btn.prev }} {% for page in pages %}
-		[<a {% if page.selected %}class="selected"{% endif %}{% if not page.selected %}href="{% url 'board_page' board.url page.num %}"{% endif %}>{{ page.num }}</a>]{% if loop.last %} {% endif %}
-		{% endfor %} {{ btn.next }}
+        {% if threads.has_previous %}
+        <a href="{% url 'board_page' board.url threads.next_page_number %}">prev</a>
+		{% endif %}
+		{% for page in pages.page_range %}
+		[<a {% if page == threads.number %}class="selected"{% endif %}{% if page != threads.number %}href="{% url 'board_page' board.url page %}"{% endif %}>{{ page }}</a>]
+		{% endfor %}
+		{% if threads.has_next %}
+		<a href="{% url 'board_page' board.url threads.next_page_number %}">next</a>
+		{% endif %}
 		{% if config.catalog_link %}
 			 | <a href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">Catalog</a>
 		{% endif %}

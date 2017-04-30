@@ -5,6 +5,7 @@ from django.shortcuts import render
 import random
 from calendar import timegm
 from datetime import datetime, timedelta
+from django.core.paginator import Paginator
 
 from django.views.decorators.cache import cache_page
 
@@ -39,22 +40,20 @@ def render_index(request):
         return HttpResponse('404')
 
 
-@cache_page(CACHE_TTL)
+#@cache_page(CACHE_TTL)
 def render_board(request, board_name, current_page=0):
     try:
         boards = Board.objects.all()
         board = boards.get(uri=board_name)
         board.url = board.uri
         posts = get_posts(board)
-        threads = get_threads(board, posts).order_by('-bump')[int(current_page):15]
+        threads = get_threads(board, posts).order_by('-bump')
         for thrd in threads:
             thrd.posts = get_posts(board).filter(thread=thrd.id)
             thrd.omitted = len(thrd.posts) - 3
             thrd.posts = thrd.posts[:3]
-        pages = [Page(_) for _ in range(15)]
-        for page in pages:
-            if page.num == current_page:
-                page.set_active()
+        pages = Paginator(threads, 10)
+        threads = pages.page(int(current_page))
         context = {
                     'config': config,
                     'board': board,
@@ -151,12 +150,3 @@ class PostBreaf(object):
         self.snippet = s(body) if len(s(body)) else EMPTY_POST
         self.board_name = board.title
         self.board_url = board.uri
-
-
-class Page(object):
-    def __init__(self, number):
-        self.num = number
-        self.selected = False
-
-    def set_active(self):
-        self.selected = True
