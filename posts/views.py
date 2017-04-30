@@ -41,7 +41,7 @@ def render_index(request):
 
 
 #@cache_page(CACHE_TTL)
-def render_board(request, board_name, current_page=0):
+def render_board(request, board_name, current_page=1):
     try:
         boards = Board.objects.all()
         board = boards.get(uri=board_name)

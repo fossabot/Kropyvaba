@@ -13,7 +13,7 @@
 			{% if file.thumb == 'spoiler' %}
 				Spoiler Image, 
 			{% endif %}
-			{{ file.size }}
+			{{ file.size|format_size }}
 			{% if file.width and file.height %}
 				, {{ file.width}}x{{ file.height }}
 				{% if config.show_ratio %}
