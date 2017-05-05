@@ -40,7 +40,6 @@ def render_index(request):
         return HttpResponse('404')
 
 
-#@cache_page(CACHE_TTL)
 def render_board(request, board_name, current_page=1):
     try:
         boards = Board.objects.all()
@@ -88,7 +87,6 @@ def render_thread(request, board_name, thread_id):
         return HttpResponse('404')
 
 
-@cache_page(CACHE_TTL)
 def render_catalog(request, board_name):
     try:
         board = Board.objects.get(uri=board_name)

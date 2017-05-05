@@ -34,12 +34,13 @@
                 <div id="Grid">
                 {% for post in recent_posts %}
                         <div class="mix"
-				data-reply="{{ post.reply_count }}"
-				 data-bump="{{ post.bump }}"
-				 data-time="{{ post.time }}"
-				 data-id="{{ post.id }}"
-				 data-sticky="{% if post.sticky %}true{% else %}false{% endif %}"
-				 data-locked="{% if post.locked %}true{% else %}false{% endif %}"
+                data-reply="{{ post.reply_count }}"
+				data-bump="{{ post.bump }}"
+				data-time="{{ post.time }}"
+				data-id="{{ post.id }}"
+				data-sticky="{% if post.sticky %}true{% else %}false{% endif %}"
+				data-locked="{% if post.locked %}true{% else %}false{% endif %}"
+				style="display: inline-block"
 			>
                                 <div class="thread grid-li grid-size-small">  
                                         <a href="{{post.link}}">  
