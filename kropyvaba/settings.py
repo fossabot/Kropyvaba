@@ -137,7 +137,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'uk-ua'
 
 TIME_ZONE = 'UTC'
 
@@ -167,6 +167,8 @@ config = {
     'post_date': "%d-%m-%y о %H:%M:%S",
     'recent': "recent.css",
     'catalog_link': 'catalog.html',
+    'button_reply': "Відповісти",
+    'button_newtopic': "Створити нитку",
     'slogan': [
             "Український іміджборд",
             "Насирматри!",
