@@ -15,4 +15,4 @@ class PostForm(ModelForm):
         meta class for ModelForm
         """
         model = Post
-        fields = '__all__'
+        exclude = ['time', 'sage', 'cycle', 'locked', 'sticky', 'ip']

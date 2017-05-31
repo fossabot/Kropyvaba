@@ -1,13 +1,10 @@
 <form name="post" onsubmit="return dopost(this);" enctype="multipart/form-data" action="{{ config.post_url }}" method="post">
-
+{% csrf_token %}
 {% if id %}<input type="hidden" name="thread" value="{{ id }}">{% endif %}
-
 <input type="hidden" name="board" value="{{ board.uri }}">
-	{% csrf_token %}
 {% if current_page %}
 	<input type="hidden" name="page" value="{{ current_page }}">
 {% endif %}
-{% if mod %}<input type="hidden" name="mod" value="1">{% endif %}
 	<table>
 		{% if not config.field_disable_name  %}<tr>
 			<th>
@@ -15,10 +12,6 @@
 			</th>
 			<td>
 				{{ form.name }}
-                {% if config.allow_no_country and config.country_flags %}
-                    <input id="no_country" name="no_country" type="checkbox">
-                    <label for="no_country">Don't show my flag</label>
-                {% endif %}
 			</td>
 		</tr>{% endif %}
 		{% if not config.field_disable_email  %}<tr>
@@ -30,9 +23,6 @@
                     <select name="email" id="email_selectbox" autocomplete="off">
                         <option value=""></option>
                         <option value="sage">sage</option>
-                        {% if not config.always_noko %}
-                            <option value="noko">noko</option>
-                        {% endif %}
                     </select>
 				{% else %}
 				    {{ form.email }}
@@ -74,16 +64,6 @@
 				{% endif %}
 			</td>
 		</tr>
-		{% if config.recaptcha %}
-		<tr>
-			<th>
-				Verification
-			</th>
-			<td>
-				<script type="text/javascript" src="//www.google.com/recaptcha/api/challenge?k={{ config.recaptcha_public }}"></script>
-			</td>
-		</tr>
-		{% endif %}
 		<tr id="upload">
 			<th>
 				File

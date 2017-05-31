@@ -3,7 +3,8 @@
 """file with backend code"""
 
 # django stuff
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 import random
@@ -84,18 +85,64 @@ def render_thread(request, board_name, thread_id):
         board.url = board.uri
         post = get_posts(board).get(id=thread_id)
         post.posts = get_posts(board).filter(thread=post.id)
-        form = PostForm()
+        if request.method == 'POST':
+            print("is post")
+            form = PostForm(request.POST)
+            ip = get_ip(request)
+            if handle_form(form, board_name, ip, thread_id):
+                return HttpResponseRedirect(
+                    reverse(
+                        'thread',
+                        args=(board_name,thread_id)
+                    )
+                )
+        else:
+            form = PostForm()
         context = {
                     'config': config,
                     'board': board,
                     'boards': boards,
                     'threads': [post],
                     'hr': True,
-                    'form': form
+                    'form': form,
+                    'id': 1
                 }
         return render(request, 'posts/index.html', context)
     except ObjectDoesNotExist:
         return HttpResponse('404')
+
+
+def handle_form(form,board, ip, thread):
+    """
+    Adding new post/thread
+    """
+    if form.is_valid():
+        print("Form is valid")
+        name = form.cleaned_data['name']
+        email = form.cleaned_data['email']
+        subject = form.cleaned_data['subject']
+        body = form.cleaned_data['body']
+        password = form.cleaned_data['password']
+        time = int(datetime.timestamp(datetime.now()))
+        sage = cycle = locked = sticky = 0
+        new_post = Posts[board].objects.create(
+            time=time,
+            sage=sage,
+            cycle=cycle,
+            locked=locked,
+            sticky=sticky
+        )
+        new_post.name = name
+        new_post.subject = subject
+        new_post.email = email
+        new_post.body = markup(body)
+        new_post.body_nomarkup = body
+        new_post.password = password
+        new_post.ip = ip
+        new_post.thread = thread
+        new_post.bump = time
+        new_post.save()
+        return True
 
 
 def render_catalog(request, board_name):
@@ -149,6 +196,19 @@ def get_posts(board): return Posts[board.uri].objects
 
 def get_threads(board, posts): return posts.filter(thread=None)
 
+
+def markup(body): return body
+
+
+def get_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
 def get_board(board_uri):
     """
     Return cached board object
@@ -159,6 +219,7 @@ def get_board(board_uri):
         boards_cached[board_uri] = Board.objects.get(uri=board_uri)
     return boards_cached[board_uri]
 
+
 def get_boards_navlist():
     global boards_update
     global boards_navlist
@@ -166,6 +227,7 @@ def get_boards_navlist():
         boards_navlist = Board.objects.exclude(uri='bugs').order_by('uri')
         boards_update = False
     return boards_navlist
+
 
 class PostBreaf(object):
     def __init__(self, post):
