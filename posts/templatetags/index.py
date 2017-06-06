@@ -14,6 +14,10 @@ def to_dict(json_string):
     if type(json_string) is str:
         return json.loads(json_string)
 
+@register.filter(name='extension')
+def extension(filename):
+    if type(filename) is str:
+        return filename.split('.')[-1]
 
 @register.filter(name='to_time')
 def to_time(timestamp):

@@ -13,37 +13,8 @@
 			var modRoot="{{ config.root }}"+(inMod ? "mod.php?/" : "");
 		</script>
 		{% if not nojavascript %}
-			<script type="text/javascript" src="{{ config.url_javascript }}"></script>
+			<script type="text/javascript" src="{% static config.url_javascript %}"></script>
 			{% if not config.additional_javascript_compile %}
-			{% for javascript in config.additional_javascript %}<script type="text/javascript" src="{{ config.additional_javascript_url }}{{ javascript }}"></script>{% endfor %}
+			{% for javascript in config.additional_javascript %}<script type="text/javascript" src="{% static javascript %}"></script>{% endfor %}
 			{% endif %}
 		{% endif %}
-		{% if config.recaptcha %}<style type="text/css">
-			#recaptcha_area {
-				float: none !important;
-				padding: 0 !important;
-			}
-			#recaptcha_logo, #recaptcha_privacy {
-				display: none;
-			}
-			#recaptcha_table {
-				border: none !important;
-			}
-			#recaptcha_table tr:first-child {
-				height: auto;
-			}
-			.recaptchatable img {
-				float: none !important;
-			}
-			#recaptcha_response_field {
-				font-size: 10pt !important;
-				border: 1px solid #a9a9a9 !important;
-				padding: 1px !important;
-			}
-			td.recaptcha_image_cell {
-				background: transparent !important;
-			}
-			.recaptchatable, #recaptcha_area tr, #recaptcha_area td, #recaptcha_area th {
-				padding: 0 !important;
-			}
-		</style>{% endif %}
