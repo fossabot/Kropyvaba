@@ -1,10 +1,5 @@
 {% load index %}
-<a href="
-	{% if file.file|extension == 'webm' or file.file|extension == 'mp4' %}
-		{{ config.root }}player.php?v={{ config.uri_img }}{{ file }}&amp;t={{ file.filename }}&amp;loop=1
-	{% else %}
-		{{ config.uri_img }}{{ post.file }}
-	{% endif %}
+<a href="{{ file.file_path }}
 	"
 	 target="_blank"
 	{% if post.thumb == 'file' or filename|extension == 'webm' or file|extension == 'mp4' %}
@@ -20,7 +15,7 @@
 		</video>
 	{% else %}
 		<img class="post-image" 
-			src="{{ file.file_path }} "
+			src="/{{ file.thumb_path }} "
 			 style="width:{{ file.thumbwidth }}px;height:{{ file.thumbheight }}px" alt=""
 		/>
 	{% endif %}

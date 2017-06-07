@@ -175,6 +175,7 @@ config = {
     'catalog_link': 'catalog.html',
     'button_reply': "Відповісти",
     'button_newtopic': "Створити нитку",
+    'allow_delete': True,
     'slogan': [
         "Український іміджборд",
         "Насирматри!",

@@ -59,7 +59,7 @@ def render_board(request, board_name, current_page=1):
         for thread in threads:
             thread.posts = posts.filter(thread=thread.id)
             posts_len = len(thread.posts)
-            thread.omitted = posts_len - 3
+            thread.omitted = posts_len - 5 if posts_len >= 5 else 0
             thread.posts = thread.posts[thread.omitted:]
         form = PostForm()
         context = {
@@ -107,7 +107,7 @@ def render_thread(request, board_name, thread_id):
                     'form': form,
                     'id': 1
                 }
-        return render(request, 'posts/index.html', context)
+        return render(request, 'posts/page.html', context)
     except ObjectDoesNotExist:
         return HttpResponse('404')
 
