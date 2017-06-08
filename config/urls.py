@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from kropyvaba import settings
+from config import settings
 
 urlpatterns = [
     url(r'^mod.php/', admin.site.urls),

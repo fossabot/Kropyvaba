@@ -18,7 +18,7 @@ from django.views.decorators.cache import cache_page
 from posts.models import Board, Posts
 
 from posts.forms import PostForm
-from kropyvaba.settings import config, CACHE_TTL
+from config.settings import config, CACHE_TTL
 
 EMPTY_POST = '(коментар відсутній)'
 boards_update = True  # switch when there are some adding/editing of boards

@@ -4,7 +4,7 @@ from datetime import datetime
 from math import floor, log
 import os
 import random
-from kropyvaba.settings import config, STATIC_ROOT
+from config.settings import config, STATIC_ROOT
 
 register = template.Library()
 
