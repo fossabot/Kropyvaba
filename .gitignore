@@ -34,4 +34,4 @@ docs/_build/
 migrations/
 
 .directory
-kropyvaba/secret_key.py
+config/secret_key.py
