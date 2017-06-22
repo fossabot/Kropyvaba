@@ -1,6 +1,7 @@
 from django.conf.urls import url
 
 from .views import render_board, render_catalog, render_index, render_thread
+from .views import get_media
 
 urlpatterns = [
     url(
@@ -27,5 +28,10 @@ urlpatterns = [
         r'^(?P<board_name>[A-Za-z]+)/catalog.html$',
         render_catalog,
         name="catalog"
+        ),
+    url(
+        r'^(?P<board_name>[A-Za-z]+)/res/(?P<path>.*)$',
+        get_media,
+        name='media'
         ),
 ]

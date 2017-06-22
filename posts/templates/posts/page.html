@@ -1,3 +1,4 @@
+{% load index %}
 <!doctype html>
 <html>
 <head>
@@ -6,7 +7,7 @@
 		var active_page = "page";
 	</script>
 	{% include 'posts/header.html' %}
-	<title>{{ title }}</title>
+	<title>{{ threads.0.body_nomarkup|truncate }} | Кропивач</title>
 </head>
 <body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} active-page" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
         {{ boardlist.top }}
@@ -32,15 +33,6 @@
 		{% include 'posts/post_form.html' %}
 	{% else %}
 		{% include 'posts/boardlist.html' %}
-	{% endif %}
-
-	{% if config.page_nav_top %}
-		<div class="pages top">
-			{% for page in pages %}
-			[<a {% if page.selected %}class="selected"{% endif %}{% if not page.selected %}href="{% url 'board_page' board.url page.num %}"{% endif %}>{{ page.num }}</a>]{% if loop.last %} {% endif %}
-			{% endfor %}
-			{{ btn.next }}
-		</div>
 	{% endif %}
 
 	{% if config.global_message %}<hr /><div class="blotter">{{ config.global_message }}</div>{% endif %}

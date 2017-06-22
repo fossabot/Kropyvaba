@@ -4,7 +4,7 @@
 
 # django stuff
 from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
+from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 import random
@@ -12,21 +12,27 @@ from calendar import timegm
 from datetime import datetime, timedelta
 from django.core.paginator import Paginator
 
-from django.views.decorators.cache import cache_page
+# from django.views.decorators.cache import cache_page
 
 # database models
 from posts.models import Board, Posts
 
 from posts.forms import PostForm
-from config.settings import config, CACHE_TTL
+from config.settings import config  # , CACHE_TTL
 
 EMPTY_POST = '(коментар відсутній)'
 boards_update = True  # switch when there are some adding/editing of boards
 boards_cached = {}
 boards_navlist = []
 
+
 # @cache_page(CACHE_TTL)
 def render_index(request):
+    """
+    Render main page with lists of boards, recent posts and statistics
+    :param request: user request
+    :return: main page
+    """
     try:
         boards = get_boards_navlist()
         fields = ['id', 'body_nomarkup', 'thread', 'time', 'ip']
@@ -49,6 +55,13 @@ def render_index(request):
 
 
 def render_board(request, board_name, current_page=1):
+    """
+    Render board with lists of threads and last 5 posts for them
+    :param request: user request
+    :param board_name: name of board that we should render
+    :param current_page: page that user requested
+    :return: board page
+    """
     try:
         board = get_board(board_name)
         board.url = board.uri
@@ -61,7 +74,16 @@ def render_board(request, board_name, current_page=1):
             posts_len = len(thread.posts)
             thread.omitted = posts_len - 5 if posts_len >= 5 else 0
             thread.posts = thread.posts[thread.omitted:]
-        form = PostForm()
+        if request.method == 'POST':
+            form = PostForm(request.POST, request.FILES)
+            ip = get_ip(request)
+            new_post_id = handle_form(form, board_name, ip, None)
+            if new_post_id:
+                return HttpResponseRedirect(
+                    reverse('thread', args=[board_name, new_post_id])
+                    )
+        else:
+            form = PostForm()
         context = {
                     'config': config,
                     'board': board,
@@ -77,8 +99,15 @@ def render_board(request, board_name, current_page=1):
         return HttpResponse('404')
 
 
-#@cache_page(CACHE_TTL)
+# @cache_page(CACHE_TTL)
 def render_thread(request, board_name, thread_id):
+    """
+    Render thread page with all thread's posts
+    :param request: user request
+    :param board_name: name of threads board
+    :param thread_id: thread id
+    :return: thread page
+    """
     try:
         board = get_board(board_name)
         boards = get_boards_navlist()
@@ -86,15 +115,15 @@ def render_thread(request, board_name, thread_id):
         post = get_posts(board).get(id=thread_id)
         post.posts = get_posts(board).filter(thread=post.id)
         if request.method == 'POST':
-            print("is post")
-            form = PostForm(request.POST)
+            form = PostForm(request.POST, request.FILES)
             ip = get_ip(request)
-            if handle_form(form, board_name, ip, thread_id):
+            new_post_id = handle_form(form, board_name, ip, thread_id)
+            if new_post_id:
                 return HttpResponseRedirect(
-                    reverse(
-                        'thread',
-                        args=(board_name,thread_id)
-                    )
+                    reverse('thread', args=[
+                        board_name,
+                        thread_id
+                    ])+'#{0}'.format(new_post_id)
                 )
         else:
             form = PostForm()
@@ -112,17 +141,23 @@ def render_thread(request, board_name, thread_id):
         return HttpResponse('404')
 
 
-def handle_form(form,board, ip, thread):
+def handle_form(form, board, ip, thread):
     """
     Adding new post/thread
+    :param form: form that needs to handle
+    :param board: thread or reply board
+    :param ip: ip of poster
+    :param thread: thread id if we work with reply
+    :return: True if form is valid and processed
     """
     if form.is_valid():
-        print("Form is valid")
         name = form.cleaned_data['name']
         email = form.cleaned_data['email']
         subject = form.cleaned_data['subject']
         body = form.cleaned_data['body']
         password = form.cleaned_data['password']
+        for file in form.files.items():
+            print(file)
         time = int(datetime.timestamp(datetime.now()))
         sage = cycle = locked = sticky = 0
         new_post = Posts[board].objects.create(
@@ -142,7 +177,7 @@ def handle_form(form,board, ip, thread):
         new_post.thread = thread
         new_post.bump = time
         new_post.save()
-        return True
+        return new_post.id
 
 
 def render_catalog(request, board_name):
@@ -150,7 +185,7 @@ def render_catalog(request, board_name):
         board = get_board(board_name)
         boards = get_boards_navlist()
         posts = get_posts(board)
-        recent_posts = [post for post in get_threads(board, posts).order_by('-bump')]
+        recent_posts = [_ for _ in get_threads(board, posts).order_by('-bump')]
         for thrd in recent_posts:
             thrd.reply_count = len(get_posts(board).filter(thread=thrd.id))
         context = {
@@ -163,6 +198,13 @@ def render_catalog(request, board_name):
         return render(request, 'posts/catalog.html', context)
     except ObjectDoesNotExist:
         return HttpResponse('404')
+
+
+def get_media(board_name, path):
+    """
+     deal with media files (sic!)
+    """
+    pass
 
 
 def make_stats(posts):
