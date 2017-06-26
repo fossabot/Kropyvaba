@@ -29,7 +29,7 @@ boards_navlist = []
 # @cache_page(CACHE_TTL)
 def render_index(request):
     """
-    Render main page with lists of boards, recent posts and statistics
+    Renders main page with lists of boards, recent posts and statistics
     :param request: user request
     :return: main page
     """
@@ -56,7 +56,7 @@ def render_index(request):
 
 def render_board(request, board_name, current_page=1):
     """
-    Render board with lists of threads and last 5 posts for them
+    Renders board with lists of threads and last 5 posts for them
     :param request: user request
     :param board_name: name of board that we should render
     :param current_page: page that user requested
@@ -102,7 +102,7 @@ def render_board(request, board_name, current_page=1):
 # @cache_page(CACHE_TTL)
 def render_thread(request, board_name, thread_id):
     """
-    Render thread page with all thread's posts
+    Renders thread page with all thread's posts
     :param request: user request
     :param board_name: name of threads board
     :param thread_id: thread id
@@ -143,7 +143,7 @@ def render_thread(request, board_name, thread_id):
 
 def handle_form(form, board, ip, thread):
     """
-    Adding new post/thread
+    Adds new post/thread
     :param form: form that needs to handle
     :param board: thread or reply board
     :param ip: ip of poster
@@ -170,8 +170,9 @@ def handle_form(form, board, ip, thread):
         new_post.name = name
         new_post.subject = subject
         new_post.email = email
-        new_post.body = markup(body)
-        new_post.body_nomarkup = body
+        new_post.body = body
+        # Tinyboard logic…
+        new_post.body_nomarkup = markup(body, ip)
         new_post.password = password
         new_post.ip = ip
         new_post.thread = thread
@@ -202,19 +203,41 @@ def render_catalog(request, board_name):
 
 def get_media(board_name, path):
     """
-     deal with media files (sic!)
+    Deal with media files (sic!)
     """
     pass
 
 
 def make_stats(data):
+    """
+    Counts posting statistics
+    :param data: posts for statistics
+    :return: Statistics object
+    """
     class Statistic(object):
+        """
+        Object which contain next statistics data:
+        Number of all posts;
+        Number of posted threads;
+        Number of posters;
+        Variables with '_per24' prefix -- same things but for last 24 hours
+        """
         def __init__(self, posts):
             # functions for DRY
-            def count_threads(threads):
-                return len([post for post in threads if not post[2]])
+            def count_threads(_posts):
+                """
+                Counts number of threads in _posts
+                :param _posts: source data
+                :return: number of threads
+                """
+                return len([post for post in _posts if not post[2]])
 
             def count_posters(_posts):
+                """
+                Counts number of uniques posters in _posts
+                :param _posts: source data
+                :return: number of posters
+                """
                 return len(set(post[4] for post in _posts))
             # getting time info
             past = datetime.utcnow() + timedelta(hours=-24)
@@ -240,10 +263,16 @@ def get_posts(board): return Posts[board.uri].objects
 def get_threads(board, posts): return posts.filter(thread=None)
 
 
-def markup(body): return body
+def markup(body, ip):
+    return '{0}\n<tinyboard proxy>{1}</tinyboard>'.format(body, ip)
 
 
 def get_ip(request):
+    """
+    Return a user ip
+    :param request: http/s request
+    :return: ip address
+    """
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
         ip = x_forwarded_for.split(',')[0]
