@@ -207,29 +207,30 @@ def get_media(board_name, path):
     pass
 
 
-def make_stats(posts):
+def make_stats(data):
     class Statistic(object):
         def __init__(self, posts):
             # functions for DRY
             def count_threads(threads):
                 return len([post for post in threads if not post[2]])
 
-            def count_posters(posts):
-                return len(set(post[4] for post in posts))
+            def count_posters(_posts):
+                return len(set(post[4] for post in _posts))
             # getting time info
             past = datetime.utcnow() + timedelta(hours=-24)
             stamp = timegm(past.timetuple())
             # total objects
-            self.total_posts = max(*[post[0] for post in posts])
+            self.total_posts = sum([max(*[p[0]
+                                          for p in posts if p[5] is board])
+                                    for board in get_boards_navlist()])
             self.total_threads = count_threads(posts)
             self.posters = count_posters(posts)
             # objects for last 24 hours
-            posts = [post for post in posts if post[3] >= stamp]
-            print(type(posts))
-            self.posts_per24 = len(posts)
-            self.threads_per24 = count_threads(posts)
-            self.posters_per24 = count_posters(posts)
-    stats = Statistic(posts)
+            last_posts = [post for post in posts if post[3] >= stamp]
+            self.posts_per24 = len(last_posts)
+            self.threads_per24 = count_threads(last_posts)
+            self.posters_per24 = count_posters(last_posts)
+    stats = Statistic(data)
     return stats
 
 
