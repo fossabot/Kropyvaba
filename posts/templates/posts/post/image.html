@@ -1,5 +1,7 @@
 {% load index %}
-<a href=""
+<a href="
+	{% url 'media' board.uri 'src' file.file %}
+    "
 	 target="_blank"
 	{% if post.thumb == 'file' or filename|extension == 'webm' or file|extension == 'mp4' %}
 		 class="file"

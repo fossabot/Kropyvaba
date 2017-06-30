@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
+from django.views.static import serve
 import random
 from calendar import timegm
 from datetime import datetime, timedelta
@@ -18,6 +19,7 @@ from django.core.paginator import Paginator
 from posts.models import Board, Posts
 
 from posts.forms import PostForm
+from config.settings import MEDIA_ROOT
 from config.settings import config  # , CACHE_TTL
 
 EMPTY_POST = '(коментар відсутній)'
@@ -201,11 +203,12 @@ def render_catalog(request, board_name):
         return HttpResponse('404')
 
 
-def get_media(board_name, path):
+def get_media(request, board_name, media_type, path):
     """
     Deal with media files (sic!)
     """
-    pass
+    root = '{0}{1}/{2}'.format(MEDIA_ROOT, media_type, board_name)
+    return serve(request, path, document_root=root)
 
 
 def make_stats(data):
