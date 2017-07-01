@@ -17,7 +17,7 @@ function multi_image() {
 
         var images_len = $('form:not([id="quick-reply"]) [type=file]').length;
         
-        if (!(images_len >= max_images)) {
+        if (!(images_len >= 4)) {
             var new_file = '<br class="file_separator"/><input type="file" name="file'+(images_len+1)+'" id="upload_file'+(images_len+1)+'">';
 
             $('[type=file]:last').after(new_file);
@@ -29,6 +29,6 @@ function multi_image() {
     })
 }
 
-if (active_page == 'thread' || active_page == 'index' && max_images > 1) {
+if (active_page == 'thread' || active_page == 'index' && 4 > 1) {
 	$(document).ready(multi_image);
 }

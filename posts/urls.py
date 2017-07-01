@@ -30,7 +30,8 @@ urlpatterns = [
         name="catalog"
         ),
     url(
-        '^(?P<board_name>[A-Za-z]+)/(?P<media_type>(src|thumb))/(?P<path>.*)$',
+        r'^(?P<board_name>[A-Za-z]+)/'
+        r'(?P<media_type>(src|thumb))/(?P<path>.*)$',
         get_media,
         name='media'
         ),

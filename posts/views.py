@@ -2,6 +2,10 @@
 
 """file with backend code"""
 
+import logging
+
+import simplejson as json
+
 # django stuff
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -22,17 +26,24 @@ from posts.forms import PostForm
 from config.settings import MEDIA_ROOT
 from config.settings import config  # , CACHE_TTL
 
+from PIL import Image
+from imagekit import ImageSpec
+from imagekit.processors import ResizeToFit
+
 EMPTY_POST = '(коментар відсутній)'
 boards_update = True  # switch when there are some adding/editing of boards
 boards_cached = {}
 boards_navlist = []
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 
 # @cache_page(CACHE_TTL)
 def render_index(request):
     """
     Renders main page with lists of boards, recent posts and statistics
-    :param request: user request
+    :param request: user's request
     :return: main page
     """
     try:
@@ -59,7 +70,7 @@ def render_index(request):
 def render_board(request, board_name, current_page=1):
     """
     Renders board with lists of threads and last 5 posts for them
-    :param request: user request
+    :param request: user's request
     :param board_name: name of board that we should render
     :param current_page: page that user requested
     :return: board page
@@ -77,6 +88,7 @@ def render_board(request, board_name, current_page=1):
             thread.omitted = posts_len - 5 if posts_len >= 5 else 0
             thread.posts = thread.posts[thread.omitted:]
         if request.method == 'POST':
+            # TODO: add dollchan's requests handling
             form = PostForm(request.POST, request.FILES)
             ip = get_ip(request)
             new_post_id = handle_form(form, board_name, ip, None)
@@ -105,7 +117,7 @@ def render_board(request, board_name, current_page=1):
 def render_thread(request, board_name, thread_id):
     """
     Renders thread page with all thread's posts
-    :param request: user request
+    :param request: user's request
     :param board_name: name of threads board
     :param thread_id: thread id
     :return: thread page
@@ -117,16 +129,28 @@ def render_thread(request, board_name, thread_id):
         post = get_posts(board).get(id=thread_id)
         post.posts = get_posts(board).filter(thread=post.id)
         if request.method == 'POST':
+            json_response = 'json_response' in request.POST
             form = PostForm(request.POST, request.FILES)
             ip = get_ip(request)
             new_post_id = handle_form(form, board_name, ip, thread_id)
             if new_post_id:
-                return HttpResponseRedirect(
-                    reverse('thread', args=[
-                        board_name,
-                        thread_id
-                    ])+'#{0}'.format(new_post_id)
-                )
+                if json_response:
+                    respond = json.dumps({
+                        'id': new_post_id,
+                        'noko': False,
+                        'redirect': '/'+board_name
+                    })
+                    return HttpResponse(
+                        respond,
+                        content_type="application/json"
+                    )
+                else:
+                    return HttpResponseRedirect(
+                        reverse('thread', args=[
+                            board_name,
+                            thread_id
+                        ])+'#{0}'.format(new_post_id)
+                    )
         else:
             form = PostForm()
         context = {
@@ -158,12 +182,13 @@ def handle_form(form, board, ip, thread):
         subject = form.cleaned_data['subject']
         body = form.cleaned_data['body']
         password = form.cleaned_data['password']
-        for file in form.files.items():
-            print(file)
-        time = int(datetime.timestamp(datetime.now()))
+        time = datetime.timestamp(datetime.now())
+        if thread is None and form.files == {}:
+            return False
+        files = handle_files(form.files, str(time), board)
         sage = cycle = locked = sticky = 0
         new_post = Posts[board].objects.create(
-            time=time,
+            time=int(time),
             sage=sage,
             cycle=cycle,
             locked=locked,
@@ -173,6 +198,7 @@ def handle_form(form, board, ip, thread):
         new_post.subject = subject
         new_post.email = email
         new_post.body = body
+        new_post.files = json.dumps(files)
         # Tinyboard logic…
         new_post.body_nomarkup = markup(body, ip)
         new_post.password = password
@@ -183,7 +209,82 @@ def handle_form(form, board, ip, thread):
         return new_post.id
 
 
+def handle_files(files, time, board):
+    """
+    Checks and save files.
+    :param files: files fot handling
+    :param time: current time
+    :param board: post's board
+    :return: json list of files features
+    """
+    _files = []
+    for file in files.items():
+        size = file[1].size
+        if size <= config['max_filesize']:
+            name = file[1].name
+            ext = name.split('.')[-1]
+            content_type = file[1].content_type  # TODO: doesn't work when doll
+            if ext in config['allowed_ext']:
+                path = '{0}src/{1}/{2}.{3}'.format(MEDIA_ROOT,
+                                                   board,
+                                                   time,
+                                                   ext)
+                # file saving
+                # TODO: add file exist checking
+                with open(path, 'wb+') as destination:
+                    for chunk in file[1].chunks():
+                        destination.write(chunk)
+                destination.close()
+
+                # TODO: add webm handling
+                image = Image.open(path)
+
+                path = '{0}thumb/{1}/{2}.jpg'.format(MEDIA_ROOT,
+                                                     board,
+                                                     time)
+                # thumb generation
+                thumb_generator = Thumbnail(source=file[1])
+                thumb = thumb_generator.generate()
+
+                destination = open(path, 'wb+')
+                destination.write(thumb.read())
+                destination.close()
+
+                thumb = Image.open(path)
+
+                file_data = {
+                    "name": name,
+                    "type": content_type,
+                    "tmp_name": ".",  # ???
+                    "error": 0,
+                    "size": size,
+                    "filename": name,
+                    "extension": ext,
+                    "file_id": time,
+                    "file": '{0}.{1}'.format(time, ext),
+                    "thumb": '{0}.jpg'.format(time),
+                    "is_an_image": content_type.split('/')[0] == 'image',
+                    "hash": "c5c76d11ff82103d18c3c9767bcb881e",
+                    "width": image.width,
+                    "height": image.height,
+                    "thumbwidth": thumb.width,
+                    "thumbheight": thumb.height,
+                    "file_path": '{0}/src/{1}.{2}'.format(board, time, ext),
+                    "thumb_path": '{0}/thumb/{1}.jpg'.format(board, time)
+                }
+                image.close()
+                thumb.close()
+                _files.append(file_data)
+    return _files
+
+
 def render_catalog(request, board_name):
+    """
+    Renders catalog page for specific board
+    :param request: user's request
+    :param board_name: board url
+    :return: catalog page
+    """
     try:
         board = get_board(board_name)
         boards = get_boards_navlist()
@@ -260,13 +361,25 @@ def make_stats(data):
     return stats
 
 
-def get_posts(board): return Posts[board.uri].objects
+def get_posts(board):
+    """
+    Returns post's query
+    :param board: board %)
+    :return: post's query
+    """
+    return Posts[board.uri].objects
 
 
-def get_threads(board, posts): return posts.filter(thread=None)
+def get_threads(board, posts): return posts.filter(thread=None)  # TODO: ???
 
 
 def markup(body, ip):
+    """
+    Generates a markup for text
+    :param body: text for processing
+    :param ip: user's ip
+    :return: markuped text
+    """
     return '{0}\n<tinyboard proxy>{1}</tinyboard>'.format(body, ip)
 
 
@@ -286,7 +399,8 @@ def get_ip(request):
 
 def get_board(board_uri):
     """
-    Return cached board object
+    TODO: rewrite
+    :return: cached board object
     """
     global boards_cached
     global boards_update
@@ -296,6 +410,10 @@ def get_board(board_uri):
 
 
 def get_boards_navlist():
+    """
+    TODO: rewrite
+    :return: board
+    """
     global boards_update
     global boards_navlist
     if boards_update:
@@ -305,11 +423,23 @@ def get_boards_navlist():
 
 
 class PostBreaf(object):
+    """
+    Object for main page
+    """
     def __init__(self, post):
         self.id, body, self.thread, self.time, _, board = post
-        # slice last row
 
+        # slice last row
         def s(x): return '\n'.join(x.split('\n')[:-1])
         self.snippet = s(body) if len(s(body)) else EMPTY_POST
         self.board_name = board.title
         self.board_url = board.uri
+
+
+class Thumbnail(ImageSpec):
+    """
+    Thumbnail setting's
+    """
+    processors = [ResizeToFit(255, 255)]
+    format = 'JPEG'
+    options = {'quality': 60}
