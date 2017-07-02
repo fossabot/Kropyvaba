@@ -16,7 +16,7 @@ function multi_image() {
         e.preventDefault();
 
         var images_len = $('form:not([id="quick-reply"]) [type=file]').length;
-        
+// TODO: Fix magic numbers
         if (!(images_len >= 4)) {
             var new_file = '<br class="file_separator"/><input type="file" name="file'+(images_len+1)+'" id="upload_file'+(images_len+1)+'">';
 

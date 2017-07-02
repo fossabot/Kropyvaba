@@ -173,7 +173,7 @@ config = {
     ],
     'max_filesize': 40 * 1024 * 1024,  # 40MB
     'max_images': 4,
-    'allowed_ext': ['png', 'jpeg', 'gif', 'jpg'],
+    'allowed_ext': ['png', 'jpeg', 'gif', 'jpg', 'webm'],
     'uri_stylesheets': '',
     'font_awesome': True,
     'post_date': "%d-%m-%y о %H:%M:%S",

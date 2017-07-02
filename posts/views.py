@@ -1,6 +1,8 @@
 # coding: utf-8
 
 """file with backend code"""
+from subprocess import call
+from tempfile import NamedTemporaryFile
 
 import logging
 
@@ -16,6 +18,7 @@ import random
 from calendar import timegm
 from datetime import datetime, timedelta
 from django.core.paginator import Paginator
+from django.core.files.uploadedfile import UploadedFile
 
 # from django.views.decorators.cache import cache_page
 
@@ -56,12 +59,12 @@ def render_index(request):
         recent_posts = [PostBreaf(post) for post in posts[::-1]]
         recent_posts = sorted(recent_posts, key=lambda x: x.time, reverse=True)
         context = {
-                    'config': config,
-                    'boards': boards.exclude(uri='bugs'),
-                    'slogan': random.choice(config['slogan']),
-                    'stats': make_stats(posts),
-                    'recent_posts': recent_posts[:30]
-                }
+            'config': config,
+            'boards': boards.exclude(uri='bugs'),
+            'slogan': random.choice(config['slogan']),
+            'stats': make_stats(posts),
+            'recent_posts': recent_posts[:30]
+        }
         return render(request, 'posts/main_page.html', context)
     except ObjectDoesNotExist:
         return HttpResponse('404')
@@ -95,19 +98,19 @@ def render_board(request, board_name, current_page=1):
             if new_post_id:
                 return HttpResponseRedirect(
                     reverse('thread', args=[board_name, new_post_id])
-                    )
+                )
         else:
             form = PostForm()
         context = {
-                    'config': config,
-                    'board': board,
-                    'boards': get_boards_navlist(),
-                    'threads': threads,
-                    'pages': pages,
-                    'hr': True,
-                    'index': True,
-                    'form': form
-                }
+            'config': config,
+            'board': board,
+            'boards': get_boards_navlist(),
+            'threads': threads,
+            'pages': pages,
+            'hr': True,
+            'index': True,
+            'form': form
+        }
         return render(request, 'posts/index.html', context)
     except ObjectDoesNotExist:
         return HttpResponse('404')
@@ -138,7 +141,7 @@ def render_thread(request, board_name, thread_id):
                     respond = json.dumps({
                         'id': new_post_id,
                         'noko': False,
-                        'redirect': '/'+board_name
+                        'redirect': '/' + board_name
                     })
                     return HttpResponse(
                         respond,
@@ -149,19 +152,19 @@ def render_thread(request, board_name, thread_id):
                         reverse('thread', args=[
                             board_name,
                             thread_id
-                        ])+'#{0}'.format(new_post_id)
+                        ]) + '#{0}'.format(new_post_id)
                     )
         else:
             form = PostForm()
         context = {
-                    'config': config,
-                    'board': board,
-                    'boards': boards,
-                    'threads': [post],
-                    'hr': True,
-                    'form': form,
-                    'id': 1
-                }
+            'config': config,
+            'board': board,
+            'boards': boards,
+            'threads': [post],
+            'hr': True,
+            'form': form,
+            'id': 1
+        }
         return render(request, 'posts/page.html', context)
     except ObjectDoesNotExist:
         return HttpResponse('404')
@@ -225,32 +228,49 @@ def handle_files(files, time, board):
             ext = name.split('.')[-1]
             content_type = file[1].content_type  # TODO: doesn't work when doll
             if ext in config['allowed_ext']:
-                path = '{0}src/{1}/{2}.{3}'.format(MEDIA_ROOT,
-                                                   board,
-                                                   time,
-                                                   ext)
+
                 # file saving
-                # TODO: add file exist checking
+                index = file[0].replace('file', '')
+                path = choose_path(board, 'src', time, ext, index)
+
                 with open(path, 'wb+') as destination:
                     for chunk in file[1].chunks():
                         destination.write(chunk)
                 destination.close()
 
-                # TODO: add webm handling
-                image = Image.open(path)
+                # TODO: Refactor all this hell
 
-                path = '{0}thumb/{1}/{2}.jpg'.format(MEDIA_ROOT,
-                                                     board,
-                                                     time)
-                # thumb generation
-                thumb_generator = Thumbnail(source=file[1])
-                thumb = thumb_generator.generate()
+                if ext == 'webm':
+                    temp_file = NamedTemporaryFile()
+                    temp_path = temp_file.name + '.png'
+                    call(["ffmpeg",
+                          "-i", path,
+                          "-vframes", "1",
+                          temp_path])
+                    temp_file.close()
+                    temp_th = open(temp_path, 'rb+')
+                    preview = UploadedFile(file=temp_th)
+                    logger.debug(type(preview))
+                    thumb_generator = Thumbnail(source=preview)
+                    thumb = thumb_generator.generate()
+                    preview.close()
+                else:
+                    image = Image.open(path)
+                    thumb_generator = Thumbnail(source=file[1])
+                    thumb = thumb_generator.generate()
+
+                path = choose_path(board, 'thumb', time, 'jpg', index)
 
                 destination = open(path, 'wb+')
                 destination.write(thumb.read())
                 destination.close()
 
                 thumb = Image.open(path)
+
+                filename = '{0}-{1}.{2}'.format(time, index, ext)
+
+                if ext == 'webm':
+                    image = thumb
 
                 file_data = {
                     "name": name,
@@ -261,21 +281,34 @@ def handle_files(files, time, board):
                     "filename": name,
                     "extension": ext,
                     "file_id": time,
-                    "file": '{0}.{1}'.format(time, ext),
-                    "thumb": '{0}.jpg'.format(time),
+                    "file": filename,
+                    "thumb": '{0}-{1}.jpg'.format(time, index),
                     "is_an_image": content_type.split('/')[0] == 'image',
                     "hash": "c5c76d11ff82103d18c3c9767bcb881e",
                     "width": image.width,
                     "height": image.height,
                     "thumbwidth": thumb.width,
                     "thumbheight": thumb.height,
-                    "file_path": '{0}/src/{1}.{2}'.format(board, time, ext),
-                    "thumb_path": '{0}/thumb/{1}.jpg'.format(board, time)
+                    "file_path": '{0}/src/{1}'.format(board, filename),
+                    "thumb_path": '{0}/thumb/{1}-{2}.jpg'.format(board,
+                                                                 time,
+                                                                 index)
                 }
                 image.close()
                 thumb.close()
                 _files.append(file_data)
     return _files
+
+
+def choose_path(board, _type, time, ext, index):
+    path = '{0}{1}/{2}/{3}-{4}.{5}'.format(MEDIA_ROOT,
+                                           _type,
+                                           board,
+                                           time,
+                                           index,
+                                           ext
+                                           )
+    return path
 
 
 def render_catalog(request, board_name):
@@ -293,12 +326,12 @@ def render_catalog(request, board_name):
         for thrd in recent_posts:
             thrd.reply_count = len(get_posts(board).filter(thread=thrd.id))
         context = {
-                    'config': config,
-                    'board': board,
-                    'boards': boards,
-                    'recent_posts': recent_posts,
-                    'hr': True
-                }
+            'config': config,
+            'board': board,
+            'boards': boards,
+            'recent_posts': recent_posts,
+            'hr': True
+        }
         return render(request, 'posts/catalog.html', context)
     except ObjectDoesNotExist:
         return HttpResponse('404')
@@ -318,6 +351,7 @@ def make_stats(data):
     :param data: posts for statistics
     :return: Statistics object
     """
+
     class Statistic(object):
         """
         Object which contain next statistics data:
@@ -326,6 +360,7 @@ def make_stats(data):
         Number of posters;
         Variables with '_per24' prefix -- same things but for last 24 hours
         """
+
         def __init__(self, posts):
             # functions for DRY
             def count_threads(_posts):
@@ -343,6 +378,7 @@ def make_stats(data):
                 :return: number of posters
                 """
                 return len(set(post[4] for post in _posts))
+
             # getting time info
             past = datetime.utcnow() + timedelta(hours=-24)
             stamp = timegm(past.timetuple())
@@ -357,6 +393,7 @@ def make_stats(data):
             self.posts_per24 = len(last_posts)
             self.threads_per24 = count_threads(last_posts)
             self.posters_per24 = count_posters(last_posts)
+
     stats = Statistic(data)
     return stats
 
@@ -426,11 +463,13 @@ class PostBreaf(object):
     """
     Object for main page
     """
+
     def __init__(self, post):
         self.id, body, self.thread, self.time, _, board = post
 
         # slice last row
         def s(x): return '\n'.join(x.split('\n')[:-1])
+
         self.snippet = s(body) if len(s(body)) else EMPTY_POST
         self.board_name = board.title
         self.board_url = board.uri
