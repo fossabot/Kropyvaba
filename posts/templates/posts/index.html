@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html>
 <head>
@@ -32,7 +33,6 @@
 					{{ board.subtitle }}
 				{% endif %}
 			{% endif %}
-            {% if mod %}<p><a href="?/">Return to dashboard</a></p>{% endif %}
 		</div>
 	</header>
 
@@ -43,7 +43,9 @@
 	{% if not no_post_form %}
 		{% include 'posts/post_form.html' %}
 	{% else %}
-		{% include 'posts/boardlist.html' %}
+			<div class="boardlist">
+                {% include 'posts/boardlist.html' %}
+            </div>
 	{% endif %}
 
 	{% if config.page_nav_top %}
@@ -80,7 +82,30 @@
 			 | <a href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">Catalog</a>
 		{% endif %}
 	</div>
+
+    <hr>
+    <div class="boardlist bottom">
+        {% include 'posts/boardlist.html' %}
+    </div>
+
 	<footer>
-	</footer>
+		<p class="unimportant" style="margin-top:20px;text-align:center;">- Kropyvaba + Vichan's templates
+			<br><a href="https://github.com/SHooZ/Kropyvaba">Kropyvaba</a> Copyright &copy; 2017 SHooZ
+			<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2017 vichan-devel</p>
+		{% for footer in config.footer %}<p class="unimportant" style="text-align:center;">{{ footer }}</p>{% endfor %}
+</footer>
+
+	<script type="text/javascript">
+		var styles = {
+
+			{% for name, uri in config.stylesheets %}'{{ name }}' : '{% static uri %}',
+			{% endfor %}
+		}; onready(init);
+	</script>
+
+	<script type="text/javascript">
+		ready();
+	</script>
+
 </body>
 </html>

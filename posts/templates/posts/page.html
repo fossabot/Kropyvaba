@@ -1,4 +1,5 @@
 {% load index %}
+{% load static %}
 <!doctype html>
 <html>
 <head>
@@ -10,7 +11,9 @@
 	<title>{{ threads.0.body_nomarkup|truncate }} | Кропивач</title>
 </head>
 <body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} active-page" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
-        {{ boardlist.top }}
+	<div class="boardlist">
+        {% include 'posts/boardlist.html' %}
+    </div>
 	<header>
 		<h1>/{{ board.url }}/ - {{ board.title }}</h1>
 		<div class="subtitle">
@@ -21,7 +24,6 @@
 					{{ board.subtitle }}
 				{% endif %}
 			{% endif %}
-            {% if mod %}<p><a href="?/">Return to dashboard</a></p>{% endif %}
 		</div>
 	</header>
 
@@ -43,11 +45,44 @@
 	{% for post in threads %}
             {% include 'posts/post_thread.html' %}
     {% endfor %}
+        <hr>
+        		<div id="thread-interactions">
+			<span id="thread-links">
+				<a id="thread-return" href="{% url 'board' board.url %}">[Return]</a>
+				<a id="thread-top" href="#top">[Go to top]</a>
+                		{% if config.catalog_link %}
+					<a id="thread-catalog" href="{% url 'catalog' board.url %}">[Catalog]</a>
+		                {% endif %}
+			</span>
+
+			<span id="thread-quick-reply">
+				<a id="link-quick-reply" href="#">[Post a Reply]</a>
+</span>
 	{% include 'posts/report_delete.html' %}
 </form>
 
 	<hr>
+	<div class="boardlist bottom">
+        {% include 'posts/boardlist.html' %}
+    </div>
 	<footer>
-	</footer>
+		<p class="unimportant" style="margin-top:20px;text-align:center;">- Kropyvaba + Vichan's templates
+			<br><a href="https://github.com/SHooZ/Kropyvaba">Kropyvaba</a> Copyright &copy; 2017 SHooZ
+			<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2017 vichan-devel</p>
+		{% for footer in config.footer %}<p class="unimportant" style="text-align:center;">{{ footer }}</p>{% endfor %}
+</footer>
+
+	<script type="text/javascript">
+		var styles = {
+
+			{% for name, uri in config.stylesheets %}'{{ name }}' : '{% static uri %}',
+			{% endfor %}
+		}; onready(init);
+	</script>
+
+	<script type="text/javascript">
+		ready();
+	</script>
+
 </body>
 </html>

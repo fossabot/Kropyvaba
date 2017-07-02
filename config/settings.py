@@ -162,6 +162,7 @@ config = {
     'default_stylesheet': {
         '1': 'ukrchan.css'
     },
+    'stylesheets': [['Ukrchan', 'ukrchan.css'], ['Futaba', 'futaba.css']],
     'additional_javascript': [
         'jquery.min.js',
         'jquery-ui.custom.min.js',
@@ -170,6 +171,7 @@ config = {
         'expand-video.js',
         'dollchan.js',
     ],
+    'footer': ['Кропивач 2016-2017'],
     'max_filesize': 40 * 1024 * 1024,  # 40MB
     'max_images': 4,
     'allowed_ext': ['png', 'jpeg', 'gif', 'jpg', 'webm'],

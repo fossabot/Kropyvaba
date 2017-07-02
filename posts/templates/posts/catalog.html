@@ -10,7 +10,10 @@
 	<title>{{ board.uri }} - Catalog</title>
 </head>
 <body class="8chan vichan is-not-moderator theme-catalog active-catalog" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
-	{% include 'posts/boardlist.html' %}
+
+	<div class="boardlist">
+        {% include 'posts/boardlist.html' %}
+    </div>
 	<header>
 		<h1>{{ config.title }} (<a href="{{link}}">/{{ board.uri }}/</a>)</h1>
 		<div class="subtitle">{{ config.subtitle }}</div>
@@ -73,14 +76,13 @@
 	
 	<hr/>
 	<footer>
-		<p class="unimportant" style="margin-top:20px;text-align:center;">- Tinyboard + 
-			<a href="https://engine.vichan.net/">vichan</a> {{ config.version }} -
-		<br>Tinyboard Copyright &copy; 2010-2014 Tinyboard Development Group    
-		<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2016 vichan-devel</p>
-	</footer>
+		<p class="unimportant" style="margin-top:20px;text-align:center;">- Kropyvaba + Vichan's templates
+			<br><a href="https://github.com/SHooZ/Kropyvaba">Kropyvaba</a> Copyright &copy; 2017 SHooZ
+			<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2017 vichan-devel</p>
+		{% for footer in config.footer %}<p class="unimportant" style="text-align:center;">{{ footer }}</p>{% endfor %}
+</footer>
 	<script type="text/javascript">
 		var styles = {
-			
 			{% for name, uri in config.stylesheets %}'{{ name }}' : '/stylesheets/{{ uri }}',
 			{% endfor %}
 		}; onready(init);

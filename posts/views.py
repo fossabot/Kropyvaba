@@ -91,14 +91,25 @@ def render_board(request, board_name, current_page=1):
             thread.omitted = posts_len - 5 if posts_len >= 5 else 0
             thread.posts = thread.posts[thread.omitted:]
         if request.method == 'POST':
-            # TODO: add dollchan's requests handling
+            json_response = 'json_response' in request.POST
             form = PostForm(request.POST, request.FILES)
             ip = get_ip(request)
             new_post_id = handle_form(form, board_name, ip, None)
             if new_post_id:
-                return HttpResponseRedirect(
-                    reverse('thread', args=[board_name, new_post_id])
-                )
+                if json_response:
+                    respond = json.dumps({
+                        'id': new_post_id,
+                        'noko': False,
+                        'redirect': '/' + board_name
+                    })
+                    return HttpResponse(
+                        respond,
+                        content_type="application/json"
+                    )
+                else:
+                    return HttpResponseRedirect(
+                        reverse('thread', args=[board_name, new_post_id])
+                    )
         else:
             form = PostForm()
         context = {
