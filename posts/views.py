@@ -270,7 +270,7 @@ def handle_files(files, time, board):
                 filename = '{0}-{1}.{2}'.format(time, index, ext)
 
                 if ext == 'webm':
-                    image = thumb
+                    image = Image.open(temp_path)
 
                 file_data = {
                     "name": name,

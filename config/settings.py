@@ -167,7 +167,6 @@ config = {
         'jquery-ui.custom.min.js',
         'multi-image.js',
         'style-select.js',
-        'webm-settings.js',
         'expand-video.js',
         'dollchan.js',
     ],
