@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html>
 <head>
@@ -5,7 +6,7 @@
         <script type="text/javascript">
 	  var
           {% if not no_post_form %}
-              active_page = "index"
+              active_page = "board"
             , board_name = "{{ board.uri }}";
 	  {% else %}
               active_page = "ukko";
@@ -17,9 +18,10 @@
 </head>
 <body class="8chan vichan is-not-moderator active-index" data-stylesheet="default">
 
-	{% include 'posts/boardlist.html' %}
-	
-	{% if pm %}<div class="top_notice">You have <a href="?/PM/{{ pm.id }}">an unread PM</a>{% if pm.waiting > 0 %}, plus {{ pm.waiting }} more waiting{% endif %}.</div><hr />{% endif %}
+	<div class="boardlist">
+        {% include 'posts/boardlist.html' %}
+    </div>
+	<script type="text/javascript">if (typeof do_boardlist != 'undefined') do_boardlist();</script>
 	{% if config.url_banner %}<img class="board_image" src="{{ config.url_banner }}" {% if config.banner_width or config.banner_height %}style="{% if config.banner_width %}width:{{ config.banner_width }}px{% endif %};{% if config.banner_width %}height:{{ config.banner_height }}px{% endif %}" {% endif %}alt="" />{% endif %}
 
 
@@ -33,7 +35,6 @@
 					{{ board.subtitle }}
 				{% endif %}
 			{% endif %}
-            {% if mod %}<p><a href="?/">Return to dashboard</a></p>{% endif %}
 		</div>
 	</header>
 
@@ -44,13 +45,15 @@
 	{% if not no_post_form %}
 		{% include 'posts/post_form.html' %}
 	{% else %}
-		{% include 'posts/boardlist.html' %}
+			<div class="boardlist">
+                {% include 'posts/boardlist.html' %}
+            </div>
 	{% endif %}
 
 	{% if config.page_nav_top %}
 		<div class="pages top">
 			{% for page in pages %}
-			 [<a {% if page.selected %}class="selected"{% endif %}{% if not page.selected %}href="{{ page.link }}"{% endif %}>{{ page.num }}</a>]{% if loop.last %} {% endif %}
+			[<a {% if page.selected %}class="selected"{% endif %}{% if not page.selected %}href="{% url 'board_page' board.url page.num %}"{% endif %}>{{ page.num }}</a>]{% if loop.last %} {% endif %}
 			{% endfor %}
 			{{ btn.next }}
 		</div>
@@ -68,14 +71,43 @@
 </form>
 
 	<div class="pages">
-		{{ btn.prev }} {% for page in pages %}
-		 [<a {% if page.selected %}class="selected"{% endif %}{% if not page.selected %}href="{{ page.link }}"{% endif %}>{{ page.num }}</a>]{% if loop.last %} {% endif %}
-		{% endfor %} {{ btn.next }}
+        {% if threads.has_previous %}
+        <form action="{% url 'board_page' board.url threads.previous_page_number %}" method="get"><input value="Prev" type="submit"></form>
+		{% endif %}
+		{% for page in pages.page_range %}
+		[<a {% if page == threads.number %}class="selected"{% endif %}{% if page != threads.number %}href="{% url 'board_page' board.url page %}"{% endif %}>{{ page }}</a>]
+		{% endfor %}
+		{% if threads.has_next %}
+		<form action="{% url 'board_page' board.url threads.next_page_number %}" method="get"><input value="Next" type="submit"></form>
+		{% endif %}
 		{% if config.catalog_link %}
 			 | <a href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">Catalog</a>
 		{% endif %}
 	</div>
+
+    <hr>
+    <div class="boardlist bottom">
+        {% include 'posts/boardlist.html' %}
+    </div>
+
 	<footer>
-	</footer>
+		<p class="unimportant" style="margin-top:20px;text-align:center;">- Kropyvaba + Vichan's templates
+			<br><a href="https://github.com/SHooZ/Kropyvaba">Kropyvaba</a> Copyright &copy; 2017 SHooZ
+			<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2017 vichan-devel</p>
+		{% for footer in config.footer %}<p class="unimportant" style="text-align:center;">{{ footer }}</p>{% endfor %}
+</footer>
+
+	<script type="text/javascript">
+		var styles = {
+
+			{% for name, uri in config.stylesheets %}'{{ name }}' : '{% static uri %}',
+			{% endfor %}
+		}; onready(init);
+	</script>
+
+	<script type="text/javascript">
+		ready();
+	</script>
+
 </body>
 </html>

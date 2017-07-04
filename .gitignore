@@ -7,6 +7,7 @@ __init__.py
 # Distribution / packaging
 .Python
 .env/
+.idea/
 
 # Unit test / coverage reports
 htmlcov/
@@ -31,6 +32,10 @@ local_settings.py
 docs/_build/
 
 *.sqlite3
+*.rdb
 migrations/
 
 .directory
+config/secret_key.py
+static/
+media/

@@ -1,14 +1,12 @@
-<div class="boardlist">
     <span class="sub" data-description="0">
-        [ 
-          <a href="https://www.kropyva.ch/">Кропивач</a>
+        [
+          <a href="{% url 'index' %}">Кропивач</a>
         ]
     </span>
     <span class="sub" data-description="1">
-        [ 
+        [
           {% for board in boards %}
-            <a href="{% url 'board' board.uri %}" title="{{ board.name }}">{{ board.uri }}</a> / 
+            <a href="{% url 'board' board.uri %}" title="{{ board.name }}">{{ board.uri }}</a> /
           {% endfor %}
         ]
     </span>
-</div>

@@ -1,3 +1,7 @@
 Django==1.11.2
+flake8==3.3.0
+django-debug-toolbar==1.7
+django-redis==4.7.0
 simplejson==3.11.1
-pyup-django==0.4.0
+pillow
+django-imagekit==4.0.1

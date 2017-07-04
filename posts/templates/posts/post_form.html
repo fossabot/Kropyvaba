@@ -1,175 +1,86 @@
 <form name="post" onsubmit="return dopost(this);" enctype="multipart/form-data" action="{{ config.post_url }}" method="post">
-
+{% csrf_token %}
 {% if id %}<input type="hidden" name="thread" value="{{ id }}">{% endif %}
-
 <input type="hidden" name="board" value="{{ board.uri }}">
-
 {% if current_page %}
 	<input type="hidden" name="page" value="{{ current_page }}">
 {% endif %}
-{% if mod %}<input type="hidden" name="mod" value="1">{% endif %}
 	<table>
 		{% if not config.field_disable_name  %}<tr>
 			<th>
 				Name
-				
 			</th>
 			<td>
-				<input type="text" name="name" size="25" maxlength="35" autocomplete="off"> {% if config.allow_no_country and config.country_flags %}<input id="no_country" name="no_country" type="checkbox"> <label for="no_country">Don't show my flag</label>{% endif %}
-				
+				{{ form.name }}
 			</td>
 		</tr>{% endif %}
 		{% if not config.field_disable_email  %}<tr>
 			<th>
 				Email
-				
 			</th>
 			<td>
 				{% if config.field_email_selectbox %}
-				<select name="email" id="email_selectbox" autocomplete="off">
-					<option value=""></option>
-					<option value="sage">sage</option>
-					{% if not config.always_noko %}<option value="noko">noko</option>{% endif %}
-				</select>
+                    <select name="email" id="email_selectbox" autocomplete="off">
+                        <option value=""></option>
+                        <option value="sage">sage</option>
+                    </select>
 				{% else %}
-				<input type="text" name="email" size="25" maxlength="40" autocomplete="off">
+				    {{ form.email }}
 				{% endif %}
-				
-				{% if config.field_disable_subject  %}
-				<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />{% if config.spoiler_images %} <input id="spoiler" name="spoiler" type="checkbox"> <label for="spoiler">Spoiler Image</label>				{% endif %}
+                {% if config.field_disable_subject  %}
+				    <input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />
+                    {% if config.spoiler_images %}
+                        <input id="spoiler" name="spoiler" type="checkbox">
+                        <label for="spoiler">Spoiler Image</label>
+                    {% endif %}
 				{% endif %}
-				
 			</td>
 		</tr>{% endif %}
 		{% if not config.field_disable_subject %}<tr>
 			<th>
 				Subject
-				
 			</th>
 			<td>
-				<input style="float:left;" type="text" name="subject" size="25" maxlength="100" autocomplete="off">
-				<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />{% if config.spoiler_images %} <input id="spoiler" name="spoiler" type="checkbox"> <label for="spoiler">Spoiler Image</label>{% endif %}
+				{{ form.subject }}
+				<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />
+                {% if config.spoiler_images %}
+                    <input id="spoiler" name="spoiler" type="checkbox">
+                    <label for="spoiler">Spoiler Image</label>
+                {% endif %}
 			</td>
 		</tr>
 		{% endif %}
 		<tr>
 			<th>
 				Comment
-				
 			</th>
 			<td>
-				<textarea name="body" id="body" rows="5" cols="35"></textarea>
-				
+                {{ form.body }}
 				{% if config.field_disable_subject %}
 				{% if config.field_disable_email %}
-				<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />{% if config.spoiler_images %} <input id="spoiler" name="spoiler" type="checkbox"> <label for="spoiler">Spoiler Image</label>{% endif %}
+				<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />{% if config.spoiler_images %}
+                <input id="spoiler" name="spoiler" type="checkbox"> <label for="spoiler">Spoiler Image</label>{% endif %}
 				{% endif %}
 				{% endif %}
 			</td>
 		</tr>
-		{% if config.recaptcha %}
-		<tr>
-			<th>
-				Verification
-				
-			</th>
-			<td>
-				<script type="text/javascript" src="//www.google.com/recaptcha/api/challenge?k={{ config.recaptcha_public }}"></script>
-				
-			</td>
-		</tr>
-		{% endif %}
-		{% if config.user_flag %}
-			<tr>
-				<th>Flag</th>
-				<td>
-					<select name="user_flag" id="user_flag">
-						<option value="">None</option>
-						{% for flag, text in config.user_flags %}
-							<option value="{{ flag }}">{{ text }}</option>
-						{% endfor %}
-					</select>
-				</td>
-			</tr>
-		{% endif %}
-		{% if config.allowed_tags and not id %}
-			<tr>
-				<th>Tag</th>
-				<td>
-					<select name="tag">
-						{% for id, tag in config.allowed_tags %}
-							<option value="{{ id }}">{{ tag }}</option>
-						{% endfor %}
-					</select>
-				</td>
-			</tr>
-		{% endif %}
 		<tr id="upload">
 			<th>
 				File
 			</th>
 			<td>
 				<input type="file" name="file" id="upload_file">
-
-				<script type="text/javascript">if (typeof init_file_selector !== 'undefined') init_file_selector({{ config.max_images }});</script>
-
-				{% if config.allow_upload_by_url %}
-					<div style="float:none;text-align:left" id="upload_url">
-						<label for="file_url">Or URL</label>: 
-						<input style="display:inline" type="text" id="file_url" name="file_url" size="35">
-					</div>
-				{% endif %}
-				
+				<script type="text/javascript">if (typeof init_file_selector !== 'undefined') init_file_selector({{ config.max_images }});</script>				
 			</td>
 		</tr>
-		{% if config.enable_embedding %}
-		<tr id="upload_embed">
-			<th>
-				Embed
-				
-			</th>
-			<td>
-				<input type="text" name="embed" value="" size="30" maxlength="120" autocomplete="off">
-			</td>
-		</tr>
-		{% endif %}
-		{% if mod %}
-		<tr>
-			<th>
-				Flags
-			</th>
-			<td>
-				{% if not id and post.mod %}<div class="center">
-					<label for="sticky">Sticky</label>
-					<input title="Sticky" type="checkbox" name="sticky" id="sticky"><br>
-				</div>{% endif %}
-				{% if not id and post.mod %}<div class="center">
-					<label for="lock">Lock</label><br>
-					<input title="Lock" type="checkbox" name="lock" id="lock">
-				</div>{% endif %}
-				{% if post.mod %}<div class="center">
-					<label for="raw">Raw HTML</label><br>
-					<input title="Raw HTML" type="checkbox" name="raw" id="raw">
-				</div>{% endif %}
-			</td>
-		</tr>
-		{% endif %}
 		{% if not config.field_disable_password  %}<tr>
 			<th>
 				Password
-				
 			</th>
 			<td>
-				<input type="text" name="password" value="" size="12" maxlength="18" autocomplete="off"> 
+                {{ form.password }}
 				<span class="unimportant">(For file deletion.)</span>
-				
 			</td>
 		</tr>{% endif %}
 	</table>
-
-<input type="hidden" name="hash" value="{{ antibot.hash }}">
 </form>
-
-<script type="text/javascript">
-	rememberStuff();
-</script>

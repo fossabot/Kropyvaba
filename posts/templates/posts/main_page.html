@@ -60,7 +60,7 @@
         <label><strong>Дошки</strong></label>
         <div id='boards-table'>
             {% for board in boards %}
-            <strong><a href="{% url 'board' board.uri %}" title="{{ board.title }}">{{ board.title }}{% if board.uri == 'b' or board.uri == 'f'%}<span class='nsfw'>(18+){% endif %}</span></a></strong><br>
+            <strong><a href="{% url 'board' board.uri %}" title="{{ board.title }}">{{ board.title }}{% if board.uri == 'b' or board.uri == 'f'%}<span class='nsfw'> (18+){% endif %}</span></a></strong><br>
             {% endfor %}
         </div>    
         </div>
@@ -72,7 +72,7 @@
 				{% for post in recent_posts %}
 					<li>
 						<strong>{{ post.board_name }}</strong>: 
-						<a href="{% url 'thread' post.board_url post.id %}">
+						<a href="{% if post.thread %}{% url 'thread' post.board_url post.thread %}#{{post.id}}{% else %}{% url 'thread' post.board_url post.id %}{% endif %}">
 							{{ post.snippet }}
 						</a>
 					</li>
@@ -86,8 +86,8 @@
 				<li>Повідомлень за добу: {{ stats.posts_per24 }}</li>
 				<li>Доступно ниток: {{ stats.total_threads }}</li>
 				<li>Ниток за добу: {{ stats.threads_per24 }}</li>
-				<li>Дописувачів: {{ stats.unique_posters }}</li>
-				<li>Дописувачів за добу: {{ stats.unique_posters_per24 }}</li>
+				<li>Дописувачів: {{ stats.posters }}</li>
+				<li>Дописувачів за добу: {{ stats.posters_per24 }}</li>
 			</ul>
 </div>
 	</div>

@@ -216,7 +216,6 @@ div.post {
 }
 div.post div.body {
 	word-wrap:break-word;
-	white-space:pre-wrap;
 }
 div.post.reply {
 	background:#FFF;
