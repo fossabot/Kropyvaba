@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+PROJECT_ROOT = os.path.join(os.path.dirname(__file__), os.pardir)
+
 try:
     from .secret_key import SECRET_KEY
 except ImportError:
@@ -42,7 +44,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    # 'pyup_django',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -168,7 +169,6 @@ config = {
         'jquery-ui.custom.min.js',
         'multi-image.js',
         'style-select.js',
-        'expand-video.js',
         'dollchan.js',
     ],
     'footer': ['Кропивач 2016-2017'],
