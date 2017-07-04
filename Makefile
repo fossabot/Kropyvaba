@@ -12,6 +12,7 @@ migrate:
 	$(MANAGE) migrate
 
 collect:
+	cp tools/dollchan/src/Dollchan_Extension_Tools.es6.user.js posts/static/dollchan.js
 	$(MANAGE) collectstatic
 
 .PHONY: test migrate
