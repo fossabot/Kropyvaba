@@ -14,6 +14,8 @@
 	<div class="boardlist">
         {% include 'posts/boardlist.html' %}
     </div>
+    		<script type="text/javascript">if (typeof do_boardlist != 'undefined') do_boardlist();</script>
+<a name="top"></a>
 	<header>
 		<h1>/{{ board.url }}/ - {{ board.title }}</h1>
 		<div class="subtitle">
@@ -26,7 +28,6 @@
 			{% endif %}
 		</div>
 	</header>
-
         	{% include 'posts/attention_bar.html' %}
 
 	{{ config.ad.top }}

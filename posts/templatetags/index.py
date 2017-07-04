@@ -20,6 +20,14 @@ def to_dict(json_string):
         return json.loads(json_string)
 
 
+@register.filter(name='first_file')
+def first_file(json_string):
+    if type(json_string) is str:
+        data = json.loads(json_string)
+        if len(data):
+            return data[0]['thumb']
+
+
 @register.filter(name='extension')
 def extension(filename):
     if type(filename) is str:

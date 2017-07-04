@@ -7,6 +7,7 @@ from tempfile import NamedTemporaryFile
 import logging
 
 import simplejson as json
+import re
 
 # django stuff
 from django.http import HttpResponse, HttpResponseRedirect
@@ -82,7 +83,7 @@ def render_board(request, board_name, current_page=1):
         board = get_board(board_name)
         board.url = board.uri
         posts = get_posts(board)
-        threads = get_threads(board, posts).order_by('-bump')
+        threads = get_threads(posts).order_by('-bump')
         pages = Paginator(threads, 10)
         threads = pages.page(int(current_page))
         for thread in threads:
@@ -211,10 +212,10 @@ def handle_form(form, board, ip, thread):
         new_post.name = name
         new_post.subject = subject
         new_post.email = email
-        new_post.body = body
+        new_post.body = markup(body, board)
         new_post.files = json.dumps(files)
-        # Tinyboard logic…
-        new_post.body_nomarkup = markup(body, ip)
+        nomarkup = '{0}\n<tinyboard proxy>{1}</tinyboard>'.format(body, ip)
+        new_post.body_nomarkup = nomarkup
         new_post.password = password
         new_post.ip = ip
         new_post.thread = thread
@@ -333,9 +334,9 @@ def render_catalog(request, board_name):
         board = get_board(board_name)
         boards = get_boards_navlist()
         posts = get_posts(board)
-        recent_posts = [_ for _ in get_threads(board, posts).order_by('-bump')]
-        for thrd in recent_posts:
-            thrd.reply_count = len(get_posts(board).filter(thread=thrd.id))
+        recent_posts = [_ for _ in get_threads(posts).order_by('-bump')]
+        for thread in recent_posts:
+            thread.reply_count = len(get_posts(board).filter(thread=thread.id))
         context = {
             'config': config,
             'board': board,
@@ -418,17 +419,80 @@ def get_posts(board):
     return Posts[board.uri].objects
 
 
-def get_threads(board, posts): return posts.filter(thread=None)  # TODO: ???
+def get_threads(posts): return posts.filter(thread=None)  # TODO: ???
 
 
-def markup(body, ip):
+def markup(body, board):
     """
     Generates a markup for text
     :param body: text for processing
-    :param ip: user's ip
+    :param board: posts board
     :return: markuped text
     """
-    return '{0}\n<tinyboard proxy>{1}</tinyboard>'.format(body, ip)
+    strings = body.split('\n')
+    respond = []
+    for string in strings:
+        string = string.replace('>', '&gt;')
+        string = string.replace('<', '&lt;')
+        # quotation
+
+        def rep(m):
+            quote = m.group('quote')
+            return '<span class="quote">&gt;{0}</span>'.format(quote)
+        string = re.sub("^(?P<quote_mark>&gt;)(?P<quote>(?!&gt;).+)", rep, string)
+
+        # reply's
+
+        def rep(m):
+            reply_id = m.group('id')
+            post = Posts[board].objects.get(id=reply_id)
+            if post:
+                thread_id = post.thread if post.thread else post.id
+                link = reverse('thread', args=[board, thread_id])
+                if not post.thread:
+                    link += '#'+str(post.id)
+                return '''<a onclick="highlightReply('{0}', event);\
+                          "href="{1}">&gt;&gt;{0}</a>'''.format(reply_id, link)
+        string = re.sub("^(?P<reply>&gt;&gt;)(?P<id>\d+)", rep, string)
+
+        # bold
+
+        def rep(m):
+            text = m.group('text')
+            return '<strong>{0}</strong>'.format(text)
+        string = re.sub("\*\*(?P<text>.+)\*\*", rep, string)
+
+        # italic
+
+        def rep(m):
+            text = m.group('text')
+            return '<em>{0}</em>'.format(text)
+        string = re.sub("\*(?P<text>.+)\*", rep, string)
+
+        # underline
+
+        def rep(m):
+            text = m.group('text')
+            return '<u>{0}</u>'.format(text)
+        string = re.sub("\_\_(?P<text>.+)\_\_", rep, string)
+
+        # strike
+
+        def rep(m):
+            text = m.group('text')
+            return '<strike>{0}</strike>'.format(text)
+        string = re.sub("DEL(?P<text>.+)DEL", rep, string)
+
+        # spoiler
+
+        def rep(m):
+            text = m.group('text')
+            return '<span class="spoiler">{0}</span>'.format(text)
+        string = re.sub("\%\%(?P<text>.+)\%\%", rep, string)
+
+        respond += [string]
+
+    return '<br>'.join(respond)
 
 
 def get_ip(request):

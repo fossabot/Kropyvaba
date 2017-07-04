@@ -169,7 +169,7 @@ for brd in boards:
         name = models.CharField(max_length=35, blank=True, null=True)
         trip = models.CharField(max_length=15, blank=True, null=True)
         capcode = models.CharField(max_length=50, blank=True, null=True)
-        body = models.TextField()
+        body = models.TextField(blank=True)
         body_nomarkup = models.TextField(blank=True, null=True)
         time = models.IntegerField()
         bump = models.IntegerField(blank=True, null=True)

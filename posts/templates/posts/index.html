@@ -18,8 +18,10 @@
 </head>
 <body class="8chan vichan is-not-moderator active-index" data-stylesheet="default">
 
-	{% include 'posts/boardlist.html' %}
-	
+	<div class="boardlist">
+        {% include 'posts/boardlist.html' %}
+    </div>
+	<script type="text/javascript">if (typeof do_boardlist != 'undefined') do_boardlist();</script>
 	{% if config.url_banner %}<img class="board_image" src="{{ config.url_banner }}" {% if config.banner_width or config.banner_height %}style="{% if config.banner_width %}width:{{ config.banner_width }}px{% endif %};{% if config.banner_width %}height:{{ config.banner_height }}px{% endif %}" {% endif %}alt="" />{% endif %}
 
 
