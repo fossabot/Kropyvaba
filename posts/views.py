@@ -453,42 +453,42 @@ def markup(body, board):
                     link += '#'+str(post.id)
                 return '''<a onclick="highlightReply('{0}', event);\
                           "href="{1}">&gt;&gt;{0}</a>'''.format(reply_id, link)
-        string = re.sub("^(?P<reply>&gt;&gt;)(?P<id>\d+)", rep, string)
+        string = re.sub(r"^(?P<reply>&gt;&gt;)(?P<id>\d+)", rep, string)
 
         # bold
 
         def rep(m):
             text = m.group('text')
             return '<strong>{0}</strong>'.format(text)
-        string = re.sub("\*\*(?P<text>.+)\*\*", rep, string)
+        string = re.sub(r"\*\*(?P<text>.+)\*\*", rep, string)
 
         # italic
 
         def rep(m):
             text = m.group('text')
             return '<em>{0}</em>'.format(text)
-        string = re.sub("\*(?P<text>.+)\*", rep, string)
+        string = re.sub(r"\*(?P<text>.+)\*", rep, string)
 
         # underline
 
         def rep(m):
             text = m.group('text')
             return '<u>{0}</u>'.format(text)
-        string = re.sub("\_\_(?P<text>.+)\_\_", rep, string)
+        string = re.sub(r"\_\_(?P<text>.+)\_\_", rep, string)
 
         # strike
 
         def rep(m):
             text = m.group('text')
             return '<strike>{0}</strike>'.format(text)
-        string = re.sub("DEL(?P<text>.+)DEL", rep, string)
+        string = re.sub(r"DEL(?P<text>.+)DEL", rep, string)
 
         # spoiler
 
         def rep(m):
             text = m.group('text')
             return '<span class="spoiler">{0}</span>'.format(text)
-        string = re.sub("\%\%(?P<text>.+)\%\%", rep, string)
+        string = re.sub(r"\%\%(?P<text>.+)\%\%", rep, string)
 
         respond += [string]
 
