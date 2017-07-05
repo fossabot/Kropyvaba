@@ -6,8 +6,12 @@ from tempfile import NamedTemporaryFile
 
 import logging
 
-import simplejson as json
 import re
+import random
+from calendar import timegm
+from datetime import datetime, timedelta
+
+import simplejson as json
 
 # django stuff
 from django.http import HttpResponse, HttpResponseRedirect
@@ -15,9 +19,6 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.views.static import serve
-import random
-from calendar import timegm
-from datetime import datetime, timedelta
 from django.core.paginator import Paginator
 from django.core.files.uploadedfile import UploadedFile
 
@@ -35,18 +36,18 @@ from imagekit import ImageSpec
 from imagekit.processors import ResizeToFit
 
 EMPTY_POST = '(коментар відсутній)'
-boards_update = True  # switch when there are some adding/editing of boards
-boards_cached = {}
-boards_navlist = []
+BOARDS_UPDATE = True  # switch when there are some adding/editing of boards
+BOARDS_CACHED = {}
+BOARDS_NAVLIST = []
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 
 # @cache_page(CACHE_TTL)
 def render_index(request):
     """
-    Renders main page with lists of boards, recent posts and statistics
+    Render main page with lists of boards, recent posts and statistics.
     :param request: user's request
     :return: main page
     """
@@ -54,9 +55,9 @@ def render_index(request):
         boards = get_boards_navlist()
         fields = ['id', 'body_nomarkup', 'thread', 'time', 'ip']
         posts = []
-        for b in boards:
-            for post in get_posts(b).values_list(*fields):
-                posts += [post + (b,)]
+        for board in boards:
+            for post in get_posts(board).values_list(*fields):
+                posts += [post + (board,)]
         recent_posts = [PostBreaf(post) for post in posts[::-1]]
         recent_posts = sorted(recent_posts, key=lambda x: x.time, reverse=True)
         context = {
@@ -73,7 +74,7 @@ def render_index(request):
 
 def render_board(request, board_name, current_page=1):
     """
-    Renders board with lists of threads and last 5 posts for them
+    Render board with lists of threads and last 5 posts for them.
     :param request: user's request
     :param board_name: name of board that we should render
     :param current_page: page that user requested
@@ -92,25 +93,25 @@ def render_board(request, board_name, current_page=1):
             thread.omitted = posts_len - 5 if posts_len >= 5 else 0
             thread.posts = thread.posts[thread.omitted:]
         if request.method == 'POST':
-            json_response = 'json_response' in request.POST
             form = PostForm(request.POST, request.FILES)
-            ip = get_ip(request)
-            new_post_id = handle_form(form, board_name, ip, None)
+            _ip = get_ip(request)
+            new_post_id = handle_form(form, board_name, _ip, None)
             if new_post_id:
-                if json_response:
+                if 'json_response' in request.POST:
                     respond = json.dumps({
                         'id': new_post_id,
                         'noko': False,
                         'redirect': '/' + board_name
                     })
-                    return HttpResponse(
+                    answer = HttpResponse(
                         respond,
                         content_type="application/json"
                     )
                 else:
-                    return HttpResponseRedirect(
+                    answer = HttpResponseRedirect(
                         reverse('thread', args=[board_name, new_post_id])
                     )
+                return answer
         else:
             form = PostForm()
         context = {
@@ -131,7 +132,7 @@ def render_board(request, board_name, current_page=1):
 # @cache_page(CACHE_TTL)
 def render_thread(request, board_name, thread_id):
     """
-    Renders thread page with all thread's posts
+    Render thread page with all thread's posts.
     :param request: user's request
     :param board_name: name of threads board
     :param thread_id: thread id
@@ -146,8 +147,8 @@ def render_thread(request, board_name, thread_id):
         if request.method == 'POST':
             json_response = 'json_response' in request.POST
             form = PostForm(request.POST, request.FILES)
-            ip = get_ip(request)
-            new_post_id = handle_form(form, board_name, ip, thread_id)
+            _ip = get_ip(request)
+            new_post_id = handle_form(form, board_name, _ip, thread_id)
             if new_post_id:
                 if json_response:
                     respond = json.dumps({
@@ -155,17 +156,18 @@ def render_thread(request, board_name, thread_id):
                         'noko': False,
                         'redirect': '/' + board_name
                     })
-                    return HttpResponse(
+                    answer = HttpResponse(
                         respond,
                         content_type="application/json"
                     )
                 else:
-                    return HttpResponseRedirect(
+                    answer = HttpResponseRedirect(
                         reverse('thread', args=[
                             board_name,
                             thread_id
                         ]) + '#{0}'.format(new_post_id)
                     )
+                return answer
         else:
             form = PostForm()
         context = {
@@ -182,12 +184,12 @@ def render_thread(request, board_name, thread_id):
         return HttpResponse('404')
 
 
-def handle_form(form, board, ip, thread):
+def handle_form(form, board, _ip, thread):
     """
-    Adds new post/thread
+    Add new post/thread.
     :param form: form that needs to handle
     :param board: thread or reply board
-    :param ip: ip of poster
+    :param _ip: ip of poster
     :param thread: thread id if we work with reply
     :return: True if form is valid and processed
     """
@@ -201,23 +203,22 @@ def handle_form(form, board, ip, thread):
         if thread is None and form.files == {}:
             return False
         files = handle_files(form.files, str(time), board)
-        sage = cycle = locked = sticky = 0
         new_post = Posts[board].objects.create(
             time=int(time),
-            sage=sage,
-            cycle=cycle,
-            locked=locked,
-            sticky=sticky
+            sage=0,
+            cycle=0,
+            locked=0,
+            sticky=0
         )
         new_post.name = name
         new_post.subject = subject
         new_post.email = email
         new_post.body = markup(body, board)
         new_post.files = json.dumps(files)
-        nomarkup = '{0}\n<tinyboard proxy>{1}</tinyboard>'.format(body, ip)
+        nomarkup = '{0}\n<tinyboard proxy>{1}</tinyboard>'.format(body, _ip)
         new_post.body_nomarkup = nomarkup
         new_post.password = password
-        new_post.ip = ip
+        new_post.ip = _ip
         new_post.thread = thread
         new_post.bump = time
         new_post.save()
@@ -226,7 +227,7 @@ def handle_form(form, board, ip, thread):
 
 def handle_files(files, time, board):
     """
-    Checks and save files.
+    Check and save files.
     :param files: files fot handling
     :param time: current time
     :param board: post's board
@@ -262,10 +263,11 @@ def handle_files(files, time, board):
                     temp_file.close()
                     temp_th = open(temp_path, 'rb+')
                     preview = UploadedFile(file=temp_th)
-                    logger.debug(type(preview))
+                    LOGGER.debug(type(preview))
                     thumb_generator = Thumbnail(source=preview)
                     thumb = thumb_generator.generate()
                     preview.close()
+                    image = Image.open(temp_path)
                 else:
                     image = Image.open(path)
                     thumb_generator = Thumbnail(source=file[1])
@@ -280,9 +282,6 @@ def handle_files(files, time, board):
                 thumb = Image.open(path)
 
                 filename = '{0}-{1}.{2}'.format(time, index, ext)
-
-                if ext == 'webm':
-                    image = Image.open(temp_path)
 
                 file_data = {
                     "name": name,
@@ -313,19 +312,23 @@ def handle_files(files, time, board):
 
 
 def choose_path(board, _type, time, ext, index):
-    path = '{0}{1}/{2}/{3}-{4}.{5}'.format(MEDIA_ROOT,
-                                           _type,
-                                           board,
-                                           time,
-                                           index,
-                                           ext
-                                           )
-    return path
+    """
+    Form a system path for file.
+    :param board: file's board
+    :param _type: type of file (src/thumb)
+    :param time: current time
+    :param ext: extension
+    :param index: file's index in the form
+    :return: path string
+    """
+    directory = '{0}{1}/{2}/'.format(MEDIA_ROOT, _type, board,)
+    file = '{0}-{1}.{2}'.format(time, index, ext)
+    return directory+file
 
 
 def render_catalog(request, board_name):
     """
-    Renders catalog page for specific board
+    Render catalog page for specific board.
     :param request: user's request
     :param board_name: board url
     :return: catalog page
@@ -359,7 +362,7 @@ def get_media(request, board_name, media_type, path):
 
 def make_stats(data):
     """
-    Counts posting statistics
+    Count posting statistics.
     :param data: posts for statistics
     :return: Statistics object
     """
@@ -377,7 +380,7 @@ def make_stats(data):
             # functions for DRY
             def count_threads(_posts):
                 """
-                Counts number of threads in _posts
+                Count number of threads in _posts.
                 :param _posts: source data
                 :return: number of threads
                 """
@@ -385,7 +388,7 @@ def make_stats(data):
 
             def count_posters(_posts):
                 """
-                Counts number of uniques posters in _posts
+                Count number of uniques posters in _posts.
                 :param _posts: source data
                 :return: number of posters
                 """
@@ -412,19 +415,25 @@ def make_stats(data):
 
 def get_posts(board):
     """
-    Returns post's query
+    Return post's query.
     :param board: board %)
     :return: post's query
     """
     return Posts[board.uri].objects
 
 
-def get_threads(posts): return posts.filter(thread=None)  # TODO: ???
+def get_threads(posts):
+    """
+    Return threads objects.
+    :param posts: data for filtering
+    :return: threads query
+    """
+    return posts.filter(thread=None)
 
 
 def markup(body, board):
     """
-    Generates a markup for text
+    Generate a markup for text.
     :param body: text for processing
     :param board: posts board
     :return: markuped text
@@ -434,61 +443,68 @@ def markup(body, board):
     for string in strings:
         string = string.replace('>', '&gt;')
         string = string.replace('<', '&lt;')
+
+        def process_markup(regex, output):
+            """
+            Process markup for simple rules i.e. bold or cursive text.
+            :param regex: regex condition
+            :param output: rule for replace
+            :return: processed string
+            """
+
+            def replace(match, result):
+                text = match.group('text')
+                return result.format(text)
+
+            return re.sub(regex, lambda line: replace(line, output), string)
+
         # quotation
 
-        def rep(m):
-            quote = m.group('quote')
-            return '<span class="quote">&gt;{0}</span>'.format(quote)
-        string = re.sub("^(?P<quote_mark>&gt;)(?P<quote>(?!&gt;).+)", rep, string)
+        string = process_markup(
+            r"^(?P<quote_mark>&gt;)(?P<text>(?!&gt;).+)",
+            '<span class="quote">&gt;{0}</span>'
+        )
 
         # reply's
 
-        def rep(m):
-            reply_id = m.group('id')
+        def rep(match):
+            reply_id = match.group('id')
             post = Posts[board].objects.get(id=reply_id)
             if post:
                 thread_id = post.thread if post.thread else post.id
                 link = reverse('thread', args=[board, thread_id])
                 if not post.thread:
-                    link += '#'+str(post.id)
+                    link += '#' + str(post.id)
                 return '''<a onclick="highlightReply('{0}', event);\
                           "href="{1}">&gt;&gt;{0}</a>'''.format(reply_id, link)
+
         string = re.sub(r"^(?P<reply>&gt;&gt;)(?P<id>\d+)", rep, string)
 
         # bold
 
-        def rep(m):
-            text = m.group('text')
-            return '<strong>{0}</strong>'.format(text)
-        string = re.sub(r"\*\*(?P<text>.+)\*\*", rep, string)
+        string = process_markup(
+            r"\*\*(?P<text>.+)\*\*",
+            '<strong>{0}</strong>'
+        )
 
         # italic
 
-        def rep(m):
-            text = m.group('text')
-            return '<em>{0}</em>'.format(text)
-        string = re.sub(r"\*(?P<text>.+)\*", rep, string)
+        string = process_markup(r"\*(?P<text>.+)\*", '<em>{0}</em>')
 
         # underline
 
-        def rep(m):
-            text = m.group('text')
-            return '<u>{0}</u>'.format(text)
-        string = re.sub(r"\_\_(?P<text>.+)\_\_", rep, string)
+        string = process_markup(r"\_\_(?P<text>.+)\_\_", '<u>{0}</u>')
 
         # strike
 
-        def rep(m):
-            text = m.group('text')
-            return '<strike>{0}</strike>'.format(text)
-        string = re.sub(r"DEL(?P<text>.+)DEL", rep, string)
+        string = process_markup(r"DEL(?P<text>.+)DEL", '<strike>{0}</strike>')
 
         # spoiler
 
-        def rep(m):
-            text = m.group('text')
-            return '<span class="spoiler">{0}</span>'.format(text)
-        string = re.sub(r"\%\%(?P<text>.+)\%\%", rep, string)
+        string = process_markup(
+            r"\%\%(?P<text>.+)\%\%",
+            '<span class="spoiler">{0}</span>'
+        )
 
         respond += [string]
 
@@ -497,7 +513,7 @@ def markup(body, board):
 
 def get_ip(request):
     """
-    Return a user ip
+    Return a user ip.
     :param request: http/s request
     :return: ip address
     """
@@ -514,11 +530,11 @@ def get_board(board_uri):
     TODO: rewrite
     :return: cached board object
     """
-    global boards_cached
-    global boards_update
-    if not (board_uri in boards_cached) or boards_update:
-        boards_cached[board_uri] = Board.objects.get(uri=board_uri)
-    return boards_cached[board_uri]
+    global BOARDS_CACHED
+    global BOARDS_UPDATE
+    if not (board_uri in BOARDS_CACHED) or BOARDS_UPDATE:
+        BOARDS_CACHED[board_uri] = Board.objects.get(uri=board_uri)
+    return BOARDS_CACHED[board_uri]
 
 
 def get_boards_navlist():
@@ -526,33 +542,42 @@ def get_boards_navlist():
     TODO: rewrite
     :return: board
     """
-    global boards_update
-    global boards_navlist
-    if boards_update:
-        boards_navlist = Board.objects.exclude(uri='bugs').order_by('uri')
-        boards_update = False
-    return boards_navlist
+    global BOARDS_UPDATE
+    global BOARDS_NAVLIST
+    if BOARDS_UPDATE:
+        BOARDS_NAVLIST = Board.objects.exclude(uri='bugs').order_by('uri')
+        BOARDS_UPDATE = False
+    return BOARDS_NAVLIST
 
 
 class PostBreaf(object):
     """
-    Object for main page
+    Object for main page.
     """
 
     def __init__(self, post):
         self.id, body, self.thread, self.time, _, board = post
 
         # slice last row
-        def s(x): return '\n'.join(x.split('\n')[:-1])
+        def _slice(text):
+            """
+            Cut off last row.
+            :param text: text for cutting
+            :return: text within last row
+            """
+            return '\n'.join(text.split('\n')[:-1])
 
-        self.snippet = s(body) if len(s(body)) else EMPTY_POST
+        sliced_body = _slice(body)
+        length_of_sliced_body = len(sliced_body)
+
+        self.snippet = sliced_body if length_of_sliced_body else EMPTY_POST
         self.board_name = board.title
         self.board_url = board.uri
 
 
 class Thumbnail(ImageSpec):
     """
-    Thumbnail setting's
+    Thumbnail setting's.
     """
     processors = [ResizeToFit(255, 255)]
     format = 'JPEG'
