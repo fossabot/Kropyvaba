@@ -45,20 +45,20 @@ logging.basicConfig(level=logging.DEBUG)
 def render_index(request):
     """
     Render main page with lists of boards, recent posts and statistics.
+
     :param request: user's request
     :return: main page
     """
     try:
         boards = get_boards_navlist()
         fields = ['id', 'body_nomarkup', 'thread', 'time', 'ip', 'board']
-        posts = []
-        for post in Post.objects.values_list(*fields).order_by('-time')[:30]:
-            posts.append(post)
-        recent_posts = [PostBreaf(post) for post in posts[::-1]]
+        posts = Post.objects.values(*fields).order_by('-time')
+        PostBreaf.set_boards(boards.values())
+        recent_posts = [PostBreaf(post) for post in posts[:30][::-1]]
         recent_posts = sorted(recent_posts, key=lambda x: x.time, reverse=True)
         context = {
             'config': config,
-            'boards': boards.exclude(uri='bugs'),
+            'boards': boards,
             'slogan': random.choice(config['slogan']),
             'stats': make_stats(posts),
             'recent_posts': recent_posts[:30]
@@ -71,6 +71,7 @@ def render_index(request):
 def render_board(request, board_name, current_page=1):
     """
     Render board with lists of threads and last 5 posts for them.
+
     :param request: user's request
     :param board_name: name of board that we should render
     :param current_page: page that user requested
@@ -129,6 +130,7 @@ def render_board(request, board_name, current_page=1):
 def render_thread(request, board_name, thread_id):
     """
     Render thread page with all thread's posts.
+
     :param request: user's request
     :param board_name: name of threads board
     :param thread_id: thread id
@@ -183,6 +185,7 @@ def render_thread(request, board_name, thread_id):
 def handle_form(form, board, _ip, thread):
     """
     Add new post/thread.
+
     :param form: form that needs to handle
     :param board: thread or reply board
     :param _ip: ip of poster
@@ -200,7 +203,7 @@ def handle_form(form, board, _ip, thread):
             return False
         files = handle_files(form.files, str(time), board)
         new_post = Post.objects.create(
-            id=Post.objects.filter(board__uri=board).count()+1,
+            id=Post.objects.filter(board__uri=board).last().id+1,
             time=int(time),
             board=Board.objects.get(uri=board),
             sage=0,
@@ -209,6 +212,7 @@ def handle_form(form, board, _ip, thread):
             sticky=0
         )
         new_post.name = name
+        new_post.num_files = len(files)
         new_post.subject = subject
         new_post.email = email
         new_post.body = markup(body, board)
@@ -218,6 +222,10 @@ def handle_form(form, board, _ip, thread):
         new_post.password = password
         new_post.ip = _ip
         new_post.thread = thread
+        if not new_post.sage:
+            op_post = Post.objects.get(id=thread)
+            op_post.bump = int(time)
+            op_post.save()
         new_post.bump = time
         new_post.save()
         return new_post.id
@@ -226,6 +234,7 @@ def handle_form(form, board, _ip, thread):
 def handle_files(files, time, board):
     """
     Check and save files.
+
     :param files: files fot handling
     :param time: current time
     :param board: post's board
@@ -361,6 +370,7 @@ def get_media(request, board_name, media_type, path):
 def make_stats(data):
     """
     Count posting statistics.
+
     :param data: posts for statistics
     :return: Statistics object
     """
@@ -368,6 +378,7 @@ def make_stats(data):
     class Statistic(object):
         """
         Object which contain next statistics data:
+
         Number of all posts;
         Number of posted threads;
         Number of posters;
@@ -379,28 +390,30 @@ def make_stats(data):
             def count_threads(_posts):
                 """
                 Count number of threads in _posts.
+
                 :param _posts: source data
                 :return: number of threads
                 """
-                return _posts.filter(thread=None).count()
+                return len([post for post in _posts if not post['thread']])
 
             def count_posters(_posts):
                 """
                 Count number of uniques posters in _posts.
+
                 :param _posts: source data
                 :return: number of posters
                 """
-                return len(_posts.values_list('ip').distinct())
+                return len(set(post['ip'] for post in _posts))
 
             # getting time info
             past = datetime.utcnow() + timedelta(hours=-24)
             stamp = timegm(past.timetuple())
             # total objects
-            self.total_posts = sum([Post.objects.filter(board=board).last().id for board in Board.objects.all()])
-            self.total_threads = count_threads(Post.objects.all())
-            self.posters = count_posters(Post.objects.all())
+            self.total_posts = sum([max(*[p['id'] if p['board'] == board['uri'] else 0 for p in posts]) for board in PostBreaf.boards])
+            self.total_threads = count_threads(posts)
+            self.posters = count_posters(posts)
             # objects for last 24 hours
-            last_posts = Post.objects.filter(time__gte=stamp)
+            last_posts = [post for post in posts if post['time'] >= stamp]
             self.posts_per24 = len(last_posts)
             self.threads_per24 = count_threads(last_posts)
             self.posters_per24 = count_posters(last_posts)
@@ -412,6 +425,7 @@ def make_stats(data):
 def get_posts(board):
     """
     Return post's query.
+
     :param board: board %)
     :return: post's query
     """
@@ -421,6 +435,7 @@ def get_posts(board):
 def get_threads(posts):
     """
     Return threads objects.
+
     :param posts: data for filtering
     :return: threads query
     """
@@ -430,6 +445,7 @@ def get_threads(posts):
 def markup(body, board):
     """
     Generate a markup for text.
+
     :param body: text for processing
     :param board: posts board
     :return: markuped text
@@ -443,6 +459,7 @@ def markup(body, board):
         def process_markup(regex, output):
             """
             Process markup for simple rules i.e. bold or cursive text.
+
             :param regex: regex condition
             :param output: rule for replace
             :return: processed string
@@ -524,6 +541,7 @@ def get_ip(request):
 def get_board(board_uri):
     """
     TODO: rewrite
+
     :return: cached board object
     """
     return Board.objects.get(uri=board_uri)
@@ -532,9 +550,11 @@ def get_board(board_uri):
 def get_boards_navlist():
     """
     TODO: rewrite
+
     :return: board
     """
-    return Board.objects.exclude(uri='bugs').order_by('uri')
+    boards = Board.objects.exclude(uri='bugs').order_by('uri')
+    return boards
 
 
 class PostBreaf(object):
@@ -543,8 +563,15 @@ class PostBreaf(object):
     """
 
     def __init__(self, post):
-        self.id, body, self.thread, self.time, _, board = post
-
+        self.id = post['id']
+        body = post['body_nomarkup']
+        self.thread = post['thread']
+        self.time = post['time']
+        boards = PostBreaf.boards
+        for _board in boards:
+            if _board['uri'] == post['board']:
+                board = _board
+        post['board']
         # slice last row
         def _slice(text):
             """
@@ -558,10 +585,12 @@ class PostBreaf(object):
         length_of_sliced_body = len(sliced_body)
 
         self.snippet = sliced_body if length_of_sliced_body else EMPTY_POST
-        board = Board.objects.get(uri=board)
-        self.board_name = board.title
-        self.board_url = board.uri
+        self.board_name = board['title']
+        self.board_url = board['uri']
 
+    @classmethod
+    def set_boards(cls, boards):
+        cls.boards = boards
 
 class Thumbnail(ImageSpec):
     """

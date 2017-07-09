@@ -12,6 +12,9 @@ class Board(models.Model):
         managed = False
         db_table = 'boards'
 
+    def __str__(self):
+        return self.title
+
 
 class Post(models.Model):
     global_id = models.AutoField(primary_key=True)
@@ -38,6 +41,9 @@ class Post(models.Model):
     sage = models.IntegerField()
     embed = models.TextField(blank=True, null=True)
     slug = models.CharField(max_length=256, blank=True, null=True)
+
+    def __str__(self):
+        return '{0}     |       {1}'.format(self.id, self.body_nomarkup)
 
     class Meta(object):
         managed = False
