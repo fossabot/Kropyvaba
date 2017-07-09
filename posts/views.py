@@ -25,7 +25,7 @@ from django.core.files.uploadedfile import UploadedFile
 # from django.views.decorators.cache import cache_page
 
 # database models
-from posts.models import Board, Posts
+from posts.models import Board, Post
 
 from posts.forms import PostForm
 from config.settings import MEDIA_ROOT
@@ -36,9 +36,6 @@ from imagekit import ImageSpec
 from imagekit.processors import ResizeToFit
 
 EMPTY_POST = '(коментар відсутній)'
-BOARDS_UPDATE = True  # switch when there are some adding/editing of boards
-BOARDS_CACHED = {}
-BOARDS_NAVLIST = []
 
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -53,11 +50,10 @@ def render_index(request):
     """
     try:
         boards = get_boards_navlist()
-        fields = ['id', 'body_nomarkup', 'thread', 'time', 'ip']
+        fields = ['id', 'body_nomarkup', 'thread', 'time', 'ip', 'board']
         posts = []
-        for board in boards:
-            for post in get_posts(board).values_list(*fields):
-                posts += [post + (board,)]
+        for post in Post.objects.values_list(*fields).order_by('-time')[:30]:
+            posts.append(post)
         recent_posts = [PostBreaf(post) for post in posts[::-1]]
         recent_posts = sorted(recent_posts, key=lambda x: x.time, reverse=True)
         context = {
@@ -203,8 +199,10 @@ def handle_form(form, board, _ip, thread):
         if thread is None and form.files == {}:
             return False
         files = handle_files(form.files, str(time), board)
-        new_post = Posts[board].objects.create(
+        new_post = Post.objects.create(
+            id=Post.objects.filter(board__uri=board).count()+1,
             time=int(time),
+            board=Board.objects.get(uri=board),
             sage=0,
             cycle=0,
             locked=0,
@@ -384,7 +382,7 @@ def make_stats(data):
                 :param _posts: source data
                 :return: number of threads
                 """
-                return len([post for post in _posts if not post[2]])
+                return _posts.filter(thread=None).count()
 
             def count_posters(_posts):
                 """
@@ -392,19 +390,17 @@ def make_stats(data):
                 :param _posts: source data
                 :return: number of posters
                 """
-                return len(set(post[4] for post in _posts))
+                return len(_posts.values_list('ip').distinct())
 
             # getting time info
             past = datetime.utcnow() + timedelta(hours=-24)
             stamp = timegm(past.timetuple())
             # total objects
-            self.total_posts = sum([max(*[p[0]
-                                          for p in posts if p[5] is board])
-                                    for board in get_boards_navlist()])
-            self.total_threads = count_threads(posts)
-            self.posters = count_posters(posts)
+            self.total_posts = sum([Post.objects.filter(board=board).last().id for board in Board.objects.all()])
+            self.total_threads = count_threads(Post.objects.all())
+            self.posters = count_posters(Post.objects.all())
             # objects for last 24 hours
-            last_posts = [post for post in posts if post[3] >= stamp]
+            last_posts = Post.objects.filter(time__gte=stamp)
             self.posts_per24 = len(last_posts)
             self.threads_per24 = count_threads(last_posts)
             self.posters_per24 = count_posters(last_posts)
@@ -419,7 +415,7 @@ def get_posts(board):
     :param board: board %)
     :return: post's query
     """
-    return Posts[board.uri].objects
+    return Post.objects.filter(board=board)
 
 
 def get_threads(posts):
@@ -469,7 +465,7 @@ def markup(body, board):
 
         def rep(match):
             reply_id = match.group('id')
-            post = Posts[board].objects.get(id=reply_id)
+            post = Post.objects.filter(board__uri=board).get(id=reply_id)
             if post:
                 thread_id = post.thread if post.thread else post.id
                 link = reverse('thread', args=[board, thread_id])
@@ -530,11 +526,7 @@ def get_board(board_uri):
     TODO: rewrite
     :return: cached board object
     """
-    global BOARDS_CACHED
-    global BOARDS_UPDATE
-    if not (board_uri in BOARDS_CACHED) or BOARDS_UPDATE:
-        BOARDS_CACHED[board_uri] = Board.objects.get(uri=board_uri)
-    return BOARDS_CACHED[board_uri]
+    return Board.objects.get(uri=board_uri)
 
 
 def get_boards_navlist():
@@ -542,12 +534,7 @@ def get_boards_navlist():
     TODO: rewrite
     :return: board
     """
-    global BOARDS_UPDATE
-    global BOARDS_NAVLIST
-    if BOARDS_UPDATE:
-        BOARDS_NAVLIST = Board.objects.exclude(uri='bugs').order_by('uri')
-        BOARDS_UPDATE = False
-    return BOARDS_NAVLIST
+    return Board.objects.exclude(uri='bugs').order_by('uri')
 
 
 class PostBreaf(object):
@@ -571,6 +558,7 @@ class PostBreaf(object):
         length_of_sliced_body = len(sliced_body)
 
         self.snippet = sliced_body if length_of_sliced_body else EMPTY_POST
+        board = Board.objects.get(uri=board)
         self.board_name = board.title
         self.board_url = board.uri
 
