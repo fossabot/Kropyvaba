@@ -1,0 +1,44 @@
+DROP TABLE "antispam";
+DROP TABLE "bans";
+DROP TABLE "cites";
+DROP TABLE "flood";
+DROP TABLE "ip_notes";
+DROP TABLE "modlogs";
+DROP TABLE "mods";
+DROP TABLE "mutes";
+DROP TABLE "news";
+DROP TABLE "noticeboard";
+DROP TABLE "pms";
+DROP TABLE "search_queries";
+DROP TABLE "theme_settings";
+DROP TABLE "ban_appeals";
+DROP TABLE "robot";
+DROP TABLE "reports";
+CREATE TABLE `posts_post`   (
+  `global_id` integer  NOT NULL PRIMARY KEY AUTOINCREMENT,
+  `id` integer DEFAULT NULL,
+  `thread` integer DEFAULT NULL,
+  `subject` varchar(100) DEFAULT NULL,
+  `email` varchar(30) DEFAULT NULL,
+  `name` varchar(35) DEFAULT NULL,
+  `trip` varchar(15) DEFAULT NULL,
+  `capcode` varchar(50) DEFAULT NULL,
+  `body` text NOT NULL,
+  `body_nomarkup` text,
+  `time` integer NOT NULL,
+  `bump` integer DEFAULT NULL,
+  `files` text,
+  `num_files` integer DEFAULT '0',
+  `filehash` text,
+  `password` varchar(20) DEFAULT NULL,
+  `ip` varchar(39) NOT NULL,
+  `sticky` integer NOT NULL,
+  `locked` integer NOT NULL,
+  `cycle` integer NOT NULL,
+  `sage` integer NOT NULL,
+  `embed` text,
+  `slug` varchar(256) DEFAULT NULL,
+  `board_id` varchar(58) NOT NULL REFERENCES "boards" ("uri"),
+  UNIQUE (`global_id`)
+)
+INSERT INTO POSTS_POST (id, thread,  subject, email, name, trip, capcode, body, body_nomarkup, time, bump, files, num_files, filehash, password, ip, sticky, locked, cycle, sage, embed , slug, board_id) SELECT id, thread,  subject, email, name, trip, capcode, body, body_nomarkup, time, bump, files, num_files, filehash, password, ip, sticky, locked, cycle, sage, embed , slug, 'a' FROM POSTS_A;

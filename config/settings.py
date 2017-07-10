@@ -165,8 +165,7 @@ config = {
     },
     'stylesheets': [['Ukrchan', 'ukrchan.css'], ['Futaba', 'futaba.css']],
     'additional_javascript': [
-        'jquery.min.js',
-        'jquery-ui.custom.min.js',
+        'jquery.js',
         'multi-image.js',
         'style-select.js',
         'dollchan.js',
