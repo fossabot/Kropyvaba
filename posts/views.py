@@ -33,14 +33,15 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 class Page404(object):
+
     """Decorate render pages for 404 error."""
 
-    def __init__(self, f):
-        self.f = f
+    def __init__(self, func):
+        self.func = func
 
     def __call__(self, *args, **kwargs):
         try:
-            return self.f(*args, **kwargs)
+            return self.func(*args, **kwargs)
         except ObjectDoesNotExist:
             return HttpResponse('404')
 
@@ -73,7 +74,6 @@ def render_index(request):
 def render_board(request, board_name, current_page=1):
     """
     Render board with lists of threads and last 5 posts for them.
-
     :param request: user's request
     :param board_name: name of board that we should render
     :param current_page: page that user requested
@@ -261,9 +261,9 @@ def make_stats(data):
             boards_posts = []
             for board in PostBreaf.boards:
                 posts_id = []
-                for p in posts:
-                    if p['board'] == board['uri']:
-                        posts_id.append(p['id'])
+                for post in posts:
+                    if post['board'] == board['uri']:
+                        posts_id.append(post['id'])
                     else:
                         posts_id.append(0)
                 boards_posts.append(max(posts_id))
@@ -365,4 +365,3 @@ class PostBreaf(object):
     @classmethod
     def set_boards(cls, boards):
         cls.boards = boards
-

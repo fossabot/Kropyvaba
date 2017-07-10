@@ -44,6 +44,8 @@ class PostForm(ModelForm):
         time = datetime.timestamp(datetime.now())
         if thread is None and self.files == {}:
             return False
+        if len(self.files) <= config['max_images']:
+            return False
         files = handle_files(self.files, str(time), board)
         new_post = Post.objects.create(
             id=Post.objects.filter(board__uri=board).last().id + 1,
@@ -97,7 +99,6 @@ def handle_files(files, time, board):
         if size <= config['max_filesize']:
             name = file[1].name
             ext = name.split('.')[-1]
-            content_type = file[1].content_type  # TODO: doesn't work when doll
             if ext in config['allowed_ext']:
 
                 # file saving
@@ -121,11 +122,16 @@ def handle_files(files, time, board):
                     temp_file.close()
                     temp_th = open(temp_path, 'rb+')
                     preview = UploadedFile(file=temp_th)
+                    content_type = preview.content_type
                     thumb_generator = Thumbnail(source=preview)
                     thumb = thumb_generator.generate()
                     preview.close()
                     image = Image.open(temp_path)
                 else:
+                    temp_th = open(path, 'rb+')
+                    preview = UploadedFile(file=temp_th)
+                    content_type = preview.content_type
+                    preview.close()
                     image = Image.open(path)
                     thumb_generator = Thumbnail(source=file[1])
                     thumb = thumb_generator.generate()
@@ -152,7 +158,7 @@ def handle_files(files, time, board):
                     "file": filename,
                     "thumb": '{0}-{1}.jpg'.format(time, index),
                     "is_an_image": content_type.split('/')[0] == 'image',
-                    "hash": "c5c76d11ff82103d18c3c9767bcb881e",
+                    "hash": "c5c76d11ff82103d18c3c9767bcb881e",  # TODO hash
                     "width": image.width,
                     "height": image.height,
                     "thumbwidth": thumb.width,
@@ -201,7 +207,6 @@ def markup(body, board):
         def process_markup(regex, output):
             """
             Process markup for simple rules i.e. bold or cursive text.
-
             :param regex: regex condition
             :param output: rule for replace
             :return: processed string
@@ -256,7 +261,9 @@ def markup(body, board):
 
 
 class Thumbnail(ImageSpec):
+
     """Thumbnail setting's."""
+
     processors = [ResizeToFit(255, 255)]
     format = 'JPEG'
     options = {'quality': 60}
