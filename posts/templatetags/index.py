@@ -9,6 +9,11 @@ from config.settings import config, STATIC_ROOT
 register = template.Library()
 
 
+@register.simple_tag
+def get_config():
+    return config
+
+
 @register.filter(name='truncate')
 def truncate(string):
     return string.split('\n')[0]

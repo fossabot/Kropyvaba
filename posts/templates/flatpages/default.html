@@ -1,0 +1,56 @@
+{% load static %}
+{% load index %}
+{% get_config as config %}
+<html>
+    <head>
+        {% include 'posts/header.html' %}
+        <title>{{ flatpage.title }} | Кропивач</title>
+        <link rel="stylesheet" media="screen" href="{% static config.recent %}"/>
+    </head>
+    <body>
+        <div class="boardlist">
+            <span class="sub" data-description="0">
+                [ <a href="/help.html">/ЧаПи/</a> ]
+            </span>
+            <span class="sub" data-description="1">
+                [ <a href="/bugs/index.html" title="Пропозиції та претензії">/зауваження/</a> ]
+            </span>
+            <span class="sub" data-description="2">
+                [ <a href="/mobile.html" title="Для власників смартфонів">/мобільна версія/</a> ]
+            </span>
+            <span class="sub" data-description="3">
+                [ <a href="/donate.html" title="Підтримка сайту">/пожертвувати/</a> ]
+            </span>
+            <span class="sub" data-description="4">
+                [ <a href="https://twitter.com/kropyvach">/твіттер/</a> ]
+            </span>
+            <span class="sub" data-description="5">
+                [ <a href="https://drama.kropyva.ch/">/енциклопедія/</a> ]
+            </span>
+        </div>
+        <header>
+            <h1 style="font-family: 'Lobster', cursive;">{{ flatpage.title }}</h1>
+        </header>
+        <div style="width: 70%; margin-left: auto; margin-right: auto;">
+            <p>
+                {{ flatpage.content|safe }}
+            </p>
+            <br>
+        </div>
+    	<hr/>
+	    <footer>
+            <label>Кропивач 2016-2017</label>
+             <br>
+	    </footer>
+        <script type="text/javascript">
+            var styles = {
+
+                {% for name, uri in config.stylesheets %}'{{ name }}' : '{% static uri %}',
+                {% endfor %}
+            }; onready(init);
+        </script>
+        <script type="text/javascript">
+            ready();
+        </script>
+    </body>
+</html>
