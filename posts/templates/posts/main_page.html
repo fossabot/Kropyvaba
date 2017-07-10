@@ -2,11 +2,10 @@
 <!doctype html>
 <html>
 <head>
-	<meta name=viewport content="width=device-width, initial-scale=1">
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-	<meta name="description" content="Кропивач - це український іміджборд, місце для спілкування на довільні теми. Реєстрація не є необхідною.">
-	<meta name="keywords" content="Кропивач,іміджборд,імейджборд,Україна,анонімний форум,форум,imageboard,kropyvach,аніме,політика,музика,спілкування,культура,анонімність">
-	<title>{{ config.title }}</title>
+    {% include 'posts/header.html' %}
+	<meta charset="utf-8">
+    <title>{{ config.title }}</title>
+    <link rel="stylesheet" media="screen" href="{% static config.recent %}"/>
 	{% if config.url_favicon %}<link rel="shortcut icon" href="{{ config.url_favicon }}" />{% endif %}
 </head>
 <body>
@@ -98,25 +97,17 @@
     <label>Кропивач 2016-2017</label>
     <br>
 	</footer>
-	<noscript id="deferred-styles">
-      <link rel="stylesheet" media="screen" href="{% static config.url_stylesheet %}"/>
-	  <link rel="stylesheet" media="screen" href="{% static config.recent %}"/>
-      <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
-	  {% if config.default_stylesheet.1 != '' %}<link rel="stylesheet" type="text/css" id="stylesheet" href="{% static config.default_stylesheet.1 %}">{% endif %}
-    </noscript>
-    <script>
-      var loadDeferredStyles = function() {
-        var addStylesNode = document.getElementById("deferred-styles");
-        var replacement = document.createElement("div");
-        replacement.innerHTML = addStylesNode.textContent;
-        document.body.appendChild(replacement);
-        addStylesNode.parentElement.removeChild(addStylesNode);
-      };
-      var raf = requestAnimationFrame || mozRequestAnimationFrame ||
-          webkitRequestAnimationFrame || msRequestAnimationFrame;
-      if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
-      else window.addEventListener('load', loadDeferredStyles);
-    </script>
+	<script type="text/javascript">
+		var styles = {
+
+			{% for name, uri in config.stylesheets %}'{{ name }}' : '{% static uri %}',
+			{% endfor %}
+		}; onready(init);
+	</script>
+
+	<script type="text/javascript">
+		ready();
+	</script>
 
 
 </body>

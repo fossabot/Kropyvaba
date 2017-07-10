@@ -159,6 +159,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 config = {
     'title': "Кропивач",
+    'url_favicon': "favicon.ico",
     'url_stylesheet': "style.css",
     'default_stylesheet': {
         '1': 'ukrchan.css'
