@@ -95,7 +95,7 @@ def render_board(request, board_name, current_page=1):
         form = PostForm(request.POST, request.FILES)
         _ip = get_ip(request)
         if form.is_valid():
-            new_post_id = form.save(board_name, _ip, None)
+            new_post_id = form.process(board_name, _ip, None)
             if new_post_id:
                 if 'json_response' in request.POST:
                     respond = json.dumps({
@@ -146,11 +146,27 @@ def render_thread(request, board_name, thread_id):
     post = Post.objects.filter(board=board).get(id=thread_id)
     post.posts = Post.objects.filter(board=board).filter(thread=post.id)
     if request.method == 'POST':
+        if 'delete' in request.POST:
+            for key in request.POST.keys():
+                if key.startswith('delete_'):
+                    post_id = key[7:]
+                    LOGGER.debug(post_id)
+                    post_to_delete = Post.objects.get(id=post_id)
+                    if post_to_delete.password == request.POST['password']:
+                        LOGGER.debug('Hoooray!')
+                        post_to_delete.delete()
+                        return HttpResponseRedirect(
+                            reverse('thread', args=[
+                                board_name,
+                                thread_id
+                            ]))
+        if 'report' in request.POST:
+            LOGGER.debug('someone wants to report something')
         json_response = 'json_response' in request.POST
-        form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
+        post_form = PostForm(request.POST, request.FILES)
+        if post_form.is_valid():
             _ip = get_ip(request)
-            new_post_id = form.process(board_name, _ip, thread_id)
+            new_post_id = post_form.process(board_name, _ip, thread_id)
             if new_post_id:
                 if json_response:
                     respond = json.dumps({
@@ -171,14 +187,14 @@ def render_thread(request, board_name, thread_id):
                     )
                 return answer
     else:
-        form = PostForm()
+        post_form = PostForm()
     context = {
         'config': config,
         'board': board,
         'boards': boards,
         'threads': [post],
         'hr': True,
-        'form': form,
+        'form': post_form,
         'id': 1
     }
     return render(request, 'posts/page.html', context)

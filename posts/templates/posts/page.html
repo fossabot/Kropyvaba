@@ -41,6 +41,8 @@
 	{% if config.global_message %}<hr /><div class="blotter">{{ config.global_message }}</div>{% endif %}
 	<hr />
 	<form name="postcontrols" action="{{ config.post_url }}" method="post">
+		{% csrf_token %}
+
 	<input type="hidden" name="board" value="{{ board.uri }}" />
 	{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
 	{% for post in threads %}
@@ -75,7 +77,6 @@
 
 	<script type="text/javascript">
 		var styles = {
-
 			{% for name, uri in config.stylesheets %}'{{ name }}' : '{% static uri %}',
 			{% endfor %}
 		}; onready(init);

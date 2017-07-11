@@ -44,7 +44,6 @@
 	    </footer>
         <script type="text/javascript">
             var styles = {
-
                 {% for name, uri in config.stylesheets %}'{{ name }}' : '{% static uri %}',
                 {% endfor %}
             }; onready(init);

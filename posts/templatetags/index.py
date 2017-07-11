@@ -16,7 +16,7 @@ def get_config():
 
 @register.filter(name='truncate')
 def truncate(string):
-    return string.split('\n')[0]
+    return string.split('\n')[0][:40]
 
 
 @register.filter(name='to_dict')

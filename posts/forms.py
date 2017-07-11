@@ -42,9 +42,11 @@ class PostForm(ModelForm):
         body = self.cleaned_data['body']
         password = self.cleaned_data['password']
         time = datetime.timestamp(datetime.now())
-        if thread is None and self.files == {}:
+        if thread is None and len(self.files) == 0:
             return False
-        if len(self.files) <= config['max_images']:
+        if len(self.files) >= config['max_images']:
+            return False
+        if len(body) == 0 and len(self.files) == 0:
             return False
         files = handle_files(self.files, str(time), board)
         new_post = Post.objects.create(
@@ -128,10 +130,10 @@ def handle_files(files, time, board):
                     preview.close()
                     image = Image.open(temp_path)
                 else:
-                    temp_th = open(path, 'rb+')
-                    preview = UploadedFile(file=temp_th)
-                    content_type = preview.content_type
-                    preview.close()
+                    # temp_th = open(path, 'rb+')
+                    # preview = UploadedFile(file=temp_th)
+                    # content_type = preview.content_type  # TODO doesn't work
+                    # preview.close()
                     image = Image.open(path)
                     thumb_generator = Thumbnail(source=file[1])
                     thumb = thumb_generator.generate()
@@ -148,7 +150,7 @@ def handle_files(files, time, board):
 
                 file_data = {
                     "name": name,
-                    "type": content_type,
+                    "type": 0,  # content_type,
                     "tmp_name": ".",  # ???
                     "error": 0,
                     "size": size,
@@ -157,7 +159,7 @@ def handle_files(files, time, board):
                     "file_id": time,
                     "file": filename,
                     "thumb": '{0}-{1}.jpg'.format(time, index),
-                    "is_an_image": content_type.split('/')[0] == 'image',
+                    "is_an_image": 0,  # content_type.split('/')[0] == 'image',
                     "hash": "c5c76d11ff82103d18c3c9767bcb881e",  # TODO hash
                     "width": image.width,
                     "height": image.height,
