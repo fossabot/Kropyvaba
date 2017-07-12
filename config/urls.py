@@ -18,7 +18,7 @@ from django.contrib import admin
 from config import settings
 
 urlpatterns = [
-    url(r'^mod.php/', admin.site.urls),
+    url(r'^admin/', admin.site.urls),
     url(r'^', include('posts.urls')),
 ]
 

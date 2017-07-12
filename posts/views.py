@@ -55,17 +55,22 @@ def render_index(request):
     :return: main page
     """
     boards = get_boards_navlist()
-    fields = ['id', 'body_nomarkup', 'thread', 'time', 'ip', 'board']
+    fields = ['id', 'body_nomarkup', 'thread', 'time', 'ip', 'board_id']
     posts = Post.objects.values(*fields).order_by('-time')
     PostBreaf.set_boards(boards.values())
-    recent_posts = [PostBreaf(post) for post in posts[:30][::-1]]
-    recent_posts = sorted(recent_posts, key=lambda x: x.time, reverse=True)
+    if len(posts):
+        recent = [PostBreaf(post) for post in posts[:30][::-1]]
+        recent = sorted(recent, key=lambda x: x.time, reverse=True)
+        stats = make_stats(posts)
+    else:
+        recent = []
+        stats = None
     context = {
         'config': config,
         'boards': boards,
         'slogan': random.choice(config['slogan']),
-        'stats': make_stats(posts),
-        'recent_posts': recent_posts[:30]
+        'stats': stats,
+        'recent_posts': recent[:30]
     }
     return render(request, 'posts/main_page.html', context)
 
@@ -79,7 +84,6 @@ def render_board(request, board_name, current_page=1):
     :param current_page: page that user requested
     :return: board page
     """
-
     board = get_board(board_name)
     board.url = board.uri
     posts = get_posts(board)
@@ -92,12 +96,17 @@ def render_board(request, board_name, current_page=1):
         thread.omitted = posts_len - 5 if posts_len >= 5 else 0
         thread.posts = thread.posts[thread.omitted:]
     if request.method == 'POST':
+        json_response = 'json_response' in request.POST
         form = PostForm(request.POST, request.FILES)
-        _ip = get_ip(request)
+        LOGGER.debug(form.errors)
         if form.is_valid():
+            LOGGER.debug('form is valid')
+            _ip = get_ip(request)
+            LOGGER.debug('args:\t{}'.format(board_name, _ip, None))
             new_post_id = form.process(board_name, _ip, None)
             if new_post_id:
-                if 'json_response' in request.POST:
+                LOGGER.debug('post created {}'.format(new_post_id))
+                if json_response:
                     respond = json.dumps({
                         'id': new_post_id,
                         'noko': False,
@@ -278,7 +287,7 @@ def make_stats(data):
             for board in PostBreaf.boards:
                 posts_id = []
                 for post in posts:
-                    if post['board'] == board['uri']:
+                    if post['board_id'] == board['id']:
                         posts_id.append(post['id'])
                     else:
                         posts_id.append(0)
@@ -359,7 +368,7 @@ class PostBreaf(object):
         self.time = post['time']
         boards = PostBreaf.boards
         for _board in boards:
-            if _board['uri'] == post['board']:
+            if _board['id'] == post['board_id']:
                 board = _board
         # slice last row
         def _slice(text):

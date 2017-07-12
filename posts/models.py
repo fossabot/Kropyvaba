@@ -4,13 +4,10 @@ from django.db import models
 
 
 class Board(models.Model):
-    uri = models.CharField(primary_key=True, max_length=58)
+    uri = models.CharField(max_length=58)
     title = models.TextField()
     subtitle = models.TextField(blank=True, null=True)
-
-    class Meta(object):
-        managed = False
-        db_table = 'boards'
+    posts = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -44,7 +41,3 @@ class Post(models.Model):
 
     def __str__(self):
         return '{0}     |       {1}'.format(self.id, self.body_nomarkup)
-
-    class Meta(object):
-        managed = False
-        db_table = 'posts_post'

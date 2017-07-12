@@ -49,8 +49,11 @@ class PostForm(ModelForm):
         if len(body) == 0 and len(self.files) == 0:
             return False
         files = handle_files(self.files, str(time), board)
+        _board = Board.objects.get(uri=board)
+        _board.posts += 1
+        _board.save()
         new_post = Post.objects.create(
-            id=Post.objects.filter(board__uri=board).last().id + 1,
+            id=_board.posts,
             time=int(time),
             board=Board.objects.get(uri=board),
             sage=0,
@@ -62,15 +65,16 @@ class PostForm(ModelForm):
         new_post.num_files = len(files)
         new_post.subject = subject
         new_post.email = email
-        new_post.body = markup(body, board)
+        new_post.body = markup(body, board) if len(body) else ''
         new_post.files = json.dumps(files)
         nomarkup = '{0}\n<tinyboard proxy>{1}</tinyboard>'.format(body,
                                                                   _ip)
         new_post.body_nomarkup = nomarkup
         new_post.password = password
+        print('\n{}\n'.format(_ip))
         new_post.ip = _ip
         new_post.thread = thread
-        if not new_post.sage:
+        if not new_post.sage and new_post.thread:
             op_post = Post.objects.get(id=thread)
             op_post.bump = int(time)
             op_post.save()
@@ -83,7 +87,7 @@ class PostForm(ModelForm):
         meta class for ModelForm
         """
         model = Post
-        exclude = ['time', 'sage', 'cycle', 'locked', 'sticky', 'ip']
+        exclude = ['time', 'sage', 'cycle', 'locked', 'sticky', 'ip', 'board']
 
 
 def handle_files(files, time, board):

@@ -1,5 +1,4 @@
-from django.conf.urls import url
-from django.contrib.flatpages import views
+from django.conf.urls import url, include
 from .views import render_board, render_catalog, render_index, render_thread
 from .views import get_media
 
@@ -28,5 +27,5 @@ urlpatterns = [
         get_media,
         name='media'
         ),
-    url(r'^help.html/$', views.flatpage, {'url': '/help/'}, name='help'),
+    url(r'^about/', include('django.contrib.flatpages.urls')),
 ]
