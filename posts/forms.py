@@ -44,7 +44,7 @@ class PostForm(ModelForm):
         time = datetime.timestamp(datetime.now())
         if thread is None and len(self.files) == 0:
             return False
-        if len(self.files) >= config['max_images']:
+        if len(self.files) > config['max_images']:
             return False
         if len(body) == 0 and len(self.files) == 0:
             return False
