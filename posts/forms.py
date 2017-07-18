@@ -48,9 +48,10 @@ class PostForm(ModelForm):
             return False
         if len(body) == 0 and len(self.files) == 0:
             return False
-        files = handle_files(self.files, str(time), board)
-        if not files:
-            return False
+        if len(self.files):
+            files = handle_files(self.files, str(time), board)
+            if not files:
+                return False
         _board = Board.objects.get(uri=board)
         _board.posts += 1
         _board.save()
