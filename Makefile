@@ -5,7 +5,7 @@ test:
 	$(MANAGE) test
 
 run:
-	$(MANAGE) runserver
+	$(MANAGE) runserver 0.0.0.0:8000
 
 migrate:
 	$(MANAGE) makemigrations
