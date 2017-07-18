@@ -49,6 +49,8 @@ class PostForm(ModelForm):
         if len(body) == 0 and len(self.files) == 0:
             return False
         files = handle_files(self.files, str(time), board)
+        if not files:
+            return False
         _board = Board.objects.get(uri=board)
         _board.posts += 1
         _board.save()
@@ -128,7 +130,7 @@ def handle_files(files, time, board):
                     temp_file.close()
                     temp_th = open(temp_path, 'rb+')
                     preview = UploadedFile(file=temp_th)
-                    content_type = preview.content_type
+                    # content_type = preview.content_type
                     thumb_generator = Thumbnail(source=preview)
                     thumb = thumb_generator.generate()
                     preview.close()
@@ -177,6 +179,10 @@ def handle_files(files, time, board):
                 image.close()
                 thumb.close()
                 _files.append(file_data)
+            else:
+                return False  # frong ext
+        else:
+            return False  # files are too big
     return _files
 
 
