@@ -52,6 +52,8 @@ class PostForm(ModelForm):
             files = handle_files(self.files, str(time), board)
             if not files:
                 return False
+        else:
+            files = []
         _board = Board.objects.get(uri=board)
         _board.posts += 1
         _board.save()
