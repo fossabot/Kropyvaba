@@ -3,5 +3,5 @@ flake8==3.3.0
 django-debug-toolbar==1.8
 django-redis==4.8.0
 simplejson==3.11.1
-pillow==4.2.0
+pillow==4.2.1
 django-imagekit==4.0.1
