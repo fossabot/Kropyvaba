@@ -39,3 +39,4 @@ migrations/
 config/secret_key.py
 static/
 media/
+tools/jquery/
