@@ -72,8 +72,7 @@ class PostForm(ModelForm):
         new_post.email = email
         new_post.body = markup(body, board) if len(body) else ''
         new_post.files = json.dumps(files)
-        nomarkup = '{0}\n<tinyboard proxy>{1}</tinyboard>'.format(body,
-                                                                  _ip)
+        nomarkup = '{0}\n<tinyboard proxy>{1}</tinyboard>'.format(body, _ip)
         new_post.body_nomarkup = nomarkup
         new_post.password = password
         print('\n{}\n'.format(_ip))
