@@ -261,7 +261,7 @@ def markup(body, board):
         # underline
         string = process_markup(r"\_\_(?P<text>.+)\_\_", '<u>{0}</u>')
         # strike
-        string = process_markup(r"DEL(?P<text>.+)DEL", '<strike>{0}</strike>')
+        string = process_markup(r"~~(?P<text>.+)~~", '<strike>{0}</strike>')
         # spoiler
 
         string = process_markup(
