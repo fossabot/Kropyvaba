@@ -1,3 +1,3 @@
 [submodule "tools/dollchan"]
 	path = tools/dollchan
-	url = git@github.com:SHooZ/Dollchan-Extension-Tools.git
+	url = git@github.com:SHooZ/Dollchan-Extension-Tools.git#branch=kropyva
