@@ -102,7 +102,6 @@ def render_board(request, board_name, current_page=1):
         if form.is_valid():
             LOGGER.debug('form is valid')
             _ip = get_ip(request)
-            LOGGER.debug('args:\t{}'.format(board_name, _ip, None))
             new_post_id = form.process(board_name, _ip, None)
             if new_post_id:
                 LOGGER.debug('post created {}'.format(new_post_id))
@@ -370,7 +369,7 @@ class PostBreaf(object):
         for _board in boards:
             if _board['id'] == post['board_id']:
                 board = _board
-        # slice last row
+
         def _slice(text):
             """
             Cut off last row.
