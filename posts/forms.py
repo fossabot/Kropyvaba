@@ -19,6 +19,9 @@ from imagekit.processors import ResizeToFit
 from config.settings import config
 from config.settings import MEDIA_ROOT
 from posts.models import Post, Board
+from precise_bbcode.bbcode import get_parser
+
+bb_parser = get_parser()
 
 
 class PostForm(ModelForm):
@@ -70,7 +73,8 @@ class PostForm(ModelForm):
         new_post.num_files = len(files)
         new_post.subject = subject
         new_post.email = email
-        new_post.body = markup(body, board) if len(body) else ''
+        body = markup(bb_parser.render(body), board) if len(body) else ''
+        new_post.body = body
         new_post.files = json.dumps(files)
         nomarkup = '{0}\n<tinyboard proxy>{1}</tinyboard>'.format(body, _ip)
         new_post.body_nomarkup = nomarkup
@@ -212,11 +216,9 @@ def markup(body, board):
     :param board: posts board
     :return: markuped text
     """
-    strings = body.split('\n')
+    strings = body.split('<br />')
     respond = []
     for string in strings:
-        string = string.replace('>', '&gt;')
-        string = string.replace('<', '&lt;')
 
         def process_markup(regex, output):
             """
@@ -271,7 +273,7 @@ def markup(body, board):
 
         respond += [string]
 
-    return '<br>'.join(respond)
+    return '<br />'.join(respond)
 
 
 class Thumbnail(ImageSpec):

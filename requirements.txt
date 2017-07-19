@@ -5,3 +5,4 @@ django-redis==4.8.0
 simplejson==3.11.1
 pillow==4.2.1
 django-imagekit==4.0.1
+django-precise-bbcode==1.2.8

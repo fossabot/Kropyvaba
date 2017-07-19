@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'debug_toolbar',
     'posts',
+    'precise_bbcode',
 ]
 
 SITE_ID = 1
