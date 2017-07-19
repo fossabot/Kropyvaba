@@ -15,7 +15,9 @@
 			var modRoot="{{ config.root }}"+(inMod ? "mod.php?/" : "");
 		</script>
 		{% if not nojavascript %}
-			<script type="text/javascript" src="{% static config.url_javascript %}"></script>
+			<script type="text/javascript"">
+			{% include 'posts/main.js' %}	
+			</script>
 			{% if not config.additional_javascript_compile %}
 			{% for javascript in config.additional_javascript %}<script type="text/javascript" src="{% static javascript %}"></script>{% endfor %}
 			{% endif %}
