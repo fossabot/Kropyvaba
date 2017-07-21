@@ -15,17 +15,20 @@ import os
 
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), os.pardir)
 
-try:
+SETTINGS_DIR = os.path.abspath(os.path.dirname(__file__))
+
+if os.path.isfile(SETTINGS_DIR+'secret_key.py'):
     from .secret_key import SECRET_KEY
-except ImportError:
+else:
     from django.utils.crypto import get_random_string
 
     CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
-    SETTINGS_DIR = os.path.abspath(os.path.dirname(__file__))
     FILE = open(os.path.join(SETTINGS_DIR, 'secret_key.py'), 'w')
     FILE.write('SECRET_KEY = "' + get_random_string(50, CHARS) + '"\n')
     FILE.close()
-    from .secret_key import SECRET_KEY
+    import sys
+    sys.path.append(SETTINGS_DIR)
+    from config.secret_key import SECRET_KEY
 
 # for flake8
 assert SECRET_KEY
