@@ -21,7 +21,7 @@ from config.settings import MEDIA_ROOT
 from posts.models import Post, Board
 from precise_bbcode.bbcode import get_parser
 
-bb_parser = get_parser()
+BB_PARSER = get_parser()
 
 
 class PostForm(ModelForm):
@@ -74,7 +74,7 @@ class PostForm(ModelForm):
         new_post.subject = subject
         new_post.email = email
         nomarkup = '{0}\n<tinyboard proxy>{1}</tinyboard>'.format(body, _ip)
-        body = markup(bb_parser.render(body), board) if len(body) else ''
+        body = markup(BB_PARSER.render(body), board) if len(body) else ''
         new_post.body = body
         new_post.files = json.dumps(files)
         new_post.body_nomarkup = nomarkup
@@ -255,19 +255,22 @@ def markup(body, board):
         string = re.sub(r"^(?P<reply>&gt;&gt;)(?P<id>\d+)", rep, string)
         # bold
         string = process_markup(
-            r"\*\*(?P<text>.+)\*\*",
+            r"\*\*(?P<text>[^\*\*]+)\*\*",
             '<strong>{0}</strong>'
         )
         # italic
-        string = process_markup(r"\*(?P<text>.+)\*", '<em>{0}</em>')
+        string = process_markup(r"\*(?P<text>[^\*]+)\*", '<em>{0}</em>')
         # underline
-        string = process_markup(r"\_\_(?P<text>.+)\_\_", '<u>{0}</u>')
+        string = process_markup(r"\_\_(?P<text>[^\_\_]+)\_\_", '<u>{0}</u>')
         # strike
-        string = process_markup(r"~~(?P<text>.+)~~", '<strike>{0}</strike>')
+        string = process_markup(
+            r"~~(?P<text>[^~~]+)~~",
+            '<strike>{0}</strike>'
+        )
         # spoiler
 
         string = process_markup(
-            r"\%\%(?P<text>.+)\%\%",
+            r"\%\%(?P<text>[^\%\%]+)\%\%",
             '<span class="spoiler">{0}</span>'
         )
 
