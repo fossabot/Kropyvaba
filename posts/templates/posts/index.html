@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!doctype html>
 <html>
 <head>
@@ -78,10 +79,10 @@
 		[<a {% if page == threads.number %}class="selected"{% endif %}{% if page != threads.number %}href="{% url 'board_page' board.url page %}"{% endif %}>{{ page }}</a>]
 		{% endfor %}
 		{% if threads.has_next %}
-		<form action="{% url 'board_page' board.url threads.next_page_number %}" method="get"><input value="Next" type="submit"></form>
+		<form action="{% url 'board_page' board.url threads.next_page_number %}" method="get"><input value="{% trans 'Next' %}" type="submit"></form>
 		{% endif %}
 		{% if config.catalog_link %}
-			 | <a href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">Catalog</a>
+		| <a href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">{% trans "Catalog" %}</a>
 		{% endif %}
 	</div>
 

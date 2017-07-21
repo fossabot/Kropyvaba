@@ -1,4 +1,5 @@
 {% load index %}
+{% load i18n %}
 <!doctype html>
 <html>
 <head>
@@ -8,7 +9,7 @@
 		  , board_name = "{{ board.uri }}";
 	</script>
 	{% include 'posts/header.html' %}
-	<title>{{ board.uri }} - Catalog</title>
+	<title>{{ board.uri }} - {% trans 'Catalog' %}</title>
 </head>
 <body class="8chan vichan is-not-moderator theme-catalog active-catalog" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
 
@@ -20,19 +21,19 @@
 		<div class="subtitle">{{ config.subtitle }}</div>
 	</header>
 
-        <span>Sort by: </span>
+	<span>{% trans "Sort by: " %}</span>
         <select id="sort_by" style="display: inline-block">
-                <option selected value="bump:desc">Bump order</option>
-                <option value="time:desc">Creation date</option>
-                <option value="reply:desc">Reply count</option>
-                <option value="random:desc">Random</option>
+		<option selected value="bump:desc">{% trans 'Bump order' %}</option>
+		<option value="time:desc">{% trans 'Creation date' %}</option>
+		<option value="reply:desc">{% trans 'Reply count' %}</option>
+		<option value="random:desc">{% trans 'Random' %}</option>
         </select>
- 
-        <span>Image size: </span>
+
+	<span>{% trans "Image size: " %}</span>
         <select id="image_size" style="display: inline-block">
-                <option value="vsmall">Very small</option>
-                <option selected value="small">Small</option>
-                <option value="large">Large</option>
+		<option value="vsmall">{% trans 'Very small' %}</option>
+		<option selected value="small">{% trans 'Small' %}</option>
+		<option value="large">{% trans 'Large' %}</option>
         </select>
         <div class="threads">
                 <div id="Grid">
@@ -46,10 +47,10 @@
 				data-locked="{% if post.locked %}true{% else %}false{% endif %}"
 				style="display: inline-block"
 			>
-                                <div class="thread grid-li grid-size-small">  
+                                <div class="thread grid-li grid-size-small">
                                         <a href="{% url 'thread' board.uri post.id %}">
 						{% if post.youtube %}
-							<img src="//img.youtube.com/vi/{{ post.youtube }}/0.jpg" 
+							<img src="//img.youtube.com/vi/{{ post.youtube }}/0.jpg"
 						{% else %}
 							<img src="{% url 'media' board.uri 'src' post.files|first_file %}"
 						{% endif %}
@@ -74,7 +75,7 @@
                 {% endfor %}
                 </div>
         </div>
-	
+
 	<hr/>
 	<footer>
 		<p class="unimportant" style="margin-top:20px;text-align:center;">- Kropyvaba + Vichan's templates

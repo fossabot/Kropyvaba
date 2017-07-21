@@ -38,7 +38,7 @@ onready(function(){
 	
 	stylesDiv.after(
 		$('<div id="style-select" style="float:right;margin-bottom:10px"></div>')
-			.text(_('Style: '))
+			.text(_('Стиль: '))
 			.append(stylesSelect)
 	);
 });

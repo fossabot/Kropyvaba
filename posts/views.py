@@ -17,6 +17,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.views.static import serve
 from django.core.paginator import Paginator
+from django.utils.translation import ugettext as _
 # from django.views.decorators.cache import cache_page
 
 # database models
@@ -26,7 +27,7 @@ from posts.forms import PostForm
 from config.settings import MEDIA_ROOT
 from config.settings import config  # , CACHE_TTL
 
-EMPTY_POST = '(коментар відсутній)'
+EMPTY_POST = _('(коментар відсутній)')
 
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)

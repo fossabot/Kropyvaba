@@ -1,0 +1,165 @@
+# Ukrainian translation of kropyvaba.
+# Copyright (C) 2017
+# This file is distributed under the same license as the kropyvaba package.
+# SHooZ <shooz@ex.ua>, 2017.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-21 14:45+0300\n"
+"PO-Revision-Date: 2017-07-21 01:52+3\n"
+"Last-Translator: SHooZ <shooz@ex.ua>\n"
+"Language-Team: Kropyva.ch\n"
+"Language: Ukrainian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: posts/templates/posts/boardlist.html:4 posts/templates/posts/page.html:12
+msgid "Кропивач"
+msgstr "Кропивач"
+
+#: posts/templates/posts/catalog.html:12 posts/templates/posts/index.html:85
+#: posts/templates/posts/page.html:58
+msgid "Catalog"
+msgstr "Каталоґ"
+
+#: posts/templates/posts/catalog.html:24
+msgid "Sort by: "
+msgstr "Сортувати по"
+
+#: posts/templates/posts/catalog.html:26
+msgid "Bump order"
+msgstr "порядку піднімання"
+
+#: posts/templates/posts/catalog.html:27
+msgid "Creation date"
+msgstr "даті створення"
+
+#: posts/templates/posts/catalog.html:28
+msgid "Reply count"
+msgstr "кількості дописів"
+
+#: posts/templates/posts/catalog.html:29
+msgid "Random"
+msgstr "настрою"
+
+#: posts/templates/posts/catalog.html:32
+msgid "Image size: "
+msgstr "Розмір зображень"
+
+#: posts/templates/posts/catalog.html:34
+msgid "Very small"
+msgstr "дуже малий"
+
+#: posts/templates/posts/catalog.html:35
+msgid "Small"
+msgstr "малий"
+
+#: posts/templates/posts/catalog.html:36
+msgid "Large"
+msgstr "великий"
+
+#: posts/templates/posts/index.html:82
+msgid "Next"
+msgstr "Далі"
+
+#: posts/templates/posts/page.html:55
+msgid "Return"
+msgstr "Повернутися"
+
+#: posts/templates/posts/page.html:56
+msgid "Go to top"
+msgstr "Угору"
+
+#: posts/templates/posts/page.html:63
+msgid "Post a Reply"
+msgstr "Дописати відповідь"
+
+#: posts/templates/posts/post/fileinfo.html:12
+msgid "File: "
+msgstr "Файл: "
+
+#: posts/templates/posts/post_form.html:12
+msgid "Name"
+msgstr "Імʼя"
+
+#: posts/templates/posts/post_form.html:19
+msgid "Email"
+msgstr "Ел. пошта"
+
+#: posts/templates/posts/post_form.html:24
+msgid "sage"
+msgstr "sage"
+
+#: posts/templates/posts/post_form.html:33
+#: posts/templates/posts/post_form.html:47
+#: posts/templates/posts/post_form.html:60
+msgid "Spoiler Image"
+msgstr "Зображення під спойлер"
+
+#: posts/templates/posts/post_form.html:40
+msgid "Subject"
+msgstr "Тема"
+
+#: posts/templates/posts/post_form.html:54
+msgid "Comment"
+msgstr "Коментар"
+
+#: posts/templates/posts/post_form.html:67
+#: posts/templates/posts/report_delete.html:6
+msgid "File"
+msgstr "Файл"
+
+#: posts/templates/posts/post_form.html:75
+#: posts/templates/posts/report_delete.html:6
+msgid "Password"
+msgstr "Пароль"
+
+#: posts/templates/posts/post_form.html:78
+msgid "For file deletion."
+msgstr "Для видаляння допису."
+
+#: posts/templates/posts/post_thread.html:32
+msgid "Reply"
+msgstr "Дописати"
+
+#: posts/templates/posts/post_thread.html:42
+msgid "posts"
+msgstr "текстових дописів"
+
+#: posts/templates/posts/post_thread.html:44
+msgid "and"
+msgstr "і"
+
+#: posts/templates/posts/post_thread.html:48
+msgid "image replies"
+msgstr "дописів з файлами"
+
+#: posts/templates/posts/post_thread.html:49
+msgid "omitted. Click reply to view."
+msgstr "сховано. Натисніть «Дописати», щоб їх переглянути."
+
+#: posts/templates/posts/report_delete.html:5
+msgid "Delete Post "
+msgstr "Видалити допис"
+
+#: posts/templates/posts/report_delete.html:8
+msgid "Delete"
+msgstr "Видалити"
+
+#: posts/templates/posts/report_delete.html:13
+msgid "Reason"
+msgstr "Причина"
+
+#: posts/templates/posts/report_delete.html:15
+msgid "Report"
+msgstr "Поскаржитися"
+
+#: posts/views.py:30
+msgid "(коментар відсутній)"
+msgstr "(коментар відсутній)"

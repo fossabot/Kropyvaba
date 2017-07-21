@@ -1,4 +1,4 @@
-# encoding=utf8
+# encoding=utf-8
 """
 Django settings for config project.
 
@@ -140,13 +140,18 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'uk-ua'
+LANGUAGE_CODE = 'uk'
 
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
 USE_L10N = True
+
+LOCALE_PATHS = [
+    PROJECT_ROOT+'/locale',
+]
+
 
 USE_TZ = True
 

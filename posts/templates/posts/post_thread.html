@@ -1,3 +1,4 @@
+{% load i18n %}
 <div class="thread" id="thread_{{ post.id }}" data-board="{{ board.uri }}">
 {% if not index %}<a id="{{ post.id }}" class="post_anchor"></a>{% endif %}
 
@@ -28,7 +29,7 @@
 		{<img class="icon" title="Cyclical" src="{{ config.image_sticky }}" alt="Cyclical" />
 	{% endif %}
 	{% if index %}
-		<a href="{% url 'thread' board.uri post.id %}">[Reply]</a>
+	<a href="{% url 'thread' board.uri post.id %}">[{% trans "Reply" %}]</a>
 	{% endif %}
 	{% include 'posts/post/post_controls.html' %}
 	</p>
@@ -38,14 +39,14 @@
 	{% if post.omitted or post.omitted_images %}
         <span class="omitted">
 			{% if post.omitted %}
-					{{ post.omitted }} posts
+			{{ post.omitted }} {% trans 'posts' %}
 				{% if post.omitted_images %}
-					 and 
+				{% trans "and" %} 
 				{% endif %}
 			{% endif %}
 			{% if post.omitted_images %}
-				{{ post.omitted_images }} image replies
-			{% endif %} omitted. Click reply to view.
+			{{ post.omitted_images }} {% trans "image replies" %}
+			{% endif %} {% trans "omitted. Click reply to view." %}
         </span>
     {% endif %}
 {% if not index %}
