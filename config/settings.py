@@ -17,9 +17,9 @@ PROJECT_ROOT = os.path.join(os.path.dirname(__file__), os.pardir)
 
 SETTINGS_DIR = os.path.abspath(os.path.dirname(__file__))
 
-if os.path.isfile(SETTINGS_DIR+'secret_key.py'):
-    from .secret_key import SECRET_KEY
-else:
+try:
+    from secret_key import SECRET_KEY
+except:
     from django.utils.crypto import get_random_string
 
     CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
@@ -28,7 +28,7 @@ else:
     FILE.close()
     import sys
     sys.path.append(SETTINGS_DIR)
-    from config.secret_key import SECRET_KEY
+    from secret_key import SECRET_KEY
 
 # for flake8
 assert SECRET_KEY

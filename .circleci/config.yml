@@ -51,7 +51,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            coverage run --source=posts ~/repo/manage.py test
+            coverage run --source=posts ~/repo/manage.py test posts
             coveralls
 
       - store_artifacts:
