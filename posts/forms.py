@@ -112,7 +112,7 @@ def handle_files(files, time, board):
         if size <= config['max_filesize']:
             name = file[1].name
             ext = name.split('.')[-1]
-            if ext in config['allowed_ext']:
+            if ext.lower() in config['allowed_ext']:
 
                 # file saving
                 index = file[0].replace('file', '')
