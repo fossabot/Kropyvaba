@@ -21,8 +21,6 @@ from config.settings import MEDIA_ROOT
 from posts.models import Post, Board
 from precise_bbcode.bbcode import get_parser
 
-BB_PARSER = get_parser()
-
 
 class PostForm(ModelForm):
     """
@@ -73,8 +71,9 @@ class PostForm(ModelForm):
         new_post.num_files = len(files)
         new_post.subject = subject
         new_post.email = email
+        bb_parser = get_parser()
         nomarkup = '{0}\n<tinyboard proxy>{1}</tinyboard>'.format(body, _ip)
-        body = markup(BB_PARSER.render(body), board) if len(body) else ''
+        body = markup(bb_parser.render(body), board) if len(body) else ''
         new_post.body = body
         new_post.files = json.dumps(files)
         new_post.body_nomarkup = nomarkup
