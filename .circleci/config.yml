@@ -43,8 +43,8 @@ jobs:
           name: prepare project
           command: |
             . venv/bin/activate
-            echo > posts/__init__.py > config/__init__.py
-            python manage.py migrate
+            echo > ~/repo/posts/__init__.py > ~/repo/config/__init__.py
+            python ~/repo/manage.py migrate
 
       # run tests!
       - run:
