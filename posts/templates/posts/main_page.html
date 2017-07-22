@@ -1,113 +1,113 @@
 {% load static %}
 <!doctype html>
 <html>
-<head>
-    {% include 'posts/header.html' %}
-	<meta charset="utf-8">
-    <title>{{ config.title }}</title>
-    <link rel="stylesheet" media="screen" href="{% static config.recent %}"/>
-</head>
-<body>
-	<div class="boardlist">
-        <span class="sub" data-description="0">
-            [ <a href="about/help/">/ЧаПи/</a> ]
-        </span> 
-        <span class="sub" data-description="1">
-            [ <a href="/bugs/index.html" title="Пропозиції та претензії">/зауваження/</a> ]
-        </span>
-        <span class="sub" data-description="2">
-            [ <a href="about/mobile/" title="Для власників смартфонів">/мобільна версія/</a> ]
-        </span>
-        <span class="sub" data-description="3">
-            [ <a href="about/donate/" title="Підтримка сайту">/пожертвувати/</a> ]
-        </span>
-        <span class="sub" data-description="4">
-            [ <a href="https://twitter.com/kropyvach">/твіттер/</a> ]
-        </span>
-        <span class="sub" data-description="5">
-            [ <a href="https://vk.com/kropyvach">/вконтакті/</a> ]
-        </span>
-        <span class="sub" data-description="6">
-            [ <a href="https://drama.kropyva.ch/">/енциклопедія/</a> ]
-        </span>
-        <select class='mobile-only' onChange="window.location.href=this.value">
-            <option value="">Навігація</option>
-            <option value="/about/help/">/ЧаПи/</option>
-            <option value="/bugs/index.html">/зауваження/</option>
-            <option value="/about/mobile/">/мобільна версія/</option>
-            <option value="/about/donate/">/пожертвувати/</option>
-            <option value="https://twitter.com/kropyvach">/твіттер/</option>
-            <option value="https://vk.com/kropyvach">/вконтакті/</option>
-            <option value="https://drama.kropyva.ch/">/енциклопедія/</option>
-        </select>
-        </div>
-	<header>
-		<h1>Кропивач</h1>
-		<div class="subtitle">{{ slogan }}</div>
-        <div class="box logo">
-            {% load index %}
-            <img src="{% static 'randlogo/' %}{% random_logo %}">
-        </div>
-    </header>
-	<div id='main-content'>
-        
-        <p>
-        <strong><a href="https://drama.kropyva.ch/Кропивач">Кропивач</a></strong> - український <a href="https://drama.kropyva.ch/Іміджборд">іміджборд</a>, де кожен може дописувати чи ділитися контентом без реєстрації. Тут є дошки присвячені різним темам, від високої культури до порнографії. Не соромся, заходь на ту, що тебе цікавить!
-        </p>
-        <div class="post reply container">
-        <label><strong>Дошки</strong></label>
-        <div id='boards-table'>
-            {% for board in boards %}
-            <strong><a href="{% url 'board' board.uri %}" title="{{ board.title }}">{{ board.title }}{% if board.uri == 'b' or board.uri == 'f'%}<span class='nsfw'> (18+){% endif %}</span></a></strong><br>
-            {% endfor %}
-        </div>    
-        </div>
-        
-		<div class="post reply container">
-       
-        <label><strong>Останні пости</strong></label>
-			<ul>
-				{% for post in recent_posts %}
-					<li>
-						<strong>{{ post.board_name }}</strong>: 
-						<a href="{% if post.thread %}{% url 'thread' post.board_url post.thread %}#{{post.id}}{% else %}{% url 'thread' post.board_url post.id %}{% endif %}">
-							{{ post.snippet }}
-						</a>
-					</li>
-				{% endfor %}
-			</ul>
+	<head>
+		{% include 'posts/header.html' %}
+		<meta charset="utf-8">
+		<title>{{ config.title }}</title>
+		<link rel="stylesheet" media="screen" href="{% static config.recent %}"/>
+	</head>
+	<body>
+		<div class="boardlist">
+			<span class="sub" data-description="0">
+				[ <a href="about/help/">/ЧаПи/</a> ]
+			</span>
+			<span class="sub" data-description="1">
+				[ <a href="/bugs/index.html" title="Пропозиції та претензії">/зауваження/</a> ]
+			</span>
+			<span class="sub" data-description="2">
+				[ <a href="about/mobile/" title="Для власників смартфонів">/мобільна версія/</a> ]
+			</span>
+			<span class="sub" data-description="3">
+				[ <a href="about/donate/" title="Підтримка сайту">/пожертвувати/</a> ]
+			</span>
+			<span class="sub" data-description="4">
+				[ <a href="https://twitter.com/kropyvach">/твіттер/</a> ]
+			</span>
+			<span class="sub" data-description="5">
+				[ <a href="https://drama.kropyva.ch/">/енциклопедія/</a> ]
+			</span>
+			<select class='mobile-only' onChange="window.location.href=this.value">
+				<option value="">Навігація</option>
+				<option value="/about/help/">/ЧаПи/</option>
+				<option value="/bugs/index.html">/зауваження/</option>
+				<option value="/about/mobile/">/мобільна версія/</option>
+				<option value="/about/donate/">/пожертвувати/</option>
+				<option value="https://twitter.com/kropyvach">/твіттер/</option>
+				<option value="https://vk.com/kropyvach">/вконтакті/</option>
+				<option value="https://drama.kropyva.ch/">/енциклопедія/</option>
+			</select>
 		</div>
-        <div class="post reply container">
-        <label><strong>Статистика</label></strong>
-			<ul id='stats-table'>
-				<li>Усього повідомлень: {{ stats.total_posts }}</li>
-				<li>Повідомлень за добу: {{ stats.posts_per24 }}</li>
-				<li>Доступно ниток: {{ stats.total_threads }}</li>
-				<li>Ниток за добу: {{ stats.threads_per24 }}</li>
-				<li>Дописувачів: {{ stats.posters }}</li>
-				<li>Дописувачів за добу: {{ stats.posters_per24 }}</li>
-			</ul>
-</div>
-	</div>
-	
-	<hr/>
-	<footer>
-	
-    <label>Кропивач 2016-2017</label>
-    <br>
-	</footer>
-	<script type="text/javascript">
-		var styles = {
-
-			{% for name, uri in config.stylesheets %}'{{ name }}' : '{% static uri %}',
-			{% endfor %}
-		}; onready(init);
-	</script>
-
-	<script type="text/javascript">
-		ready();
-	</script>
-
-
-</body>
+		<header>
+			<h1>Кропивач</h1>
+			<div class="subtitle">{{ slogan }}</div>
+			<div class="box logo">
+				{% load index %}
+				<img src="{% static 'randlogo/' %}{% random_logo %}">
+			</div>
+		</header>
+		<div id='main-content'>
+			<p>
+				<strong><a href="https://drama.kropyva.ch/Кропивач">Кропивач</a></strong> -
+				український <a href="https://drama.kropyva.ch/Іміджборд">іміджборд</a>, де
+				кожен може дописувати чи ділитися контентом без реєстрації.
+				Тут є дошки присвячені різним темам, від високої культури до порнографії.
+				Не соромся, заходь на ту, що тебе цікавить!
+			</p>
+			<div class="post reply container">
+				<label><strong>Дошки</strong></label>
+				<div id='boards-table'>
+					{% for board in boards %}
+						<strong>
+							<a href="{% url 'board' board.uri %}" title="{{ board.title }}">{{ board.title }}
+								{% if board.uri == 'b' or board.uri == 'f'%}<span class='nsfw'> (18+){% endif %}</span></a>
+						</strong><br>
+					{% endfor %}
+				</div>
+			</div>
+			<div class="post reply container">
+				<label><strong>Останні пости</strong></label>
+				<ul>
+					{% for post in recent_posts %}
+						<li>
+							<strong>{{ post.board_name }}</strong>:
+							<a href="
+								{% if post.thread %}
+									{% url 'thread' post.board_url post.thread %}#{{post.id}}
+								{% else %}
+									{% url 'thread' post.board_url post.id %}
+								{% endif %}">
+								{{ post.snippet }}
+							</a>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+			<div class="post reply container">
+				<label><strong>Статистика</label></strong>
+				<ul id='stats-table'>
+					<li>Усього повідомлень: {{ stats.total_posts }}</li>
+					<li>Повідомлень за добу: {{ stats.posts_per24 }}</li>
+					<li>Доступно ниток: {{ stats.total_threads }}</li>
+					<li>Ниток за добу: {{ stats.threads_per24 }}</li>
+					<li>Дописувачів: {{ stats.posters }}</li>
+					<li>Дописувачів за добу: {{ stats.posters_per24 }}</li>
+				</ul>
+			</div>
+		</div>
+		<hr/>
+		<footer>
+			<label>Кропивач 2016-2017</label>
+			<br>
+		</footer>
+		<script type="text/javascript">
+			var styles = {
+				{% for name, uri in config.stylesheets %}'{{ name }}' : '{% static uri %}',
+				{% endfor %}
+			}; onready(init);
+		</script>
+		<script type="text/javascript">
+			ready();
+		</script>
+	</body>
 </html>

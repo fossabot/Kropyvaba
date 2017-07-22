@@ -30,7 +30,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            python3 -m venv venv
+            pyhon3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
 
@@ -51,7 +51,8 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python manage.py test
+            coverage run --source=posts ~/repo/manage.py test
+            coveralls
 
       - store_artifacts:
           path: test-reports
