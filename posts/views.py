@@ -2,8 +2,6 @@
 
 """file with backend code"""
 
-import logging
-
 import random
 from calendar import timegm
 from datetime import datetime, timedelta
@@ -28,9 +26,6 @@ from config.settings import MEDIA_ROOT
 from config.settings import config  # , CACHE_TTL
 
 EMPTY_POST = _('(коментар відсутній)')
-
-LOGGER = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
 
 
 class Page404(object):
@@ -99,13 +94,10 @@ def render_board(request, board_name, current_page=1):
     if request.method == 'POST':
         json_response = 'json_response' in request.POST
         form = PostForm(request.POST, request.FILES)
-        LOGGER.debug(form.errors)
         if form.is_valid():
-            LOGGER.debug('form is valid')
             _ip = get_ip(request)
             new_post_id = form.process(board_name, _ip, None)
             if new_post_id:
-                LOGGER.debug('post created {}'.format(new_post_id))
                 if json_response:
                     respond = json.dumps({
                         'id': new_post_id,
@@ -149,9 +141,6 @@ def render_thread(request, board_name, thread_id):
     board = get_board(board_name)
     boards = get_boards_navlist()
     board.url = board.uri
-    for post in Post.objects.filter(board=board):
-        if post.id == 1277:
-            LOGGER.debug('=='*7+'{0}\t{1}'.format(post.id, post.global_id))
     post = Post.objects.filter(board=board).get(id=thread_id)
     post.posts = Post.objects.filter(board=board).filter(thread=post.id)
     if request.method == 'POST':
@@ -159,10 +148,8 @@ def render_thread(request, board_name, thread_id):
             for key in request.POST.keys():
                 if key.startswith('delete_'):
                     post_id = key[7:]
-                    LOGGER.debug(post_id)
                     post_to_delete = Post.objects.get(id=post_id)
                     if post_to_delete.password == request.POST['password']:
-                        LOGGER.debug('Hoooray!')
                         post_to_delete.delete()
                         return HttpResponseRedirect(
                             reverse('thread', args=[
@@ -170,7 +157,7 @@ def render_thread(request, board_name, thread_id):
                                 thread_id
                             ]))
         if 'report' in request.POST:
-            LOGGER.debug('someone wants to report something')
+            pass
         json_response = 'json_response' in request.POST
         post_form = PostForm(request.POST, request.FILES)
         if post_form.is_valid():

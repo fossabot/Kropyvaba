@@ -43,14 +43,14 @@ jobs:
           name: prepare project
           command: |
             echo > ~/repo/posts/__init__.py > ~/repo/config/__init__.py
+            python ~/repo/manage.py migrate
 
       # run tests!
       - run:
           name: run tests
           command: |
             . venv/bin/activate
-            coverage run --source=posts manage.py test
-            coveralls
+            python manage.py test
 
       - store_artifacts:
           path: test-reports

@@ -252,7 +252,7 @@ def markup(body, board):
                 return '''<a onclick="highlightReply('{0}', event);\
                           "href="{1}">&gt;&gt;{0}</a>'''.format(reply_id, link)
 
-        string = re.sub(r"^(?P<reply>&gt;&gt;)(?P<id>\d+)", rep, string)
+        string = re.sub(r"(?P<reply>&gt;&gt;)(?P<id>\d+)", rep, string)
         # bold
         string = process_markup(
             r"\*\*(?P<text>[^\*\*]+)\*\*",
