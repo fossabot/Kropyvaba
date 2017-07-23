@@ -45,7 +45,7 @@ jobs:
             . venv/bin/activate
             coverage run --source=posts ~/repo/manage.py test posts
             coverage report
-            coveralls
+            COVERALLS_REPO_TOKEN=N5sZTY5Sr8QNaNoKZQLsfJGNAG6RNRdjQ coveralls
 
       - store_artifacts:
           path: test-reports
