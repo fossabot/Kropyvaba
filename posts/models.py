@@ -24,7 +24,7 @@ class Post(models.Model):
     trip = models.CharField(max_length=15, blank=True, null=True)
     capcode = models.CharField(max_length=50, blank=True, null=True)
     body = models.TextField(blank=True)
-    body_nomarkup = models.TextField(blank=True, null=True)
+    body_nomarkup = models.TextField(blank=True, null=True, max_length=16_000)
     time = models.IntegerField()
     bump = models.IntegerField(blank=True, null=True)
     files = models.TextField(blank=True, null=True)

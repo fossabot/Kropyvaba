@@ -38,14 +38,6 @@ jobs:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
-
-      - run:
-          name: prepare project
-          command: |
-            . venv/bin/activate
-            echo > ~/repo/posts/__init__.py > ~/repo/config/__init__.py
-            python ~/repo/manage.py migrate
-
       # run tests!
       - run:
           name: run tests

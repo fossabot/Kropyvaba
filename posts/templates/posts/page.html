@@ -3,89 +3,93 @@
 {% load static %}
 <!doctype html>
 <html>
-<head>
-	<meta charset="utf-8">
-	<script type="text/javascript">
-		var active_page = "thread";
-	</script>
-	{% include 'posts/header.html' %}
-	<title>{{ threads.0.body_nomarkup|truncate }} | {% trans 'Кропивач' %}</title>
-</head>
-<body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} active-page" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
-	<div class="boardlist">
-        {% include 'posts/boardlist.html' %}
-    </div>
-    		<script type="text/javascript">if (typeof do_boardlist != 'undefined') do_boardlist();</script>
-<a name="top"></a>
-	<header>
-		<h1>/{{ board.url }}/ - {{ board.title }}</h1>
-		<div class="subtitle">
-            {% if board.subtitle %}
-				{% if config.allow_subtitle_html %}
-					{{ board.subtitle }}
-				{% else %}
-					{{ board.subtitle }}
-				{% endif %}
-			{% endif %}
+	<head>
+		<meta charset="utf-8">
+		<script type="text/javascript">
+			var active_page = "thread";
+		</script>
+		{% include 'posts/header.html' %}
+		<title>{{ threads.0.body_nomarkup|truncate }} | {% trans 'Кропивач' %}</title>
+	</head>
+	<body class="8chan vichan
+		{% if mod %}
+			is-moderator
+		{% else %}
+			is-not-moderator
+		{% endif %} active-page" data-stylesheet="
+		{% if config.default_stylesheet.1 != '' %}
+			{{ config.default_stylesheet.1 }}
+		{% else %}
+			default
+		{% endif %}">
+		<div class="boardlist">
+			{% include 'posts/boardlist.html' %}
 		</div>
-	</header>
-        	{% include 'posts/attention_bar.html' %}
-
-	{{ config.ad.top }}
-
-	{% if not no_post_form %}
-		{% include 'posts/post_form.html' %}
-	{% else %}
-		{% include 'posts/boardlist.html' %}
-	{% endif %}
-
-	{% if config.global_message %}<hr /><div class="blotter">{{ config.global_message }}</div>{% endif %}
-	<hr />
-	<form name="postcontrols" action="{{ config.post_url }}" method="post">
-		{% csrf_token %}
-
-	<input type="hidden" name="board" value="{{ board.uri }}" />
-	{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
-	{% for post in threads %}
-            {% include 'posts/post_thread.html' %}
-    {% endfor %}
-        <hr>
-        		<div id="thread-interactions">
-			<span id="thread-links">
-				<a id="thread-return" href="{% url 'board' board.url %}">[{% trans "Return" %}]</a>
-				<a id="thread-top" href="#top">[{% trans "Go to top" %}]</a>
-                		{% if config.catalog_link %}
-				<a id="thread-catalog" href="{% url 'catalog' board.url %}">[{% trans "Catalog" %}]</a>
-		                {% endif %}
-			</span>
-
-			<span id="thread-quick-reply">
-				<a id="link-quick-reply" href="#">[{% trans "Post a Reply" %}]</a>
-</span>
-	{% include 'posts/report_delete.html' %}
-</form>
-
-	<hr>
-	<div class="boardlist bottom">
-        {% include 'posts/boardlist.html' %}
-    </div>
-	<footer>
-		<p class="unimportant" style="margin-top:20px;text-align:center;">- Kropyvaba + Vichan's templates
-			<br><a href="https://github.com/SHooZ/Kropyvaba">Kropyvaba</a> Copyright &copy; 2017 SHooZ
-			<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2017 vichan-devel</p>
-		{% for footer in config.footer %}<p class="unimportant" style="text-align:center;">{{ footer }}</p>{% endfor %}
-</footer>
-
-	<script type="text/javascript">
-		var styles = {
-			{% for name, uri in config.stylesheets %}'{{ name }}' : '{% static uri %}',
+		<script type="text/javascript">if (typeof do_boardlist != 'undefined') do_boardlist();</script>
+		<a name="top"></a>
+		<header>
+			<h1>/{{ board.url }}/ - {{ board.title }}</h1>
+			<div class="subtitle">
+				{% if board.subtitle %}
+					{% if config.allow_subtitle_html %}
+						{{ board.subtitle }}
+					{% else %}
+						{{ board.subtitle }}
+					{% endif %}
+				{% endif %}
+			</div>
+		</header>
+		{% include 'posts/attention_bar.html' %}
+		{{ config.ad.top }}
+		{% if not no_post_form %}
+			{% include 'posts/post_form.html' %}
+		{% else %}
+			{% include 'posts/boardlist.html' %}
+		{% endif %}
+		{% if config.global_message %}
+			<hr /><div class="blotter">{{ config.global_message }}</div>
+		{% endif %}
+		<form name="postcontrols" action="{{ config.post_url }}" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="board" value="{{ board.uri }}" />
+			{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
+			{% for post in threads %}
+				{% include 'posts/post_thread.html' %}
 			{% endfor %}
-		}; onready(init);
-	</script>
-
-	<script type="text/javascript">
-		ready();
-	</script>
-
-</body>
+			<hr />
+			<div id="thread-interactions">
+				<span id="thread-links">
+					<a id="thread-return" href="{% url 'board' board.url %}">[{% trans "Return" %}]</a>
+					<a id="thread-top" href="#top">[{% trans "Go to top" %}]</a>
+					{% if config.catalog_link %}
+						<a id="thread-catalog" href="{% url 'catalog' board.url %}">[{% trans "Catalog" %}]</a>
+					{% endif %}
+				</span>
+				<span id="thread-quick-reply">
+					<a id="link-quick-reply" href="#">[{% trans "Post a Reply" %}]</a>
+				</span>
+				{% include 'posts/report_delete.html' %}
+			</div>
+		</form>
+		<hr>
+		<div class="boardlist bottom">
+			{% include 'posts/boardlist.html' %}
+		</div>
+		<footer>
+			<p class="unimportant" style="margin-top:20px;text-align:center;">- Kropyvaba + Vichan's templates
+				<br><a href="https://github.com/SHooZ/Kropyvaba">Kropyvaba</a> Copyright &copy; 2017 SHooZ
+				<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2017 vichan-devel
+			</p>
+			{% for footer in config.footer %}<p class="unimportant" style="text-align:center;">{{ footer }}</p>{% endfor %}
+		</footer>
+		<script type="text/javascript">
+			var styles = {
+				{% for name, uri in config.stylesheets %}'{{ name }}' : '{% static uri %}',
+				{% endfor %}
+			}; onready(init);
+		</script>
+		<script type="text/javascript">
+			ready();
+		</script>
+	</body>
 </html>
