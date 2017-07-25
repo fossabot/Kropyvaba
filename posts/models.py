@@ -1,13 +1,22 @@
-from __future__ import unicode_literals
+import os
 
 from django.db import models
-
+from config.settings import MEDIA_ROOT
 
 class Board(models.Model):
     uri = models.CharField(max_length=58)
     title = models.TextField()
     subtitle = models.TextField(blank=True, null=True)
     posts = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            super(Board, self).save(*args, **kwargs)
+            if not os.path.exists('{0}thumb/{1}'.format(MEDIA_ROOT, self.uri)):
+                os.makedirs('{0}thumb/{1}'.format(MEDIA_ROOT, self.uri))
+            print('{0}thumb/{1}'.format(MEDIA_ROOT, self.uri))
+            if not os.path.exists('{0}src/{1}'.format(MEDIA_ROOT, self.uri)):
+                os.makedirs('{0}src/{1}'.format(MEDIA_ROOT, self.uri))
 
     def __str__(self):
         return self.title
