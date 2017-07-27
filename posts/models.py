@@ -3,15 +3,30 @@ import os
 from django.db import models
 from config.settings import MEDIA_ROOT
 
+
 class Board(models.Model):
+    NO_FLAGS = 'NO'
+    REAL_LOCATION = 'RL'
+    USER_CHOICE = 'UC'
+    FLAGS_OPTIONS_CHOICES = (
+        (NO_FLAGS, 'All posts without flags'),
+        (REAL_LOCATION, "Flags represents location based on poster's ip"),
+        (USER_CHOICE, 'Posters can choose flag for post'),
+    )
     uri = models.CharField(max_length=58)
     title = models.TextField()
     subtitle = models.TextField(blank=True, null=True)
     posts = models.IntegerField(default=0)
+    nsfw = models.BooleanField(default=False, blank=True)
+    flags = models.CharField(
+        max_length=2,
+        choices=FLAGS_OPTIONS_CHOICES,
+        default=NO_FLAGS,
+    )
 
     def save(self, *args, **kwargs):
+        super(Board, self).save(*args, **kwargs)
         if not self.pk:
-            super(Board, self).save(*args, **kwargs)
             if not os.path.exists('{0}thumb/{1}'.format(MEDIA_ROOT, self.uri)):
                 os.makedirs('{0}thumb/{1}'.format(MEDIA_ROOT, self.uri))
             print('{0}thumb/{1}'.format(MEDIA_ROOT, self.uri))

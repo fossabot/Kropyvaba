@@ -7,6 +7,7 @@ from tempfile import NamedTemporaryFile
 from datetime import datetime
 import re
 
+import GeoIP
 import simplejson as json
 
 from django.forms import ModelForm
@@ -72,17 +73,20 @@ class PostForm(ModelForm):
         new_post.subject = subject
         new_post.email = email
         bb_parser = get_parser()
-        nomarkup = '{0}\n<tinyboard proxy>{1}</tinyboard>'.format(body, _ip)
+        gi = GeoIP.new(GeoIP.GEOIP_MEMORY_CACHE)
+        country_code = gi.country_code_by_addr(_ip)
+        nomarkup = '\
+            {0}\n<tinyboard flag>{1}</tinyboard>\
+            \n<tinyboard proxy>{2}</tinyboard>'.format(body, country_code, _ip)
         body = markup(bb_parser.render(body), board) if len(body) else ''
         new_post.body = body
         new_post.files = json.dumps(files)
         new_post.body_nomarkup = nomarkup
         new_post.password = password
-        print('\n{}\n'.format(_ip))
         new_post.ip = _ip
         new_post.thread = thread
         if not new_post.sage and new_post.thread:
-            op_post = Post.objects.get(id=thread)
+            op_post = Post.objects.get(board__uri=board, id=thread)
             op_post.bump = int(time)
             op_post.save()
         new_post.bump = time
@@ -109,86 +113,78 @@ def handle_files(files, time, board):
     _files = []
     for file in files.items():
         size = file[1].size
-        if size <= config['max_filesize']:
-            name = file[1].name
-            ext = name.split('.')[-1]
-            if ext.lower() in config['allowed_ext']:
+        if size > config['max_filesize']:
+            return False
+        name = file[1].name
+        ext = name.split('.')[-1]
+        if not ext.lower() in config['allowed_ext']:
+            return False
 
-                # file saving
-                index = file[0].replace('file', '')
-                path = choose_path(board, 'src', time, ext, index)
+        # file saving
+        index = file[0].replace('file', '')  # equal 0 for first file and so on
+        path = choose_path(board, 'src', time, ext, index)
 
-                with open(path, 'wb+') as destination:
-                    for chunk in file[1].chunks():
-                        destination.write(chunk)
-                destination.close()
+        with open(path, 'wb+') as destination:
+            for chunk in file[1].chunks():
+                destination.write(chunk)
+        destination.close()
 
-                # TODO: Refactor all this hell
+        # TODO: Refactor all this hell
 
-                if ext == 'webm':
-                    temp_file = NamedTemporaryFile()
-                    temp_path = temp_file.name + '.png'
-                    call(["ffmpeg",
-                          "-i", path,
-                          "-vframes", "1",
-                          temp_path])
-                    temp_file.close()
-                    temp_th = open(temp_path, 'rb+')
-                    preview = UploadedFile(file=temp_th)
-                    # content_type = preview.content_type
-                    thumb_generator = Thumbnail(source=preview)
-                    thumb = thumb_generator.generate()
-                    preview.close()
-                    image = Image.open(temp_path)
-                else:
-                    # temp_th = open(path, 'rb+')
-                    # preview = UploadedFile(file=temp_th)
-                    # content_type = preview.content_type  # TODO doesn't work
-                    # preview.close()
-                    image = Image.open(path)
-                    thumb_generator = Thumbnail(source=file[1])
-                    thumb = thumb_generator.generate()
-
-                path = choose_path(board, 'thumb', time, 'jpg', index)
-
-                destination = open(path, 'wb+')
-                destination.write(thumb.read())
-                destination.close()
-
-                thumb = Image.open(path)
-
-                filename = '{0}-{1}.{2}'.format(time, index, ext)
-
-                file_data = {
-                    "name": name,
-                    "type": 0,  # content_type,
-                    "tmp_name": ".",  # ???
-                    "error": 0,
-                    "size": size,
-                    "filename": name,
-                    "extension": ext,
-                    "file_id": time,
-                    "file": filename,
-                    "thumb": '{0}-{1}.jpg'.format(time, index),
-                    "is_an_image": 0,  # content_type.split('/')[0] == 'image',
-                    "hash": "c5c76d11ff82103d18c3c9767bcb881e",  # TODO hash
-                    "width": image.width,
-                    "height": image.height,
-                    "thumbwidth": thumb.width,
-                    "thumbheight": thumb.height,
-                    "file_path": '{0}/src/{1}'.format(board, filename),
-                    "thumb_path": '{0}/thumb/{1}-{2}.jpg'.format(board,
-                                                                 time,
-                                                                 index)
-                }
-                image.close()
-                thumb.close()
-                _files.append(file_data)
-            else:
-                return False  # frong ext
+        if ext.lower() == 'webm':
+            temp_file = NamedTemporaryFile()
+            temp_path = temp_file.name + '.png'
+            call(["ffmpeg", "-i", path, "-vframes", "1", temp_path])
+            temp_file.close()
+            temp_th = open(temp_path, 'rb+')
+            preview = UploadedFile(file=temp_th)
+            thumb = make_thumb(preview)
+            preview.close()
+            image = Image.open(temp_path)
         else:
-            return False  # files are too big
+            image = Image.open(path)
+            thumb = make_thumb(file[1])
+
+        path = choose_path(board, 'thumb', time, 'jpg', index)
+
+        destination = open(path, 'wb+')
+        destination.write(thumb.read())
+        destination.close()
+
+        thumb = Image.open(path)
+
+        filename = '{0}-{1}.{2}'.format(time, index, ext)
+
+        file_data = {
+            "name": name,
+            "type": 0,  # content_type,
+            "tmp_name": ".",  # ???
+            "error": 0,
+            "size": size,
+            "filename": name,
+            "extension": ext,
+            "file_id": time,
+            "file": filename,
+            "thumb": '{0}-{1}.jpg'.format(time, index),
+            "is_an_image": 0,  # content_type.split('/')[0] == 'image',
+            "hash": "c5c76d11ff82103d18c3c9767bcb881e",  # TODO hash
+            "width": image.width,
+            "height": image.height,
+            "thumbwidth": thumb.width,
+            "thumbheight": thumb.height,
+            "file_path": '{0}/src/{1}'.format(board, filename),
+            "thumb_path": '{0}/thumb/{1}-{2}.jpg'.format(board, time, index)
+        }
+        image.close()
+        thumb.close()
+        _files.append(file_data)
     return _files
+
+
+def make_thumb(_file):
+    thumb_generator = Thumbnail(source=_file)
+    thumb = thumb_generator.generate()
+    return thumb
 
 
 def choose_path(board, _type, time, ext, index):
@@ -242,7 +238,7 @@ def markup(body, board):
 
         def rep(match):
             reply_id = match.group('id')
-            post = Post.objects.filter(board__uri=board).get(id=reply_id)
+            post = Post.objects.get(board__uri=board, id=reply_id)
             if post:
                 thread_id = post.thread if post.thread else post.id
                 link = reverse('thread', args=[board, thread_id])
@@ -280,7 +276,7 @@ def markup(body, board):
 
 class Thumbnail(ImageSpec):
 
-    """Thumbnail setting's."""
+    """Thumbnail settings."""
 
     processors = [ResizeToFit(255, 255)]
     format = 'JPEG'

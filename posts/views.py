@@ -3,6 +3,7 @@
 """file with backend code"""
 
 import random
+import re
 from calendar import timegm
 from datetime import datetime, timedelta
 
@@ -360,12 +361,13 @@ class PostBreaf(object):
 
         def _slice(text):
             """
-            Cut off last row.
+            Cut tinyboard tag.
 
             :param text: text for cutting
             :return: text within last row
             """
-            return '\n'.join(text.split('\n')[:-1])
+            result = re.sub(r"<tinyboard [^>]+>[^/]+</tinyboard>", '', text)
+            return result
 
         sliced_body = _slice(body)
         length_of_sliced_body = len(sliced_body)
