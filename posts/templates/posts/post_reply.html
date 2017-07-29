@@ -1,21 +1,22 @@
 <div class="post reply" id="reply_{{ post.id }}">
-<p class="intro">
-	{% if not index %}<a id="{{ post.id }}" class="post_anchor"></a>{% endif %}
-	<input type="checkbox" class="delete" name="delete_{{ post.id }}" id="delete_{{ post.id }}" />
-	<label for="delete_{{ post.id }}">
-		{% include 'posts/post/subject.html' %}
-		{% include 'posts/post/name.html' %}
-		{% include 'posts/post/ip.html' %}
-		{% include 'posts/post/flag.html' %}
-		{% include 'posts/post/time.html' %}
-	</label>
-	⋮⋮⋮
-	{% include 'posts/post/poster_id.html' %}&nbsp;
-	<a class="post_no" id="post_no_{{ post.id }}" onclick="highlightReply({{ post.id }})" href="{% url 'thread' board.uri post.thread %}#{{post.id}}">No.</a>
-	<a class="post_no" onclick="citeReply({{ post.id }})" href="{% url 'thread' board.uri post.thread %}#{{post.id}}">{{ post.id }}</a>
+	<p class="intro">
+		{% if not index %}<a id="{{ post.id }}" class="post_anchor"></a>{% endif %}
+		<input type="checkbox" class="delete" name="delete_{{ post.id }}" id="delete_{{ post.id }}" />
+		<label for="delete_{{ post.id }}">
+			{% include 'posts/post/subject.html' %}
+			{% include 'posts/post/name.html' %}
+			{% include 'posts/post/ip.html' %}
+			{% include 'posts/post/flag.html' %}
+			{% include 'posts/post/time.html' %}
+		</label>
+		⋮⋮⋮
+		{% include 'posts/post/poster_id.html' %}&nbsp;
+		<a class="post_no" id="post_no_{{ post.id }}" onclick="highlightReply({{ post.id }})" href="{% url 'thread' board.uri post.thread %}#{{post.id}}">No.</a>
+		<a class="post_no" onclick="citeReply({{ post.id }})" href="{% url 'thread' board.uri post.thread %}#{{post.id}}">{{ post.id }}</a>
+		{% if post.ip == thread.ip %}<span> OP </span>{% endif %}
 	</p>
-    {% include 'posts/post/fileinfo.html' %} 
-    {% include 'posts/post/post_controls.html' %}
+	{% include 'posts/post/fileinfo.html' %}
+	{% include 'posts/post/post_controls.html' %}
 	<div class="body" {% if post.files > 1 %}style="clear:both"{% endif %}>
 		{% if index %}{{ post.body|safe }}{% else %}{{ post.body|safe }}{% endif %}
 	</div>

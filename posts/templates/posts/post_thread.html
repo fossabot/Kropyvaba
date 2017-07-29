@@ -52,8 +52,10 @@
 {% if not index %}
 {% endif %}
 </div>
-{% for post in post.posts %}
-	{% include 'posts/post_reply.html' %}
-{% endfor %}
+{% with post as thread %}
+	{% for post in post.posts %}
+		{% include 'posts/post_reply.html' %}
+	{% endfor %}
+{% endwith %}
 <br class="clear"/>
 </div> 
