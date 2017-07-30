@@ -48,7 +48,7 @@ class Post(models.Model):
     trip = models.CharField(max_length=15, blank=True, null=True)
     capcode = models.CharField(max_length=50, blank=True, null=True)
     body = models.TextField(blank=True)
-    body_nomarkup = models.TextField(blank=True, null=True, max_length=16_000)
+    body_nomarkup = models.TextField(blank=True, null=True, max_length=16000)
     time = models.IntegerField()
     bump = models.IntegerField(blank=True, null=True)
     files = models.TextField(blank=True, null=True)
@@ -65,3 +65,12 @@ class Post(models.Model):
 
     def __str__(self):
         return '{0}     |       {1}'.format(self.id, self.body_nomarkup)
+
+
+class Report(models.Model):
+    ip = models.CharField(max_length=39)
+    reason = models.CharField(max_length=30)
+    post = models.ForeignKey(Post, models.CASCADE)
+
+    def __str__(self):
+        return self.reason

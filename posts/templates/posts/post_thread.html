@@ -52,7 +52,7 @@
 {% if not index %}
 {% endif %}
 </div>
-{% with post as thread %}
+{% with thread=post %}
 	{% for post in post.posts %}
 		{% include 'posts/post_reply.html' %}
 	{% endfor %}

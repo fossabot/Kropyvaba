@@ -20,7 +20,7 @@ from django.utils.translation import ugettext as _
 # from django.views.decorators.cache import cache_page
 
 # database models
-from posts.models import Board, Post
+from posts.models import Board, Post, Report
 
 from posts.forms import PostForm
 from config.settings import MEDIA_ROOT
@@ -149,7 +149,7 @@ def render_thread(request, board_name, thread_id):
             for key in request.POST.keys():
                 if key.startswith('delete_'):
                     post_id = key[7:]
-                    post_to_delete = Post.objects.get(id=post_id)
+                    post_to_delete = Post.objects.get(board=board, id=post_id)
                     if post_to_delete.password == request.POST['password']:
                         post_to_delete.delete()
                         return HttpResponseRedirect(
@@ -158,7 +158,22 @@ def render_thread(request, board_name, thread_id):
                                 thread_id
                             ]))
         if 'report' in request.POST:
-            pass
+            for key in request.POST.keys():
+                if key.startswith('delete_'):
+                    post_id = key[7:]
+                    post_to_report = Post.objects.get(board=board, id=post_id)
+                    print(post_to_report)
+                    report = Report(
+                        ip=get_ip(request),
+                        reason=request.POST['reason'],
+                        post=post_to_report
+                    )
+                    report.save(force_insert=True)
+                    return HttpResponseRedirect(
+                        reverse('thread', args=[
+                            board_name,
+                            thread_id
+                        ]))
         json_response = 'json_response' in request.POST
         post_form = PostForm(request.POST, request.FILES)
         if post_form.is_valid():
