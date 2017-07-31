@@ -1049,3 +1049,14 @@ th .de-file+.de-file {
 	-o-animation:de-cfg-close-rev .2s ease-in both;
 	-webkit-animation:de-cfg-close-rev .2s ease-in both;
 }
+.op-reply {
+	font-weight: bold;
+	color: white;
+	display: inline-block;
+	padding: 1px 6px;
+	border: 1px solid #444444;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#7bb850), to(#75a849));
+	background-image: linear-gradient(to bottom, #7bb850, #75a849);
+	border-radius: 3px;
+
+}
