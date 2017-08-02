@@ -183,6 +183,7 @@ config = {
         'multi-image.js',
         'style-select.js',
         'dollchan.js',
+        'report.js',
     ],
     'footer': ['Кропивач 2016-2017'],
     'max_filesize': 40 * 1024 * 1024,  # 40MB

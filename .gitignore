@@ -38,5 +38,6 @@ migrations/
 .directory
 config/secret_key.py
 static/
+!posts/static/
 media/
 tools/jquery/
