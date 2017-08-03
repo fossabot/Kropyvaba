@@ -186,8 +186,10 @@ div.post.reply.post-hover {
 	margin:10px;
 }
 div.post.reply div.body {
-	margin:0;
-	padding:0;
+	margin: 0;
+	padding: 0;
+	max-height: 300px;
+	overflow-y: auto;
 }
 .post p {
 	margin:6px 0;
