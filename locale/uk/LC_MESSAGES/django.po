@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-21 14:45+0300\n"
+"POT-Creation-Date: 2017-08-03 20:48+0000\n"
 "PO-Revision-Date: 2017-07-21 01:52+3\n"
 "Last-Translator: SHooZ <shooz@ex.ua>\n"
 "Language-Team: Kropyva.ch\n"
@@ -24,43 +24,43 @@ msgid "Кропивач"
 msgstr "Кропивач"
 
 #: posts/templates/posts/catalog.html:12 posts/templates/posts/index.html:85
-#: posts/templates/posts/page.html:58
+#: posts/templates/posts/page.html:65
 msgid "Catalog"
 msgstr "Каталоґ"
 
-#: posts/templates/posts/catalog.html:24
+#: posts/templates/posts/catalog.html:22
 msgid "Sort by: "
 msgstr "Сортувати по"
 
-#: posts/templates/posts/catalog.html:26
+#: posts/templates/posts/catalog.html:24
 msgid "Bump order"
 msgstr "порядку піднімання"
 
-#: posts/templates/posts/catalog.html:27
+#: posts/templates/posts/catalog.html:25
 msgid "Creation date"
 msgstr "даті створення"
 
-#: posts/templates/posts/catalog.html:28
+#: posts/templates/posts/catalog.html:26
 msgid "Reply count"
 msgstr "кількості дописів"
 
-#: posts/templates/posts/catalog.html:29
+#: posts/templates/posts/catalog.html:27
 msgid "Random"
 msgstr "настрою"
 
-#: posts/templates/posts/catalog.html:32
+#: posts/templates/posts/catalog.html:29
 msgid "Image size: "
 msgstr "Розмір зображень"
 
-#: posts/templates/posts/catalog.html:34
+#: posts/templates/posts/catalog.html:31
 msgid "Very small"
 msgstr "дуже малий"
 
-#: posts/templates/posts/catalog.html:35
+#: posts/templates/posts/catalog.html:32
 msgid "Small"
 msgstr "малий"
 
-#: posts/templates/posts/catalog.html:36
+#: posts/templates/posts/catalog.html:33
 msgid "Large"
 msgstr "великий"
 
@@ -68,15 +68,15 @@ msgstr "великий"
 msgid "Next"
 msgstr "Далі"
 
-#: posts/templates/posts/page.html:55
+#: posts/templates/posts/page.html:62
 msgid "Return"
 msgstr "Повернутися"
 
-#: posts/templates/posts/page.html:56
+#: posts/templates/posts/page.html:63
 msgid "Go to top"
 msgstr "Угору"
 
-#: posts/templates/posts/page.html:63
+#: posts/templates/posts/page.html:69
 msgid "Post a Reply"
 msgstr "Дописати відповідь"
 
@@ -84,43 +84,47 @@ msgstr "Дописати відповідь"
 msgid "File: "
 msgstr "Файл: "
 
-#: posts/templates/posts/post_form.html:12
+#: posts/templates/posts/post_form.html:13
 msgid "Name"
 msgstr "Імʼя"
 
-#: posts/templates/posts/post_form.html:19
+#: posts/templates/posts/post_form.html:22
 msgid "Email"
 msgstr "Ел. пошта"
 
-#: posts/templates/posts/post_form.html:24
+#: posts/templates/posts/post_form.html:27
 msgid "sage"
 msgstr "sage"
 
-#: posts/templates/posts/post_form.html:33
-#: posts/templates/posts/post_form.html:47
-#: posts/templates/posts/post_form.html:60
+#: posts/templates/posts/post_form.html:36
+#: posts/templates/posts/post_form.html:52
+#: posts/templates/posts/post_form.html:66
 msgid "Spoiler Image"
 msgstr "Зображення під спойлер"
 
-#: posts/templates/posts/post_form.html:40
+#: posts/templates/posts/post_form.html:45
 msgid "Subject"
 msgstr "Тема"
 
-#: posts/templates/posts/post_form.html:54
+#: posts/templates/posts/post_form.html:55
+msgid "By posting I've agreed with <a href='/about/rules/'>the rules</a>"
+msgstr "Відписуючи я погоджуюся з <a href='/about/rules/'>правилами</a>"
+
+#: posts/templates/posts/post_form.html:60
 msgid "Comment"
 msgstr "Коментар"
 
-#: posts/templates/posts/post_form.html:67
-#: posts/templates/posts/report_delete.html:6
+#: posts/templates/posts/post_form.html:72
+#: posts/templates/posts/report_delete.html:7
 msgid "File"
 msgstr "Файл"
 
-#: posts/templates/posts/post_form.html:75
-#: posts/templates/posts/report_delete.html:6
+#: posts/templates/posts/post_form.html:81
+#: posts/templates/posts/report_delete.html:7
 msgid "Password"
 msgstr "Пароль"
 
-#: posts/templates/posts/post_form.html:78
+#: posts/templates/posts/post_form.html:85
 msgid "For file deletion."
 msgstr "Для видаляння допису."
 
@@ -144,22 +148,22 @@ msgstr "дописів з файлами"
 msgid "omitted. Click reply to view."
 msgstr "сховано. Натисніть «Дописати», щоб їх переглянути."
 
-#: posts/templates/posts/report_delete.html:5
+#: posts/templates/posts/report_delete.html:6
 msgid "Delete Post "
 msgstr "Видалити допис"
 
-#: posts/templates/posts/report_delete.html:8
+#: posts/templates/posts/report_delete.html:9
 msgid "Delete"
 msgstr "Видалити"
 
-#: posts/templates/posts/report_delete.html:13
+#: posts/templates/posts/report_delete.html:14
 msgid "Reason"
 msgstr "Причина"
 
-#: posts/templates/posts/report_delete.html:15
+#: posts/templates/posts/report_delete.html:16
 msgid "Report"
 msgstr "Поскаржитися"
 
-#: posts/views.py:30
+#: posts/views.py:29
 msgid "(коментар відсутній)"
 msgstr "(коментар відсутній)"

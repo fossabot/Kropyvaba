@@ -94,26 +94,28 @@ def render_board(request, board_name, current_page=1):
         thread.posts = thread.posts[thread.omitted:]
     if request.method == 'POST':
         json_response = 'json_response' in request.POST
+        agreed_with_rules = 'rules' in request.POST
         form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
-            _ip = get_ip(request)
-            new_post_id = form.process(board_name, _ip, None)
-            if new_post_id:
-                if json_response:
-                    respond = json.dumps({
-                        'id': new_post_id,
-                        'noko': False,
-                        'redirect': '/' + board_name
-                    })
-                    answer = HttpResponse(
-                        respond,
-                        content_type="application/json"
-                    )
-                else:
-                    answer = HttpResponseRedirect(
-                        reverse('thread', args=[board_name, new_post_id])
-                    )
-                return answer
+        if agreed_with_rules:
+            if form.is_valid():
+                _ip = get_ip(request)
+                new_post_id = form.process(board_name, _ip, None)
+                if new_post_id:
+                    if json_response:
+                        respond = json.dumps({
+                            'id': new_post_id,
+                            'noko': False,
+                            'redirect': '/' + board_name
+                        })
+                        answer = HttpResponse(
+                            respond,
+                            content_type="application/json"
+                        )
+                    else:
+                        answer = HttpResponseRedirect(
+                            reverse('thread', args=[board_name, new_post_id])
+                        )
+                    return answer
     else:
         form = PostForm()
     context = {
@@ -175,29 +177,31 @@ def render_thread(request, board_name, thread_id):
                             thread_id
                         ]))
         json_response = 'json_response' in request.POST
+        agreed_with_rules = 'rules' in request.POST
         post_form = PostForm(request.POST, request.FILES)
-        if post_form.is_valid():
-            _ip = get_ip(request)
-            new_post_id = post_form.process(board_name, _ip, thread_id)
-            if new_post_id:
-                if json_response:
-                    respond = json.dumps({
-                        'id': new_post_id,
-                        'noko': False,
-                        'redirect': '/' + board_name
-                    })
-                    answer = HttpResponse(
-                        respond,
-                        content_type="application/json"
-                    )
-                else:
-                    answer = HttpResponseRedirect(
-                        reverse('thread', args=[
-                            board_name,
-                            thread_id
-                        ]) + '#{0}'.format(new_post_id)
-                    )
-                return answer
+        if agreed_with_rules:
+            if post_form.is_valid():
+                _ip = get_ip(request)
+                new_post_id = post_form.process(board_name, _ip, thread_id)
+                if new_post_id:
+                    if json_response:
+                        respond = json.dumps({
+                            'id': new_post_id,
+                            'noko': False,
+                            'redirect': '/' + board_name
+                        })
+                        answer = HttpResponse(
+                            respond,
+                            content_type="application/json"
+                        )
+                    else:
+                        answer = HttpResponseRedirect(
+                            reverse('thread', args=[
+                                board_name,
+                                thread_id
+                            ]) + '#{0}'.format(new_post_id)
+                        )
+                    return answer
     else:
         post_form = PostForm()
     context = {

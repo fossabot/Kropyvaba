@@ -19,7 +19,7 @@ SETTINGS_DIR = os.path.abspath(os.path.dirname(__file__))
 
 try:
     from secret_key import SECRET_KEY
-except (ModuleNotFoundError, ImportError) as e:
+except ImportError:
     from django.utils.crypto import get_random_string
 
     CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'

@@ -1,82 +1,90 @@
 {% load i18n %}
 <form name="post" onsubmit="return dopost(this);" enctype="multipart/form-data" action="{{ config.post_url }}" method="post">
-{% csrf_token %}
-{% if id %}<input type="hidden" name="thread" value="{{ id }}">{% endif %}
-<input type="hidden" name="board" value="{{ board.uri }}">
-{% if current_page %}
-	<input type="hidden" name="page" value="{{ current_page }}">
-{% endif %}
+	{% csrf_token %}
+	{% if id %}<input type="hidden" name="thread" value="{{ id }}">{% endif %}
+	<input type="hidden" name="board" value="{{ board.uri }}">
+	{% if current_page %}
+		<input type="hidden" name="page" value="{{ current_page }}">
+	{% endif %}
 	<table>
-		{% if not config.field_disable_name  %}<tr>
-			<th>
-				{% trans "Name" %}
-			</th>
-			<td>
-				{{ form.name }}
-			</td>
-		</tr>{% endif %}
-		{% if not config.field_disable_email  %}<tr>
-			<th>{% trans "Email" %}</th>
-			<td>
-				{% if config.field_email_selectbox %}
-                    <select name="email" id="email_selectbox" autocomplete="off">
-                        <option value=""></option>
-			<option value="sage">{% trans "sage" %}</option>
-                    </select>
-				{% else %}
-				    {{ form.email }}
-				{% endif %}
-                {% if config.field_disable_subject  %}
-				    <input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />
-                    {% if config.spoiler_images %}
-                        <input id="spoiler" name="spoiler" type="checkbox">
-			<label for="spoiler">{% trans "Spoiler Image" %}</label>
-                    {% endif %}
-				{% endif %}
-			</td>
-		</tr>{% endif %}
-		{% if not config.field_disable_subject %}<tr>
-			<th>
-				{% trans "Subject" %}
-			</th>
-			<td>
-				{{ form.subject }}
-				<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />
-                {% if config.spoiler_images %}
-                    <input id="spoiler" name="spoiler" type="checkbox">
-		    <label for="spoiler">{% trans "Spoiler Image" %}</label>
-                {% endif %}
-			</td>
-		</tr>
+		{% if not config.field_disable_name %}
+			<tr>
+				<th>
+					{% trans "Name" %}
+				</th>
+				<td>
+					{{ form.name }}
+				</td>
+			</tr>
+		{% endif %}
+		{% if not config.field_disable_email %}
+			<tr>
+				<th>{% trans "Email" %}</th>
+				<td>
+					{% if config.field_email_selectbox %}
+						<select name="email" id="email_selectbox" autocomplete="off">
+							<option value=""></option>
+							<option value="sage">{% trans "sage" %}</option>
+						</select>
+					{% else %}
+						{{ form.email }}
+					{% endif %}
+					{% if config.field_disable_subject  %}
+						<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />
+						{% if config.spoiler_images %}
+							<input id="spoiler" name="spoiler" type="checkbox">
+							<label for="spoiler">{% trans "Spoiler Image" %}</label>
+						{% endif %}
+					{% endif %}
+				</td>
+			</tr>
+		{% endif %}
+		{% if not config.field_disable_subject %}
+			<tr>
+				<th>
+					{% trans "Subject" %}
+				</th>
+				<td>
+					{{ form.subject }}
+					<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />
+					{% if config.spoiler_images %}
+						<input id="spoiler" name="spoiler" type="checkbox">
+						<label for="spoiler">{% trans "Spoiler Image" %}</label>
+					{% endif %}
+					<input id="rules" name="rules" type="checkbox" checked>
+					<label for="rules">{% trans "By posting I've agreed with <a href='/about/rules/'>the rules</a>" %}</label>
+				</td>
+			</tr>
 		{% endif %}
 		<tr>
-			<th>
-				{% trans "Comment" %}</th>
+			<th>{% trans "Comment" %}</th>
 			<td>
-                {{ form.body }}
+				{{ form.body }}
 				{% if config.field_disable_subject %}
-				{% if config.field_disable_email %}
-				<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />{% if config.spoiler_images %}
-				<input id="spoiler" name="spoiler" type="checkbox"> <label for="spoiler">{% trans "Spoiler Image" %}</label>{% endif %}
-				{% endif %}
+					{% if config.field_disable_email %}
+						<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />{% if config.spoiler_images %}
+						<input id="spoiler" name="spoiler" type="checkbox"> <label for="spoiler">{% trans "Spoiler Image" %}</label>{% endif %}
+					{% endif %}
 				{% endif %}
 			</td>
 		</tr>
 		<tr id="upload">
-			<th>
-				{% trans "File" %}</th>
+			<th>{% trans "File" %}</th>
 			<td>
 				<input type="file" name="file" id="upload_file">
 				<script type="text/javascript">if (typeof init_file_selector !== 'undefined') init_file_selector({{ config.max_images }});</script>
 			</td>
 		</tr>
-		{% if not config.field_disable_password  %}<tr>
-			<th>
-				{% trans "Password" %}</th>
-			<td>
-                {{ form.password }}
-		<span class="unimportant">({% trans 'For file deletion.' %})</span>
-			</td>
-		</tr>{% endif %}
+		{% if not config.field_disable_password %}
+			<tr>
+				<th>
+					{% trans "Password" %}
+				</th>
+				<td>
+					{{ form.password }}
+					<span class="unimportant">({% trans 'For file deletion.' %})</span>
+				</td>
+			</tr>
+		{% endif %}
 	</table>
 </form>
