@@ -1,6 +1,7 @@
 import os
-
+import ipaddress
 from django.db import models
+from django.utils import timezone
 from config.settings import MEDIA_ROOT
 
 
@@ -74,3 +75,24 @@ class Report(models.Model):
 
     def __str__(self):
         return self.reason
+
+
+class Ban(models.Model):
+
+    """Store bans."""
+    ip_start = models.GenericIPAddressField()
+    ipend = models.GenericIPAddressField()
+    created = models.DateTimeField()
+    expires = models.DateTimeField()
+    board = models.ForeignKey(Board, on_delete=models.CASCADE)
+    reason = models.TextField()
+
+    @classmethod
+    def current_banned(cls):
+        return [
+            (
+                ipaddress.ip_address(_.ip_start),
+                ipaddress.ip_address(_.ipend)
+            )
+            for _ in cls.objects.filter(expires__gte=timezone.now())
+        ]

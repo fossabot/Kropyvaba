@@ -5,6 +5,7 @@
 from subprocess import call
 from tempfile import NamedTemporaryFile
 from datetime import datetime
+from ipaddress import ip_address
 import re
 
 import GeoIP
@@ -19,7 +20,7 @@ from imagekit.processors import ResizeToFit
 
 from config.settings import config
 from config.settings import MEDIA_ROOT
-from posts.models import Post, Board
+from posts.models import Post, Board, Ban
 from precise_bbcode.bbcode import get_parser
 
 
@@ -38,6 +39,9 @@ class PostForm(ModelForm):
         :param thread: thread id if we work with reply
         :return: True if form is valid and processed
         """
+        for banned in Ban.current_banned():
+            if ip_address(_ip) >= banned[0] and ip_address(_ip) <= banned[1]:
+                return False
         name = self.cleaned_data['name']
         email = self.cleaned_data['email']
         subject = self.cleaned_data['subject']
