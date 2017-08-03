@@ -54,6 +54,8 @@ class PostForm(ModelForm):
             return False
         if len(body) == 0 and len(self.files) == 0:
             return False
+        if spam(body):
+            return False
         if len(self.files):
             files = handle_files(self.files, str(time), board)
             if not files:
@@ -104,6 +106,14 @@ class PostForm(ModelForm):
         model = Post
         exclude = ['time', 'sage', 'cycle', 'locked', 'sticky', 'ip', 'board']
 
+
+def spam(text):
+    "Check text for spam/flood."
+    for word in config['wordfilter']:
+        matches = re.match(word, text)
+        if matches:
+            return True
+    return False
 
 def handle_files(files, time, board):
     """

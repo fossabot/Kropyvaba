@@ -19,7 +19,7 @@ SETTINGS_DIR = os.path.abspath(os.path.dirname(__file__))
 
 try:
     from secret_key import SECRET_KEY
-except:
+except (ModuleNotFoundError, ImportError) as e:
     from django.utils.crypto import get_random_string
 
     CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
@@ -184,6 +184,7 @@ config = {
         'style-select.js',
         'dollchan.js',
         'report.js',
+        'truncate.js',
     ],
     'footer': ['Кропивач 2016-2017'],
     'max_filesize': 40 * 1024 * 1024,  # 40MB
@@ -194,6 +195,9 @@ config = {
     'post_date': "%d-%m-%y о %H:%M:%S",
     'recent': "recent.css",
     'url_javascript': 'main.js',
+    'wordfilter': [
+        r"пилипони"
+    ],
     'catalog_link': 'catalog.html',
     'button_reply': "Відповісти",
     'button_newtopic': "Створити нитку",
